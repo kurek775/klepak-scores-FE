@@ -1,21 +1,27 @@
-import { Member } from "../api/models/Member";
-import { MemberService } from "../api/services";
+import { Person } from "../api/models/Person";
+import { PersonService } from "../api/services";
+import { ButtonDemo } from "../components/atoms/button";
 
 export default async function Page() {
-  const service = new MemberService();
+  const service = new PersonService();
   try {
-    const data: Member[] = await service.getList();
+    const data: Person[] = await service.getList();
     if (!data || data.length === 0) {
       return <p>No members found.</p>;
     }
     return (
-      <ul>
-        {data.map((member) => 
-        <li key={member.id}>{member.name}</li>)}
-      </ul>
+      <div>
+        <ul>
+          {data.map((person:Person) => (
+            <li key={person.id}>
+              {person.name} {person.category} {person.crew_id}
+            </li>
+          ))}
+        </ul>
+        <ButtonDemo></ButtonDemo>
+      </div>
     );
   } catch (error) {
-    console.error("Failed to fetch members:", error);
     return <p>Error: Could not load members.</p>;
   }
 }
