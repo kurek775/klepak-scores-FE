@@ -1,6 +1,8 @@
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Person } from "../api/models/Person";
 import { PersonService } from "../api/services";
 import { ButtonDemo } from "../components/atoms/button";
+import FileUploader from "../components/atoms/file-uploader";
 
 export default async function Page() {
   const service = new PersonService();
@@ -10,16 +12,20 @@ export default async function Page() {
       return <p>No members found.</p>;
     }
     return (
-      <div>
-        <ul>
-          {data.map((person:Person) => (
-            <li key={person.id}>
-              {person.name} {person.category} {person.crew_id}
-            </li>
-          ))}
-        </ul>
-        <ButtonDemo></ButtonDemo>
-      </div>
+      <Card className="page-wrapper">
+        <CardHeader>Testovací stránka</CardHeader>
+        <CardContent>
+          <ul>
+            {data.map((person: Person) => (
+              <li key={person.id}>
+                {person.name} {person.category} {person.crew_id}
+              </li>
+            ))}
+          </ul>
+          <ButtonDemo></ButtonDemo>
+          <FileUploader></FileUploader>
+        </CardContent>
+      </Card>
     );
   } catch (error) {
     return <p>Error: Could not load members.</p>;
