@@ -1,16 +1,17 @@
 "use client";
+import { UploadService } from "@/app/api/services";
 import React, { useState } from "react";
 
 const FileUploader: React.FC = () => {
   const [fileName, setFileName] = useState<string | null>(null);
-
+  const service = new UploadService();
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (file) {
       setFileName(file.name);
-      // Zde můžete přidat logiku pro zpracování souboru (např. odeslání na server)
       console.log("Nahraný soubor:", file);
+      service.uploadBlob(file as Blob, 1, 1);
     }
   };
 
