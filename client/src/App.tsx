@@ -10,6 +10,7 @@ function App() {
       columnLabel: "Jméno",
       key: "name",
       type: "text",
+      disabled: true,
       required: true,
       filterDisabled: true,
       sorterDisabled: true,
@@ -23,7 +24,7 @@ function App() {
       sorterDisabled: true,
     },
   ];
-  const [editable, setEditable] = useState<boolean>(false);
+  const [editable, setEditable] = useState<boolean>(true);
 
   const [data, setData] = useState<Rec[]>([]);
 
@@ -35,24 +36,24 @@ function App() {
     <>
       <div>
         <FileUploader onUploadComplete={handleUploadedResponse} />
-        <button
-          className="control-button"
-          onClick={() => setEditable(!editable)}
-        >
-          {editable ? "STORNO" : "EDIT"}
-        </button>
-        <Table
+        {Boolean(data.length) && <Table
           keyVal="id"
           initialData={data}
           headers={headers}
           editable={editable}
           text={{ delete: "SMAZAT", addRow: "PŘIDAT", submit: "ULOŽIT" }}
           actions={{
-            create: true,
+            create: false,
             edit: true,
-            delete: true,
+            delete: false,
           }}
-        />
+        />}
+        {editable && Boolean(data.length)  && <button
+          className="control-button"
+          onClick={() => setEditable(!editable)}
+        >
+          Uložit
+        </button>}
       </div>
     </>
   );

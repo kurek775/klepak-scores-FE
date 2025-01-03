@@ -6,7 +6,7 @@ export async function uploadFile(file: File): Promise<UploadResponse<Record>> {
 
   try {
     const response = await fetch(
-      "http://localhost:8000/api/tours/1/crews/2/upload-photo",
+      "http://localhost:8000/api/crews/2/upload-photo",
       {
         method: "POST",
         body: formData,
