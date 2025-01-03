@@ -7,6 +7,7 @@ import { UploadResponse, Record as Rec } from "./api/types/response";
 function App() {
   const headers = [
     {
+      columnLabel: "Jméno",
       key: "name",
       type: "text",
       required: true,
@@ -14,6 +15,7 @@ function App() {
       sorterDisabled: true,
     },
     {
+      columnLabel: "Výsledek",
       key: "score",
       type: "number",
       required: true,
