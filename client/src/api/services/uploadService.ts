@@ -3,10 +3,9 @@ import { UploadResponse, Record } from "../types/response";
 export async function uploadFile(file: File): Promise<UploadResponse<Record>> {
   const formData = new FormData();
   formData.append("file", file);
-
   try {
     const response = await fetch(
-      "http://localhost:8000/api/crews/2/upload-photo",
+      import.meta.env.VITE_BE_ENDPOINT + "/api/tours/2/crews/2/upload-photo",
       {
         method: "POST",
         body: formData,

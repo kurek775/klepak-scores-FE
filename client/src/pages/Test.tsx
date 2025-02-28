@@ -2,6 +2,7 @@ import { useState } from "react";
 import Table from "pk-editable-table-component";
 import { FileUploader } from "../components/fileUploader";
 import { UploadResponse, Record as Rec } from "../api/types/response";
+import { Button } from "@fluentui/react-components";
 function TestPage() {
   const headers = [
     {
@@ -32,19 +33,16 @@ function TestPage() {
 
   const handleSubmit = (data: any) => {
     console.log(data);
-  }
+  };
 
   return (
     <>
-      <div>
-        <FileUploader onUploadComplete={handleUploadedResponse} />
-        {!editable && Boolean(data.length)  && <button
-          className="control-button"
-          onClick={() => setEditable(true)}
-        >
-          Editovat
-        </button>}
-        {Boolean(data.length) && <Table
+      <FileUploader onUploadComplete={handleUploadedResponse} />
+      {!editable && Boolean(data.length) && (
+        <Button onClick={() => setEditable(true)}>Editovat</Button>
+      )}
+      {Boolean(data.length) && (
+        <Table
           keyVal="id"
           initialData={data}
           onSubmit={handleSubmit}
@@ -56,9 +54,8 @@ function TestPage() {
             edit: true,
             delete: false,
           }}
-        />}
-    
-      </div>
+        />
+      )}
     </>
   );
 }

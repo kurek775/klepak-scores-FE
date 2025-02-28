@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "../api/services/uploadService";
 import { UploadResponse, Record } from "../api/types/response";
+import { Button, Spinner } from "@fluentui/react-components";
 type FileUploaderProps = {
   onUploadComplete?: (response: UploadResponse<Record>) => void;
 };
@@ -43,9 +44,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     >
       <h3>File Uploader</h3>
       <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={!file || uploading}>
-        {uploading ? "Uploading..." : "Upload"}
-      </button>
+      <Button onClick={handleUpload} disabled={!file || uploading}>
+        {uploading ? <Spinner size="extra-small" /> : "Upload"}
+      </Button>
     </div>
   );
 };
