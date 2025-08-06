@@ -1,16 +1,18 @@
 import "./App.css";
-import TestPage from './pages/Test';
-import { Route, Routes } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import Upload from "./pages/upload/Upload";
 function App() {
+  const loggedIn = false;
   return (
-   <>
-  
-      <div className="App">
+    <BrowserRouter>
       <Routes>
-          <Route path="/" element={<TestPage />} />
-        </Routes>
-      </div>
-    </>
- );
+        <Route path="/" element={loggedIn ? <Home /> : <Login />} />
+        <Route path="/upload" element={<Upload />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-export default App
+
+export default App;
