@@ -4,7 +4,7 @@ import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Upload from "./pages/upload/Upload";
 function App() {
-  const loggedIn = false;
+  const loggedIn = true;
   return (
     <BrowserRouter>
       <Routes>
