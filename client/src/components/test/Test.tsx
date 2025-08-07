@@ -1,14 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { getPersonsByTourId, type Person } from "../../api/test";
-
+import {
+  getCrewResultsInSport,
+  saveCrewResultsInSport,
+  type Person,
+} from "../../api/test";
+import Table from "pk-editable-table-component";
 export default function TourPersons() {
   const [persons, setPersons] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
+  const headers = [
+    {
+      columnLabel: "Name",
+      key: "person_name",
+      type: "string",
+      required: true,
+      sorterDisabled: true,
+      filterDisabled: true,
+    },
+    {
+      columnLabel: "Result",
+      key: "score",
+      type: "number",
+      required: true,
+      sorterDisabled: true,
+      filterDisabled: true,
+    },
+  ];
 
+  const handleSubmit = async (data: any) => {
+    await saveCrewResultsInSport(1, 1, 1, data);
+  };
   useEffect(() => {
-    getPersonsByTourId(4)
+    getCrewResultsInSport(1, 1, 1)
       .then(setPersons)
-      .catch((err) => console.error("API error:", err))
+      .catch((err: any) => console.error("API error:", err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -17,16 +42,20 @@ export default function TourPersons() {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-semibold mb-4">Tour Participants</h2>
-      <ul className="space-y-2">
-        {persons.map((p) => (
-          <li key={p.id} className=" shadow rounded p-2">
-            <div>
-              <strong>{p.name}</strong>
-            </div>
-            <div>Category: {p.category}</div>
-          </li>
-        ))}
-      </ul>
+
+      <Table
+        keyVal="id"
+        headers={headers}
+        initialData={persons}
+        onSubmit={handleSubmit}
+        editable={true}
+        actions={{ create: false, edit: true, delete: false }}
+        text={{
+          delete: "Remove",
+          addRow: "Add New Row",
+          submit: "Save Changes",
+        }}
+      />
     </div>
   );
 }

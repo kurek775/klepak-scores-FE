@@ -1,13 +1,19 @@
 // src/api/getPersonsByTourId.ts
 export type Person = {
   id: number;
-  name: string;
-  cre_id: number;
+  person_name: string;
+  score: number;
   category: string;
 };
 
-export async function getPersonsByTourId(tourId: number): Promise<Person[]> {
-  const res = await fetch(`http://127.0.0.1:8000/api/tours/${tourId}/persons/`);
+export async function getCrewResultsInSport(
+  tourId: number,
+  crewId: number,
+  sportId: number
+): Promise<Person[]> {
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/tours/${tourId}/crews/${crewId}/sport/${sportId}`
+  );
 
   if (!res.ok) {
     throw new Error(`Failed to fetch persons for tour ${tourId}`);
@@ -15,4 +21,29 @@ export async function getPersonsByTourId(tourId: number): Promise<Person[]> {
 
   const data = await res.json();
   return data.list;
+}
+
+export async function saveCrewResultsInSport(
+  tourId: number,
+  crewId: number,
+  sportId: number,
+  results: any[]
+): Promise<{ status: string; updated: number }> {
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/tours/${tourId}/crews/${crewId}/sport/${sportId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(results),
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`Failed to save results: ${err.detail || res.statusText}`);
+  }
+
+  return await res.json();
 }
