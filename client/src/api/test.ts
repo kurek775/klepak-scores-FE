@@ -5,6 +5,18 @@ export type Person = {
   score: number;
   category: string;
 };
+const baseURL = "http://127.0.0.1:8000/api";
+
+export async function getSports(tourId: number) {
+  const res = await fetch(`${baseURL}/tours/${tourId}/sports`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch persons for tour ${tourId}`);
+  }
+
+  const data = await res.json();
+  return data.list;
+}
 
 export async function getCrewResultsInSport(
   tourId: number,
@@ -12,7 +24,7 @@ export async function getCrewResultsInSport(
   sportId: number
 ): Promise<Person[]> {
   const res = await fetch(
-    `http://127.0.0.1:8000/api/tours/${tourId}/crews/${crewId}/sport/${sportId}`
+    `${baseURL}/tours/${tourId}/crews/${crewId}/sport/${sportId}`
   );
 
   if (!res.ok) {
@@ -30,7 +42,7 @@ export async function saveCrewResultsInSport(
   results: any[]
 ): Promise<{ status: string; updated: number }> {
   const res = await fetch(
-    `http://127.0.0.1:8000/api/tours/${tourId}/crews/${crewId}/sport/${sportId}`,
+    `${baseURL}/tours/${tourId}/crews/${crewId}/sport/${sportId}`,
     {
       method: "PUT",
       headers: {

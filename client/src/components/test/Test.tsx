@@ -5,7 +5,9 @@ import {
   type Person,
 } from "../../api/test";
 import Table from "pk-editable-table-component";
+import { useParams } from "react-router";
 export default function TourPersons() {
+  const { tourId, crewId, sportId } = useParams();
   const [persons, setPersons] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const headers = [
@@ -28,10 +30,10 @@ export default function TourPersons() {
   ];
 
   const handleSubmit = async (data: any) => {
-    await saveCrewResultsInSport(1, 1, 1, data);
+    await saveCrewResultsInSport(tourId, crewId, sportId, data);
   };
   useEffect(() => {
-    getCrewResultsInSport(1, 1, 1)
+    getCrewResultsInSport(tourId, crewId, sportId)
       .then(setPersons)
       .catch((err: any) => console.error("API error:", err))
       .finally(() => setLoading(false));
