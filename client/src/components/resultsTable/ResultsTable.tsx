@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import {
   getCrewResultsInSport,
   saveCrewResultsInSport,
-  type Person,
-} from "../../api/test";
+} from "../../api/resultsService";
 import Table from "pk-editable-table-component";
 import { useParams } from "react-router";
-export default function TourPersons() {
+import type { Result } from "../../models/Result";
+import { useTranslation } from "react-i18next";
+
+export default function ResultsTable() {
+  const { t } = useTranslation();
   const { tourId, crewId, sportId } = useParams();
-  const [persons, setPersons] = useState<Person[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(true);
   const headers = [
     {
-      columnLabel: "Name",
+      columnLabel: t("name"),
       key: "person_name",
       type: "string",
       required: true,
@@ -20,7 +23,7 @@ export default function TourPersons() {
       filterDisabled: true,
     },
     {
-      columnLabel: "Result",
+      columnLabel: t("result"),
       key: "score",
       type: "number",
       required: true,
@@ -29,13 +32,13 @@ export default function TourPersons() {
     },
   ];
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Result[]) => {
     await saveCrewResultsInSport(tourId, crewId, sportId, data);
   };
   useEffect(() => {
     getCrewResultsInSport(tourId, crewId, sportId)
-      .then(setPersons)
-      .catch((err: any) => console.error("API error:", err))
+      .then(setResults)
+      .catch((err) => console.error("API error:", err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,19 +46,15 @@ export default function TourPersons() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Tour Participants</h2>
-
       <Table
         keyVal="id"
         headers={headers}
-        initialData={persons}
+        initialData={results}
         onSubmit={handleSubmit}
         editable={true}
         actions={{ create: false, edit: true, delete: false }}
         text={{
-          delete: "Remove",
-          addRow: "Add New Row",
-          submit: "Save Changes",
+          submit: t("submit"),
         }}
       />
     </div>

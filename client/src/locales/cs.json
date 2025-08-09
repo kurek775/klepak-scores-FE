@@ -1,4 +1,7 @@
 {
     "login": "Přihlašte se",
-    "upload": "Nahrát"
+    "upload": "Nahrát",
+    "submit": "Uložit",
+    "name": "Jméno",
+    "result": "Výsledek"
 }

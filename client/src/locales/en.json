@@ -1,4 +1,7 @@
 {
     "login": "Login",
-    "upload": "Upload"
+    "upload": "Upload",
+    "submit": "Save",
+    "name": "Name",
+    "result": "Result"
 }

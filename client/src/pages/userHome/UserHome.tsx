@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { getSports } from "../../api/test";
 
 type SportDTO = { sport_id: number; sport_name: string };
-type ApiListResponse<T> = { list: T[]; count: number };
 
 export default function UserHome() {
   const { tourId } = useParams();
@@ -22,7 +21,7 @@ export default function UserHome() {
 
     getSports(tourId)
       .then(setSports)
-      .catch((err: any) => {
+      .catch((err) => {
         console.error("API error:", err);
         setError("Failed to load sports.");
       })
