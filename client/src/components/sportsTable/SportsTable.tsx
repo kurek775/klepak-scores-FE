@@ -5,17 +5,30 @@ import { useTranslation } from "react-i18next";
 import { getSports } from "../../api/sportsService";
 import type { SportDTO } from "../../models/Sport";
 import Button from "../button/Button";
-
+type ColumnType = "text" | "number" | "enum";
+type EnumConfig = {
+  enumItems: string[];
+};
+type HeaderConfig = {
+  columnLabel?: string;
+  key: string;
+  type: ColumnType;
+  disabled?: boolean;
+  required?: boolean;
+  filterDisabled?: boolean;
+  sorterDisabled?: boolean;
+  enumConfig?: EnumConfig;
+};
 export default function SportsTable() {
   const { t } = useTranslation();
   const { tourId } = useParams();
   const [editable, setEditable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const headers = [
+  const headers: HeaderConfig[] = [
     {
       columnLabel: t("sportTitle"),
       key: "sport_name",
-      type: "string",
+      type: "text" as ColumnType,
       required: true,
       sorterDisabled: true,
       filterDisabled: true,
@@ -23,7 +36,10 @@ export default function SportsTable() {
     {
       columnLabel: t("sportMetric"),
       key: "sport_metric",
-      type: "string",
+      enumConfig: {
+        enumItems: ["distance", "points"],
+      },
+      type: "enum" as ColumnType,
       required: true,
       sorterDisabled: true,
       filterDisabled: true,
