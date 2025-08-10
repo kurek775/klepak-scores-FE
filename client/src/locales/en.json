@@ -3,5 +3,10 @@
     "upload": "Upload",
     "submit": "Save",
     "name": "Name",
-    "result": "Result"
+    "result": "Result",
+    "addRow": "Add record",
+    "delete": "Delete",
+    "sportTitle": "Sport title",
+    "sportMetric": "Metric",
+    "sports": "Sports"
 }

@@ -3,5 +3,10 @@
     "upload": "Nahrát",
     "submit": "Uložit",
     "name": "Jméno",
-    "result": "Výsledek"
+    "result": "Výsledek",
+    "addRow": "Přidat záznam",
+    "delete": "Smazat",
+    "sportTitle": "Název sportu",
+    "sportMetric": "Metrika",
+    "sports": "Sporty"
 }

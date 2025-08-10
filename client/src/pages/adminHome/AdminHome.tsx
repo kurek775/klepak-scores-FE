@@ -1,3 +1,5 @@
+import SportsTable from "../../components/sportsTable/SportsTable";
+
 export default function AdminHome() {
-  return <div className="p-8">ADMIN HOME</div>;
+  return <SportsTable />;
 }

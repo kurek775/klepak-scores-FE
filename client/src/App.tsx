@@ -8,7 +8,7 @@ function App() {
   const loggedIn = true;
   const tourId = 1;
   const crewId = 1;
-  const isAdmin = false;
+  const isAdmin = true;
   return (
     <BrowserRouter>
       <Routes>
@@ -27,11 +27,47 @@ function App() {
           }
         />
 
-        <Route path="/tours/:tourId" element={<AdminHome />} />
-        <Route path="/tours/:tourId/crews/:crewId" element={<UserHome />} />
+        <Route
+          path="/tours/:tourId"
+          element={
+            loggedIn ? (
+              isAdmin ? (
+                <AdminHome />
+              ) : (
+                <Navigate to={`/tours/${tourId}/crews/${crewId}`} replace />
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
+        <Route
+          path="/tours/:tourId/crews/:crewId"
+          element={
+            loggedIn ? (
+              isAdmin ? (
+                <Navigate to={`/tours/${tourId}`} replace />
+              ) : (
+                <UserHome />
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
         <Route
           path="/tours/:tourId/crews/:crewId/sport/:sportId"
-          element={<Upload />}
+          element={
+            loggedIn ? (
+              isAdmin ? (
+                <Navigate to={`/tours/${tourId}`} replace />
+              ) : (
+                <Upload />
+              )
+            ) : (
+              <Login />
+            )
+          }
         />
       </Routes>
     </BrowserRouter>

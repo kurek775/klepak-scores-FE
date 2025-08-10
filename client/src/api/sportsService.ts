@@ -1,10 +1,3 @@
-// src/api/getPersonsByTourId.ts
-export type Person = {
-  id: number;
-  person_name: string;
-  score: number;
-  category: string;
-};
 const baseURL = import.meta.env.VITE_BE_ENDPOINT;
 
 export async function getSports(tourId: string) {

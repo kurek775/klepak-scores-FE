@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getSports } from "../../api/test";
-
-type SportDTO = { sport_id: number; sport_name: string };
+import { getSports } from "../../api/sportsService";
+import type { SportDTO } from "../../models/Sport";
 
 export default function UserHome() {
   const { tourId } = useParams();
