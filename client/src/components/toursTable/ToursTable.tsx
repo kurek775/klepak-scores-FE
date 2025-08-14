@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { listTours, createTour, updateTour } from "../../api/toursService";
 import Button from "../button/Button";
 import type { TourDTO } from "../../models/Tour";
+import { useNavigate } from "react-router";
 
 type ColumnType = "text" | "number" | "enum";
 type HeaderConfig = {
@@ -19,6 +20,7 @@ type HeaderConfig = {
 
 export default function ToursTable() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -70,11 +72,14 @@ export default function ToursTable() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     load();
   }, []);
-
+  const handleDoubleClick = (item: Record<string, string | number | null>) => {
+    if (item?.id) {
+      navigate("../tours/" + item.id);
+    }
+  };
   const handleSubmit = async (
     rows: Array<Record<string, string | number | null>>
   ) => {
@@ -188,6 +193,7 @@ export default function ToursTable() {
           addRow: t("addRow") || "Add row",
         }}
         onSubmit={handleSubmit}
+        onRowDoubleClick={handleDoubleClick}
       />
     </div>
   );
