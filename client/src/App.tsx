@@ -4,6 +4,7 @@ import Login from "./pages/login/Login";
 import Upload from "./pages/upload/Upload";
 import AdminHome from "./pages/adminHome/AdminHome";
 import UserHome from "./pages/userHome/UserHome";
+import AdminPanelTour from "./pages/adminPanelTour/AdminPanelTour";
 function App() {
   const loggedIn = true;
   const tourId = 1;
@@ -17,7 +18,7 @@ function App() {
           element={
             loggedIn ? (
               isAdmin ? (
-                <Navigate to={`/tours/${tourId}`} replace />
+                <Navigate to={`/admin`} replace />
               ) : (
                 <Navigate to={`/tours/${tourId}/crews/${crewId}`} replace />
               )
@@ -29,6 +30,21 @@ function App() {
 
         <Route
           path="/tours/:tourId"
+          element={
+            loggedIn ? (
+              isAdmin ? (
+                <AdminPanelTour />
+              ) : (
+                <Navigate to={`/tours/${tourId}/crews/${crewId}`} replace />
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
+
+        <Route
+          path="/admin"
           element={
             loggedIn ? (
               isAdmin ? (

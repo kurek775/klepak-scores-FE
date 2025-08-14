@@ -1,5 +1,5 @@
-import SportsTable from "../../components/sportsTable/SportsTable";
+import ToursTable from "../../components/toursTable/ToursTable";
 
 export default function AdminHome() {
-  return <SportsTable />;
+  return <ToursTable />;
 }
