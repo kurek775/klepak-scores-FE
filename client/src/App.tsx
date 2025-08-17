@@ -5,14 +5,16 @@ import Upload from "./pages/upload/Upload";
 import AdminHome from "./pages/adminHome/AdminHome";
 import UserHome from "./pages/userHome/UserHome";
 import AdminPanelTour from "./pages/adminPanelTour/AdminPanelTour";
+import AuthCallback from "./pages/authCallback/AuthCallback";
 function App() {
-  const loggedIn = true;
+  const loggedIn = false;
   const tourId = 1;
   const crewId = 1;
   const isAdmin = true;
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="/"
           element={
