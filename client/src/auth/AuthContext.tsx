@@ -1,33 +1,72 @@
-import { createContext, useContext } from "react";
-import { useMe, type Me } from "./useMe";
+// src/auth/AuthContext.tsx
+import { createContext, useContext, useEffect, useState } from "react";
+import { getMe } from "../api/authService";
 
-type AuthState = { me: Me | null; loading: boolean; isAdmin: boolean };
+type Me = {
+  email: string;
+  tourId?: number;
+  teamId?: number;
+  name?: string;
+  picture?: string;
+  sub: string;
+  isAdmin: boolean;
+};
+type AuthCtx = {
+  me: Me | null;
+  loading: boolean;
+  login: () => void;
+  logout: () => Promise<void>;
+  refresh: () => Promise<void>;
+};
 
-// DO NOT export this context object (keeps this file a clean refresh boundary)
-const AuthContext = createContext<AuthState | undefined>(undefined);
+const Ctx = createContext<AuthCtx>({
+  me: null,
+  loading: true,
+  login: () => {},
+  logout: async () => {},
+  refresh: async () => {},
+});
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const state = useMe(); // { me, loading, isAdmin }
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [me, setMe] = useState<Me | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMe = async () => {
+    setLoading(true);
+    try {
+      const res = await getMe();
+      console.log(res);
+      setMe(res?.sub ? res : null);
+    } catch {
+      setMe(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMe();
+  }, []);
+
+  const login = () => {
+    window.location.href = `${import.meta.env.VITE_AUTH_ENDPOINT}/login`;
+  };
+
+  const logout = async () => {
+    await fetch(`${import.meta.env.VITE_AUTH_ENDPOINT}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await fetchMe();
+  };
+
   return (
-    <div>
-      <div
-        className={
-          state.me?.isAdmin
-            ? "bg-red-600 text-white"
-            : "bg-blue-600  text-white"
-        }
-      >
-        {state.me?.name}
-      </div>
-      <AuthContext.Provider value={state}>{children}</AuthContext.Provider>
-    </div>
+    <Ctx.Provider value={{ me, loading, login, logout, refresh: fetchMe }}>
+      {children}
+    </Ctx.Provider>
   );
-}
+};
 
-export function useAuth(): AuthState {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within <AuthProvider>");
-  }
-  return ctx;
-}
+export const useAuth = () => useContext(Ctx);

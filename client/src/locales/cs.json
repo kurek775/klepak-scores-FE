@@ -1,12 +1,13 @@
 {
-    "login": "Přihlašte se",
-    "upload": "Nahrát",
-    "submit": "Uložit",
-    "name": "Jméno",
-    "result": "Výsledek",
-    "addRow": "Přidat záznam",
-    "delete": "Smazat",
-    "sportTitle": "Název sportu",
-    "sportMetric": "Metrika",
-    "sports": "Sporty"
+  "logout": "Odhlásit se",
+  "login": "Přihlašte se",
+  "upload": "Nahrát",
+  "submit": "Uložit",
+  "name": "Jméno",
+  "result": "Výsledek",
+  "addRow": "Přidat záznam",
+  "delete": "Smazat",
+  "sportTitle": "Název sportu",
+  "sportMetric": "Metrika",
+  "sports": "Sporty"
 }

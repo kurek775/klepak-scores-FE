@@ -1,8 +1,10 @@
-// pages/AuthCallback.tsx
 import { useEffect } from "react";
+import { useAuth } from "../../auth/AuthContext";
+
 export default function AuthCallback() {
+  const { refresh } = useAuth();
   useEffect(() => {
-    window.location.replace("/");
+    refresh().then(() => (window.location.href = "/"));
   }, []);
-  return <p>Probíhá přihlášení…</p>;
+  return <p>Signing you in…</p>;
 }

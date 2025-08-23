@@ -1,15 +1,17 @@
+import { useAuth } from "../../auth/AuthContext";
 import Button from "../../components/button/Button";
 import { useTranslation } from "react-i18next";
-
 export default function Login() {
   const { t } = useTranslation();
-  const handleLogin = () => {
-    // přesměruje na backend, ten zahájí Google OAuth
-    window.location.href = "http://localhost:8000/auth/google/login";
-  };
+  const { login } = useAuth();
   return (
-    <div className="p-8">
-      <Button variant="primary" onClick={handleLogin} text={t("login")} />
+    <div className="mx-auto max-w-sm p-6 text-center space-y-4">
+      <h1 className="text-2xl font-bold">Přihlášení</h1>
+      <Button
+        onClick={login}
+        text={t("login")}
+        className="px-4 py-2 rounded bg-black text-white"
+      />
     </div>
   );
 }

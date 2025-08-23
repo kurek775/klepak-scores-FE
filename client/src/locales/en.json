@@ -1,12 +1,13 @@
 {
-    "login": "Login",
-    "upload": "Upload",
-    "submit": "Save",
-    "name": "Name",
-    "result": "Result",
-    "addRow": "Add record",
-    "delete": "Delete",
-    "sportTitle": "Sport title",
-    "sportMetric": "Metric",
-    "sports": "Sports"
+  "logout": "Logout",
+  "login": "Login",
+  "upload": "Upload",
+  "submit": "Save",
+  "name": "Name",
+  "result": "Result",
+  "addRow": "Add record",
+  "delete": "Delete",
+  "sportTitle": "Sport title",
+  "sportMetric": "Metric",
+  "sports": "Sports"
 }
