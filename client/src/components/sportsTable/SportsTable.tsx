@@ -56,7 +56,7 @@ export default function SportsTable() {
   }, [tourId, t]);
 
   const handleSubmit = async (
-    rows: Array<Record<string, string | number | null>>
+    rows: Array<Record<string, string | number | null | boolean>>
   ) => {
     if (!tourId) return;
     setSaving(true);

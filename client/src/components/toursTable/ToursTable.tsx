@@ -75,13 +75,15 @@ export default function ToursTable() {
   useEffect(() => {
     load();
   }, []);
-  const handleDoubleClick = (item: Record<string, string | number | null>) => {
+  const handleDoubleClick = (
+    item: Record<string, string | number | null | boolean>
+  ) => {
     if (item?.id) {
       navigate("../tours/" + item.id);
     }
   };
   const handleSubmit = async (
-    rows: Array<Record<string, string | number | null>>
+    rows: Array<Record<string, string | number | null | boolean>>
   ) => {
     setSaving(true);
     setError(null);
