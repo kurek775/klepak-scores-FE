@@ -1,4 +1,4 @@
-export interface UserBase {
+export type UserBase = {
   id: number;
   sub?: string;
   email: string;
@@ -7,8 +7,8 @@ export interface UserBase {
   is_admin: boolean;
   created_at?: string;
   last_login_at?: string;
-}
+};
 
-export interface AssignedUser extends UserBase {
+export type AssignedUser = Partial<UserBase> & {
   crew_id: number;
-}
+};

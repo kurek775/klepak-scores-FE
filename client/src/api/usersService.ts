@@ -10,15 +10,15 @@ async function handle(res: Response) {
   return res.json();
 }
 
-export async function listUsers(tourId: number): Promise<AssignedUser[]> {
-  const res = await fetch(`${baseURL}/admin/tour/${tourId}/users`, {
-    method: "GET",
+export async function listUsers(tourId: string): Promise<AssignedUser[]> {
+  const res = await fetch(`${baseURL}/admin/users/tours/${tourId}`, {
+    credentials: "include",
   });
   return (await handle(res)) as AssignedUser[];
 }
 export async function listPendingUsers(): Promise<UserBase[]> {
   const res = await fetch(`${baseURL}/admin/users/pending`, {
-    method: "GET",
+    credentials: "include",
   });
   return (await handle(res)) as UserBase[];
 }
