@@ -3,9 +3,8 @@ import Table from "pk-editable-table-component";
 import { useTranslation } from "react-i18next";
 import Button from "../button/Button";
 import { useParams } from "react-router";
-import type { AssignedUser } from "../../models/User";
-import { listUsers } from "../../api/usersService";
-
+import { listUsers, updateUsers } from "../../api/usersService";
+import type { UserBase } from "../../models/User";
 type ColumnType = "text" | "number" | "enum";
 type HeaderConfig = {
   columnLabel?: string;
@@ -23,7 +22,7 @@ export default function UsersTable() {
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [users, setUsers] = useState<AssignedUser[]>([]);
+  const [users, setUsers] = useState<UserBase[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const headers: HeaderConfig[] = [
@@ -32,6 +31,7 @@ export default function UsersTable() {
       key: "email",
       type: "text",
       required: true,
+      disabled: true,
       sorterDisabled: true,
       filterDisabled: true,
     },
@@ -39,7 +39,7 @@ export default function UsersTable() {
       columnLabel: t("crew"),
       key: "crew_id",
       type: "number",
-      required: true,
+      required: false,
       sorterDisabled: true,
       filterDisabled: true,
     },
@@ -61,7 +61,23 @@ export default function UsersTable() {
   useEffect(() => {
     load();
   }, []);
-
+  const handleSubmit = async (
+    data: Array<Record<string, string | number | null | boolean>>
+  ) => {
+    if (!tourId) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const newData = await updateUsers(tourId, data as UserBase[]);
+      setUsers(newData);
+      setEditable(false);
+    } catch (e) {
+      console.error(e);
+      setError(t("saveFailed"));
+    } finally {
+      setSaving(false);
+    }
+  };
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -84,6 +100,7 @@ export default function UsersTable() {
       <Table
         keyVal="id"
         headers={headers}
+        onSubmit={handleSubmit}
         initialData={users}
         editable={editable}
         actions={{ create: true, edit: true, delete: false }}
