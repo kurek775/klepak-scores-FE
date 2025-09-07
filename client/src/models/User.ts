@@ -1,4 +1,5 @@
 export type UserBase = {
+  tour_id?: number;
   id: number;
   sub?: string;
   email: string;

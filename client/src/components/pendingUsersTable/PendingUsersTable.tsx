@@ -3,8 +3,8 @@ import Table from "pk-editable-table-component";
 import { useTranslation } from "react-i18next";
 import Button from "../button/Button";
 import { useParams } from "react-router";
-import type { AssignedUser } from "../../models/User";
-import { listUsers } from "../../api/usersService";
+import type { UserBase } from "../../models/User";
+import { listPendingUsers, updatePendingUsers } from "../../api/usersService";
 
 type ColumnType = "text" | "number" | "enum";
 type HeaderConfig = {
@@ -17,13 +17,13 @@ type HeaderConfig = {
   sorterDisabled?: boolean;
 };
 
-export default function UsersTable() {
+export default function PendingUsersTable() {
   const { t } = useTranslation();
   const { tourId } = useParams();
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [users, setUsers] = useState<AssignedUser[]>([]);
+  const [users, setUsers] = useState<UserBase[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const headers: HeaderConfig[] = [
@@ -31,25 +31,40 @@ export default function UsersTable() {
       columnLabel: t("email"),
       key: "email",
       type: "text",
-      required: true,
+      disabled: true,
       sorterDisabled: true,
       filterDisabled: true,
     },
     {
-      columnLabel: t("crew"),
-      key: "crew_id",
+      columnLabel: t("tour"),
+      key: "tour_id",
       type: "number",
-      required: true,
+      required: false,
       sorterDisabled: true,
       filterDisabled: true,
     },
   ];
-
+  const handleSubmit = async (
+    data: Array<Record<string, string | number | null | boolean>>
+  ) => {
+    setSaving(true);
+    setError(null);
+    try {
+      const newData = await updatePendingUsers(data as UserBase[]);
+      setUsers(newData);
+      setEditable(false);
+    } catch (e) {
+      console.error(e);
+      setError(t("saveFailed") ?? "Saving sports failed.");
+    } finally {
+      setSaving(false);
+    }
+  };
   const load = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await listUsers(tourId!);
+      const data = await listPendingUsers();
       setUsers(data);
     } catch (e) {
       console.error("API error:", e);
@@ -67,9 +82,9 @@ export default function UsersTable() {
   return (
     <div className="p-4 space-y-3">
       <div className="flex items-center gap-3">
-        <h2 className="text-xl font-semibold">{t("tours") || "Tours"}</h2>
+        <h2 className="text-xl font-semibold">{t("pending-users")}</h2>
         <Button
-          text={editable ? t("cancel") || "Cancel" : t("edit") || "Edit"}
+          text={editable ? t("cancel") : t("edit")}
           onClick={() => setEditable((v) => !v)}
           disabled={saving}
         />
@@ -85,6 +100,7 @@ export default function UsersTable() {
         keyVal="id"
         headers={headers}
         initialData={users}
+        onSubmit={handleSubmit}
         editable={editable}
         actions={{ create: true, edit: true, delete: false }}
         text={{
