@@ -11,7 +11,7 @@ export async function getMe() {
     name: data.name,
     picture: data.picture,
     isAdmin: data.is_admin ?? data.isAdmin ?? false,
-    teamId: data.team_id ?? data.teamId ?? null,
+    crewId: data.crew_id ?? data.crew_id ?? null,
     tourId: data.tour_id ?? data.tourId ?? null,
   };
 }

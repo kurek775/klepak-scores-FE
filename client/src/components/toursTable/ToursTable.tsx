@@ -88,7 +88,6 @@ export default function ToursTable() {
     setSaving(true);
     setError(null);
     try {
-      // Separate new vs existing by presence of id
       const creates: Array<Promise<any>> = [];
       const updates: Array<Promise<any>> = [];
       console.log(rows);
@@ -101,7 +100,6 @@ export default function ToursTable() {
         const themeRaw = r["theme"];
         const templateIdRaw = r["template_id"];
 
-        // Normalize values
         const year =
           yearRaw === null || yearRaw === undefined || yearRaw === ""
             ? undefined
@@ -118,7 +116,6 @@ export default function ToursTable() {
         const theme = (themeRaw ?? "").toString().trim() || undefined;
 
         if (!id) {
-          // CREATE requires year
           if (typeof year !== "number" || Number.isNaN(year)) {
             throw new Error(
               t("yearIsRequired") ?? "Year is required for new rows."
@@ -133,7 +130,6 @@ export default function ToursTable() {
             })
           );
         } else {
-          // UPDATE accepts partials
           const payload: any = {};
           if (typeof year === "number" && !Number.isNaN(year))
             payload.year = year;
@@ -142,14 +138,12 @@ export default function ToursTable() {
           if (template_id !== undefined)
             payload.template_id = template_id ?? null;
 
-          // Only send update if something is set (avoid no-op calls)
           if (Object.keys(payload).length > 0) {
             updates.push(updateTour(Number(id), payload));
           }
         }
       }
 
-      // Run creates then updates, then reload
       if (creates.length) await Promise.all(creates);
       if (updates.length) await Promise.all(updates);
 
@@ -185,7 +179,7 @@ export default function ToursTable() {
       )}
 
       <Table
-        keyVal="id" // primary key field returned by backend
+        keyVal="id"
         headers={headers}
         initialData={tours}
         editable={editable}

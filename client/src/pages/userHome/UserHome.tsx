@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getSports } from "../../api/sportsService";
 import type { SportDTO } from "../../models/Sport";
+import Button from "../../components/button/Button";
 
 export default function UserHome() {
-  const { tourId } = useParams();
+  const { tourId, crewId } = useParams();
   const [loading, setLoading] = useState(true);
   const [sports, setSports] = useState<SportDTO[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleClick = (id: number) => {
+    navigate(`/tours/${tourId}/crews/${crewId}/sport/${id}`);
+  };
 
   useEffect(() => {
     if (!tourId) {
@@ -32,13 +38,11 @@ export default function UserHome() {
     <div className="p-8">
       <ul className="space-y-2">
         {sports.map((s) => (
-          <li
+          <Button
+            onClick={() => handleClick(s.sport_id)}
             key={s.sport_id}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-2 shadow-sm"
-          >
-            <span className="font-medium text-gray-500">{s.sport_name}</span>
-            <code className="text-xs text-gray-500">#{s.sport_id}</code>
-          </li>
+            text={s.sport_name}
+          />
         ))}
       </ul>
     </div>

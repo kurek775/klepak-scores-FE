@@ -1,11 +1,10 @@
-// src/auth/AuthContext.tsx
 import { createContext, useContext, useEffect, useState } from "react";
 import { getMe } from "../api/authService";
 
 type Me = {
   email: string;
   tourId?: number;
-  teamId?: number;
+  crewId?: number;
   name?: string;
   picture?: string;
   sub: string;
@@ -37,7 +36,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(true);
     try {
       const res = await getMe();
-      console.log(res);
       setMe(res?.sub ? res : null);
     } catch {
       setMe(null);

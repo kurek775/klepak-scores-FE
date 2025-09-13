@@ -2,49 +2,60 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login/Login";
-import Upload from "./pages/upload/Upload";
+import Upload from "./pages/results/Results";
 import AdminHome from "./pages/adminHome/AdminHome";
 import UserHome from "./pages/userHome/UserHome";
 import AdminPanelTour from "./pages/adminPanelTour/AdminPanelTour";
 import AuthCallback from "./pages/authCallback/AuthCallback";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { ProtectedRoute, AdminRoute } from "./auth/Protected";
+import Results from "./pages/results/Results";
+import { useTranslation } from "react-i18next";
 
 function HomeRouter() {
   const { me, loading } = useAuth();
-
-  // wait for auth state to resolve, avoid UI flash
   if (loading) return null;
-
-  // unauthenticated -> show login page
   if (!me) return <Login />;
-
-  // admin -> admin home
   if (me.isAdmin) return <Navigate to="/admin" replace />;
 
-  // regular user -> go to their tour/crew (teamId is our crewId param)
-  const tourId = me?.tourId ?? 1;
-  const crewId = me?.teamId ?? 1;
-
-  return <Navigate to={`/tours/${tourId}/crews/${crewId}`} replace />;
+  const tourId = me?.tourId;
+  const crewId = me?.crewId;
+  if (tourId && crewId) {
+    return <Navigate to={`/tours/${tourId}/crews/${crewId}`} replace />;
+  } else {
+    return <Navigate to={`/pending`} replace />;
+  }
+}
+function PendingUserHome() {
+  const { t } = useTranslation();
+  const { me, loading } = useAuth();
+  if (loading) return null;
+  if (!me) return <Login />;
+  return (
+    <div>
+      <h2>{t("pendingUserHome")}</h2>
+      <h3>{me.name}</h3>
+    </div>
+  );
 }
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* AuthProvider must be inside BrowserRouter (it uses useNavigate) */}
       <AuthProvider>
         <Routes>
-          {/* callback sets cookie, then we refresh and bounce home */}
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          {/* explicit login route — HomeRouter will show Login if unauthenticated */}
           <Route path="/login" element={<HomeRouter />} />
-
-          {/* root redirects based on role */}
           <Route path="/" element={<HomeRouter />} />
-
-          {/* admin area */}
+          <Route
+            path="/pending"
+            element={
+              <ProtectedRoute>
+                <PendingUserHome />
+              </ProtectedRoute>
+            }
+          ></Route>
           <Route
             path="/admin"
             element={
@@ -63,7 +74,6 @@ export default function App() {
             }
           />
 
-          {/* user area */}
           <Route
             path="/tours/:tourId/crews/:crewId"
             element={
@@ -77,12 +87,11 @@ export default function App() {
             path="/tours/:tourId/crews/:crewId/sport/:sportId"
             element={
               <ProtectedRoute>
-                <Upload />
+                <Results />
               </ProtectedRoute>
             }
           />
 
-          {/* catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

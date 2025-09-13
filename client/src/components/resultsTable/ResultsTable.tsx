@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
-import {
-  getCrewResultsInSport,
-  saveCrewResultsInSport,
-} from "../../api/resultsService";
-import Table from "pk-editable-table-component";
+import { useState } from "react";
+import { saveCrewResultsInSport } from "../../api/resultsService";
+import Table, { type HeaderConfig } from "pk-editable-table-component";
 import { useParams } from "react-router";
 import type { Result } from "../../models/Result";
 import { useTranslation } from "react-i18next";
+import Button from "../button/Button";
 
-export default function ResultsTable() {
+type ResultsTableProps = {
+  data: Result[];
+};
+
+export default function ResultsTable({ data }: ResultsTableProps) {
   const { t } = useTranslation();
   const { tourId, crewId, sportId } = useParams();
-  const [results, setResults] = useState<Result[]>([]);
-  const [loading, setLoading] = useState(true);
-  const headers = [
+  const [editable, setEditable] = useState(true);
+  const headers: HeaderConfig[] = [
     {
       columnLabel: t("name"),
       key: "person_name",
-      type: "string",
+      type: "text",
       required: true,
       sorterDisabled: true,
       filterDisabled: true,
@@ -32,26 +33,35 @@ export default function ResultsTable() {
     },
   ];
 
-  const handleSubmit = async (data: Result[]) => {
-    await saveCrewResultsInSport(tourId, crewId, sportId, data);
+  const handleSubmit = async (
+    data: Array<Record<string, string | number | null | boolean>>
+  ) => {
+    if (tourId && crewId && sportId)
+      await saveCrewResultsInSport(
+        tourId,
+        crewId,
+        sportId,
+        data as unknown as Result[]
+      );
+    setEditable(false);
   };
-  useEffect(() => {
-    getCrewResultsInSport(tourId, crewId, sportId)
-      .then(setResults)
-      .catch((err) => console.error("API error:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-3">
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-semibold">{t("results")}</h2>
+        <Button
+          text={editable ? t("cancel") : t("edit")}
+          onClick={() => setEditable((v) => !v)}
+        />
+      </div>
+
       <Table
         keyVal="id"
         headers={headers}
-        initialData={results}
+        initialData={data}
         onSubmit={handleSubmit}
-        editable={true}
+        editable={editable}
         actions={{ create: false, edit: true, delete: false }}
         text={{
           submit: t("submit"),
