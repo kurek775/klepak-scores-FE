@@ -1,10 +1,10 @@
-import SportsTable from "../../components/sportsTable/SportsTable";
+import TourSportsTable from "../../components/tourSportsTable/TourSportsTable";
 import UsersTable from "../../components/usersTable/UsersTable";
 
 export default function AdminPanelTour() {
   return (
     <div>
-      <SportsTable />
+      <TourSportsTable />
       <UsersTable />
     </div>
   );

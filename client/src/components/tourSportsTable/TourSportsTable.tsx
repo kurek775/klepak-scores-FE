@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
-import { getAllSports, saveAllSports } from "../../api/sportsService";
+import { getTourSports, saveTourSports } from "../../api/sportsService";
 import type { SportDTO } from "../../models/Sport";
 import Button from "../button/Button";
 import Table, { type HeaderConfig } from "pk-editable-table-component";
 
-export default function SportsTable() {
+export default function TourSportsTable() {
   const { t } = useTranslation();
+  const { tourId } = useParams();
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,14 +19,6 @@ export default function SportsTable() {
     {
       columnLabel: t("sportTitle"),
       key: "sport_name",
-      type: "text",
-      required: true,
-      sorterDisabled: true,
-      filterDisabled: true,
-    },
-    {
-      columnLabel: t("sportMetric"),
-      key: "sport_metric",
       enumConfig: {
         enumItems: ["time", "distance", "points"],
       },
@@ -36,33 +30,40 @@ export default function SportsTable() {
   ];
 
   useEffect(() => {
+    if (!tourId) {
+      setError("Missing tourId in route.");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
 
-    getAllSports()
+    getTourSports(tourId)
       .then(setSports)
       .catch((err) => {
         console.error("API error:", err);
         setError(t("failedToLoadSports") ?? "Failed to load sports.");
       })
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [tourId, t]);
 
   const handleSubmit = async (
     rows: Array<Record<string, string | number | null | boolean>>
   ) => {
+    if (!tourId) return;
     setSaving(true);
     setError(null);
     try {
-      const saved = await saveAllSports(
-        rows.map((x) => {
-          return {
-            sport_id: x.sport_id,
-            sport_name: x.sport_name,
-            sport_metric: x.sport_metric,
-          };
-        }) as SportDTO[]
-      );
+      const seen = new Set<string>();
+      const payload = rows
+        .map((r) => ({
+          name: (r["sport_name"] ?? "").toString().trim(),
+          metric: (r["sport_metric"] ?? "").toString().trim(),
+        }))
+        .filter((r) => r.name && r.metric)
+        .filter((r) => (seen.has(r.name) ? false : (seen.add(r.name), true)));
+
+      const saved = await saveTourSports(tourId, payload);
       setSports(saved);
       setEditable(false);
     } catch (e) {

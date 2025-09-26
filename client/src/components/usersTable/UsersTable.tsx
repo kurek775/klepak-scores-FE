@@ -27,6 +27,15 @@ export default function UsersTable() {
 
   const headers: HeaderConfig[] = [
     {
+      columnLabel: t("name"),
+      key: "name",
+      type: "text",
+      required: true,
+      disabled: true,
+      sorterDisabled: true,
+      filterDisabled: true,
+    },
+    {
       columnLabel: t("email"),
       key: "email",
       type: "text",
@@ -83,12 +92,14 @@ export default function UsersTable() {
   return (
     <div className="p-4 space-y-3">
       <div className="flex items-center gap-3">
-        <h2 className="text-xl font-semibold">{t("tours") || "Tours"}</h2>
-        <Button
-          text={editable ? t("cancel") || "Cancel" : t("edit") || "Edit"}
-          onClick={() => setEditable((v) => !v)}
-          disabled={saving}
-        />
+        <h2 className="text-xl font-semibold">{t("users")}</h2>
+        {!editable && (
+          <Button
+            text={t("edit")}
+            onClick={() => setEditable((v) => !v)}
+            disabled={saving}
+          />
+        )}
       </div>
 
       {error && (
@@ -103,10 +114,9 @@ export default function UsersTable() {
         onSubmit={handleSubmit}
         initialData={users}
         editable={editable}
-        actions={{ create: true, edit: true, delete: false }}
+        actions={{ create: false, edit: true, delete: false }}
         text={{
-          submit: saving ? t("saving") || "Saving…" : t("submit") || "Submit",
-          addRow: t("addRow") || "Add row",
+          submit: saving ? t("saving") : t("submit"),
         }}
       />
     </div>

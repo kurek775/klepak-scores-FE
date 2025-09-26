@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getSports } from "../../api/sportsService";
 import type { SportDTO } from "../../models/Sport";
 import Button from "../../components/button/Button";
+import { getTourSports } from "../../api/sportsService";
 
 export default function UserHome() {
   const { tourId, crewId } = useParams();
@@ -24,7 +24,7 @@ export default function UserHome() {
     setLoading(true);
     setError(null);
 
-    getSports(tourId)
+    getTourSports(tourId)
       .then(setSports)
       .catch((err) => {
         console.error("API error:", err);

@@ -102,10 +102,9 @@ export default function PendingUsersTable() {
         initialData={users}
         onSubmit={handleSubmit}
         editable={editable}
-        actions={{ create: true, edit: true, delete: false }}
+        actions={{ create: false, edit: true, delete: false }}
         text={{
-          submit: saving ? t("saving") || "Saving…" : t("submit") || "Submit",
-          addRow: t("addRow") || "Add row",
+          submit: saving ? t("saving") : t("submit"),
         }}
       />
     </div>

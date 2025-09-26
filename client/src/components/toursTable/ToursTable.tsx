@@ -29,31 +29,18 @@ export default function ToursTable() {
 
   const headers: HeaderConfig[] = [
     {
-      columnLabel: t("year") || "Year",
+      columnLabel: t("year"),
       key: "year",
       type: "number",
       required: true,
       sorterDisabled: true,
       filterDisabled: true,
     },
+
     {
-      columnLabel: t("part") || "Part",
-      key: "part",
-      type: "text",
-      sorterDisabled: true,
-      filterDisabled: true,
-    },
-    {
-      columnLabel: t("theme") || "Theme",
+      columnLabel: t("theme"),
       key: "theme",
       type: "text",
-      sorterDisabled: true,
-      filterDisabled: true,
-    },
-    {
-      columnLabel: t("templateId") || "Template ID",
-      key: "template_id",
-      type: "number",
       sorterDisabled: true,
       filterDisabled: true,
     },
