@@ -1,33 +1,4 @@
-<main class="min-h-screen bg-gray-50 flex items-center justify-center">
-  <div class="text-center">
-    <h1 class="text-5xl font-bold text-gray-900 mb-4">Klepak Scores</h1>
-    <p class="text-lg text-gray-600 mb-8">Competition & Event Management Platform</p>
-
-    <div class="inline-flex items-center gap-3 px-6 py-3 rounded-xl border"
-         [class]="healthStatus() === 'ok'
-           ? 'bg-green-50 border-green-200'
-           : healthStatus() === 'error'
-             ? 'bg-red-50 border-red-200'
-             : 'bg-gray-100 border-gray-200'">
-      <span class="size-3 rounded-full"
-            [class]="healthStatus() === 'ok'
-              ? 'bg-green-500'
-              : healthStatus() === 'error'
-                ? 'bg-red-500'
-                : 'bg-gray-400 animate-pulse'">
-      </span>
-      <span class="text-sm font-medium"
-            [class]="healthStatus() === 'ok'
-              ? 'text-green-700'
-              : healthStatus() === 'error'
-                ? 'text-red-700'
-                : 'text-gray-500'">
-        @switch (healthStatus()) {
-          @case ('ok') { API Connected }
-          @case ('error') { API Unreachable }
-          @default { Checking... }
-        }
-      </span>
-    </div>
-  </div>
-</main>
+@if (authService.isAuthenticated()) {
+  <app-navbar />
+}
+<router-outlet />

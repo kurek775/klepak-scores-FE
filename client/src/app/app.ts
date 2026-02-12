@@ -1,24 +1,19 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import { AuthService } from './auth/auth.service';
+import { Navbar } from './shared/layout/navbar/navbar';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
+  imports: [RouterOutlet, Navbar],
 })
 export class App implements OnInit {
-  healthStatus = signal<'checking' | 'ok' | 'error'>('checking');
+  constructor(public authService: AuthService) {}
 
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
-    this.http.get<{ status: string; database: string }>('/api/health').subscribe({
-      next: (res) => {
-        this.healthStatus.set(res.status === 'ok' && res.database === 'ok' ? 'ok' : 'error');
-      },
-      error: () => {
-        this.healthStatus.set('error');
-      },
-    });
+  ngOnInit(): void {
+    this.authService.tryRestoreSession();
   }
 }

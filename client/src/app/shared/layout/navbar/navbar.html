@@ -1,0 +1,40 @@
+<nav class="bg-white border-b border-gray-200 px-6 py-3">
+  <div class="flex items-center justify-between max-w-7xl mx-auto">
+    <div class="flex items-center gap-6">
+      <a routerLink="/dashboard" class="text-lg font-bold text-gray-900">Klepak Scores</a>
+
+      @if (authService.isAdmin()) {
+        <a
+          routerLink="/admin/users"
+          routerLinkActive="text-blue-600"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Manage Users
+        </a>
+      }
+    </div>
+
+    <div class="flex items-center gap-4">
+      @if (authService.user(); as user) {
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-700">{{ user.full_name }}</span>
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium"
+            [class]="user.role === 'ADMIN'
+              ? 'bg-purple-100 text-purple-700'
+              : 'bg-blue-100 text-blue-700'"
+          >
+            {{ user.role }}
+          </span>
+        </div>
+      }
+
+      <button
+        (click)="logout()"
+        class="text-sm text-gray-500 hover:text-gray-700"
+      >
+        Sign Out
+      </button>
+    </div>
+  </div>
+</nav>
