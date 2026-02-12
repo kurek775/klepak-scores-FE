@@ -1,12 +1,24 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('client');
+export class App implements OnInit {
+  healthStatus = signal<'checking' | 'ok' | 'error'>('checking');
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get<{ status: string; database: string }>('/api/health').subscribe({
+      next: (res) => {
+        this.healthStatus.set(res.status === 'ok' && res.database === 'ok' ? 'ok' : 'error');
+      },
+      error: () => {
+        this.healthStatus.set('error');
+      },
+    });
+  }
 }
