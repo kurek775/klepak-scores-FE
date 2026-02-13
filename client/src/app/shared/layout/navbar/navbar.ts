@@ -7,11 +7,22 @@ import { AuthService } from '../../../auth/auth.service';
   selector: 'app-navbar',
   templateUrl: './navbar.html',
   imports: [RouterLink, RouterLinkActive],
+  standalone: true 
 })
 export class Navbar {
+  isMobileMenuOpen = false;
+
   constructor(public authService: AuthService) {}
 
   logout(): void {
     this.authService.logout();
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 }

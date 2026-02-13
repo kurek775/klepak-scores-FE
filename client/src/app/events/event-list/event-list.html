@@ -1,0 +1,89 @@
+<div class="max-w-5xl mx-auto p-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Events</h1>
+    @if (authService.isAdmin()) {
+      <a
+        routerLink="/events/import"
+        class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+      >
+        Import Event
+      </a>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="text-gray-500">Loading events...</p>
+  } @else if (events().length === 0) {
+    <div class="text-center py-12 text-gray-500">
+      <p class="text-lg">No events yet.</p>
+      @if (authService.isAdmin()) {
+        <p class="mt-2">
+          <a routerLink="/events/import" class="text-blue-600 hover:text-blue-800">
+            Import your first event
+          </a>
+        </p>
+      }
+    </div>
+  } @else {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+              Status
+            </th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+              Groups
+            </th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+              Participants
+            </th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          @for (event of events(); track event.id) {
+            <tr>
+              <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ event.name }}</td>
+              <td class="px-6 py-4">
+                <span
+                  class="text-xs px-2 py-1 rounded-full font-medium"
+                  [class]="
+                    event.status === 'ACTIVE'
+                      ? 'bg-green-100 text-green-700'
+                      : event.status === 'ARCHIVED'
+                        ? 'bg-gray-100 text-gray-600'
+                        : 'bg-yellow-100 text-yellow-700'
+                  "
+                >
+                  {{ event.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ event.group_count }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ event.participant_count }}</td>
+              <td class="px-6 py-4 flex items-center gap-3">
+                <a
+                  [routerLink]="['/events', event.id]"
+                  class="text-sm font-medium text-blue-600 hover:text-blue-800"
+                >
+                  View
+                </a>
+                @if (authService.isAdmin()) {
+                  <button
+                    (click)="deleteEvent(event)"
+                    class="text-sm font-medium text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

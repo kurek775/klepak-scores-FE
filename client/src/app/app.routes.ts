@@ -15,6 +15,24 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'events',
+    loadComponent: () =>
+      import('./events/event-list/event-list').then((m) => m.EventList),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'events/import',
+    loadComponent: () =>
+      import('./events/event-import/event-import').then((m) => m.EventImport),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'events/:id',
+    loadComponent: () =>
+      import('./events/event-detail/event-detail').then((m) => m.EventDetailComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'admin/users',
     loadComponent: () => import('./admin/user-list/user-list').then((m) => m.UserList),
     canActivate: [authGuard, adminGuard],
