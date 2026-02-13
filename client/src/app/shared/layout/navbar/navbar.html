@@ -3,6 +3,14 @@
     <div class="flex items-center gap-6">
       <a routerLink="/dashboard" class="text-lg font-bold text-gray-900">Klepak Scores</a>
 
+      <a
+        routerLink="/events"
+        routerLinkActive="text-blue-600"
+        class="text-sm text-gray-600 hover:text-gray-900"
+      >
+        Events
+      </a>
+
       @if (authService.isAdmin()) {
         <a
           routerLink="/admin/users"
