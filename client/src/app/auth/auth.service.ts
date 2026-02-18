@@ -21,7 +21,7 @@ export class AuthService {
   readonly user = this.userSignal.asReadonly();
   readonly isAuthenticated = computed(() => this.userSignal() !== null);
   readonly isAdmin = computed(() => this.userSignal()?.role === UserRole.ADMIN);
-
+  readonly id = computed(() => this.userSignal()?.id);
   constructor(
     private http: HttpClient,
     private router: Router,

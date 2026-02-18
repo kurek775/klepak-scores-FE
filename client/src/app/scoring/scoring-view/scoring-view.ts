@@ -10,7 +10,7 @@ import { EventService } from '../../events/event.service';
 
 interface ScoreRow {
   participant: Participant;
-  value: string;
+  value: string|number;
   saved: boolean;
 }
 

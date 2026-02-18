@@ -35,7 +35,7 @@ export class EventDetailComponent implements OnInit {
     private route: ActivatedRoute,
     public authService: AuthService,
     private http: HttpClient,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -114,12 +114,12 @@ export class EventDetailComponent implements OnInit {
               groups: ev.groups.map((g) =>
                 g.id === groupId
                   ? {
-                      ...g,
-                      evaluators: [
-                        ...g.evaluators,
-                        { id: evaluator.id, email: evaluator.email, full_name: evaluator.full_name },
-                      ],
-                    }
+                    ...g,
+                    evaluators: [
+                      ...g.evaluators,
+                      { id: evaluator.id, email: evaluator.email, full_name: evaluator.full_name },
+                    ],
+                  }
                   : g,
               ),
             };
