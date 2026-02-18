@@ -17,6 +17,8 @@ export interface DiplomaItem {
   fontWeight: FontWeight;
   color: string;
   fontFamily?: string; // font name from uploaded fonts, or 'default'
+  centerH?: boolean;  // anchor text center at X (translateX -50%)
+  centerV?: boolean;  // anchor text center at Y (translateY -50%)
 }
 
 export interface DiplomaTemplate {
@@ -26,5 +28,6 @@ export interface DiplomaTemplate {
   orientation: 'LANDSCAPE' | 'PORTRAIT';
   items: DiplomaItem[];
   fonts: DiplomaFont[];
+  default_font: string | null;
   created_at: string;
 }

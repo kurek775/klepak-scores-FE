@@ -13,11 +13,12 @@ import { DiplomaService } from '../../events/diploma.service';
 })
 export class DiplomaEditor implements OnInit, OnDestroy {
   // ── Template state ──────────────────────────────────────────
-  template    = signal<DiplomaTemplate | null>(null);
-  items       = signal<DiplomaItem[]>([]);
-  bgImageUrl  = signal('');
-  orientation = signal<'LANDSCAPE' | 'PORTRAIT'>('LANDSCAPE');
-  fonts       = signal<DiplomaFont[]>([]);
+  template     = signal<DiplomaTemplate | null>(null);
+  items        = signal<DiplomaItem[]>([]);
+  bgImageUrl   = signal('');
+  orientation  = signal<'LANDSCAPE' | 'PORTRAIT'>('LANDSCAPE');
+  fonts        = signal<DiplomaFont[]>([]);
+  defaultFont  = signal<string>('');  // '' means use Helvetica (no Czech support)
 
   // ── UI state ─────────────────────────────────────────────────
   loading = signal(false);
@@ -65,6 +66,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
         this.orientation.set(t.orientation);
         this.items.set(t.items.map(i => ({ ...i })));
         this.fonts.set(t.fonts ? t.fonts.map(f => ({ ...f })) : []);
+        this.defaultFont.set(t.default_font ?? '');
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -165,6 +167,13 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     return item.fontFamily && item.fontFamily !== 'default' ? item.fontFamily : 'inherit';
   }
 
+  previewTransform(item: DiplomaItem): string {
+    const parts: string[] = [];
+    if (item.centerH) parts.push('translateX(-50%)');
+    if (item.centerV) parts.push('translateY(-50%)');
+    return parts.join(' ');
+  }
+
   // ── Save / Delete ─────────────────────────────────────────────
   saveTemplate(): void {
     this.saving.set(true);
@@ -174,6 +183,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       orientation: this.orientation(),
       items: this.items(),
       fonts: this.fonts(),
+      default_font: this.defaultFont() || null,
     };
     this.diplomaService.saveTemplate(this.eventId, body, isNew).subscribe({
       next: (t) => { this.template.set(t); this.saving.set(false); },
@@ -188,6 +198,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
         this.template.set(null);
         this.items.set([]);
         this.fonts.set([]);
+        this.defaultFont.set('');
         this.bgImageUrl.set('');
         this.orientation.set('LANDSCAPE');
       },

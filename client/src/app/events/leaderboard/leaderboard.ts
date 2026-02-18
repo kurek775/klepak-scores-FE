@@ -110,7 +110,12 @@ export class Leaderboard implements OnInit {
         format: 'a4',
       });
 
-      // Embed custom fonts
+      // Always embed Roboto as built-in fallback (supports Czech and full UTF-8)
+      const robotoData = await this.resolveImageToBase64('/fonts/Roboto-Regular.ttf');
+      doc.addFileToVFS('Roboto-Regular.ttf', robotoData.split(',')[1]);
+      doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+
+      // Embed additional user-uploaded fonts
       if (template.fonts) {
         for (const font of template.fonts) {
           const base64 = font.data.split(',')[1];
@@ -142,13 +147,15 @@ export class Leaderboard implements OnInit {
               const pdfWeight = item.fontWeight === 'bold'   ? 'bold'
                               : item.fontWeight === 'italic' ? 'italic'
                               : 'normal';
-              const customFont = item.fontFamily && item.fontFamily !== 'default'
+              // Priority: item font → template default font → Roboto (always supports Czech)
+              const itemFont = item.fontFamily && item.fontFamily !== 'default'
                 ? item.fontFamily : null;
+              const resolvedFont = itemFont ?? template.default_font ?? 'Roboto';
 
-              if (customFont) {
-                doc.setFont(customFont, 'normal');
+              if (resolvedFont === 'Roboto') {
+                doc.setFont('Roboto', 'normal');
               } else {
-                doc.setFont('helvetica', pdfWeight);
+                doc.setFont(resolvedFont, 'normal');
               }
 
               let text = '';
@@ -165,7 +172,10 @@ export class Leaderboard implements OnInit {
                   default: text = '';
                 }
               }
-              doc.text(text, xMm, yMm);
+              doc.text(text, xMm, yMm, {
+                align:    item.centerH ? 'center' : 'left',
+                baseline: item.centerV ? 'middle'  : 'alphabetic',
+              });
             }
           }
         }
