@@ -10,7 +10,7 @@ import { EventService } from '../../events/event.service';
 
 interface ScoreRow {
   participant: Participant;
-  value: string|number;
+  value: string | number;
   saved: boolean;
 }
 
@@ -24,7 +24,9 @@ export class ScoringView implements OnInit {
   rows = signal<ScoreRow[]>([]);
   loading = signal(false);
   saving = signal(false);
+  processingAI = signal(false); // New signal for AI loading state
   eventId = 0;
+  groupId = 0; // Storing this to make AI calls easier
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +40,6 @@ export class ScoringView implements OnInit {
     const activityId = Number(this.route.snapshot.paramMap.get('activityId'));
     this.loading.set(true);
 
-    // Load activity info from event details
     this.eventService.getEvent(this.eventId).subscribe({
       next: (event) => {
         const act = event.activities.find((a) => a.id === activityId);
@@ -46,7 +47,6 @@ export class ScoringView implements OnInit {
       },
     });
 
-    // Load evaluator's group participants for this event
     this.groupService.getMyGroups().subscribe({
       next: (groups) => {
         const myGroup = groups.find((g) => g.event_id === this.eventId);
@@ -54,7 +54,8 @@ export class ScoringView implements OnInit {
           this.loading.set(false);
           return;
         }
-        // Get full group detail with participants
+        this.groupId = myGroup.id; // Store for AI usage
+        
         this.eventService.getEvent(this.eventId).subscribe({
           next: (event) => {
             const groupDetail = event.groups.find((g) => g.id === myGroup.id);
@@ -62,7 +63,6 @@ export class ScoringView implements OnInit {
               this.loading.set(false);
               return;
             }
-            // Load existing records
             this.scoringService.getActivityRecords(activityId).subscribe({
               next: (records) => {
                 const recordMap = new Map<number, ScoreRecord>();
@@ -87,6 +87,45 @@ export class ScoringView implements OnInit {
       error: () => this.loading.set(false),
     });
   }
+
+  // --- AI Logic Start ---
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    const act = this.activity();
+    if (!act || !this.groupId) return;
+
+    this.processingAI.set(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('activity_id', act.id.toString());
+    formData.append('group_id', this.groupId.toString());
+
+    this.scoringService.processImage(formData).subscribe({
+      next: (results: { participant_id: number; value: string | number }[]) => {
+        this.rows.update((currentRows) =>
+          currentRows.map((row) => {
+            const aiMatch = results.find((r) => r.participant_id === row.participant.id);
+            if (aiMatch) {
+              return { ...row, value: aiMatch.value, saved: false };
+            }
+            return row;
+          })
+        );
+        this.processingAI.set(false);
+        // Clear input so same file can be uploaded again if needed
+        input.value = '';
+      },
+      error: () => {
+        this.processingAI.set(false);
+        input.value = '';
+      },
+    });
+  }
+  // --- AI Logic End ---
 
   get isBoolean(): boolean {
     return this.activity()?.evaluation_type === EvaluationType.BOOLEAN;
@@ -125,7 +164,7 @@ export class ScoringView implements OnInit {
   }
 
   toggleBoolean(row: ScoreRow): void {
-    row.value = row.value === '1' ? '0' : '1';
+    row.value = row.value === '1' || row.value === 1 ? '0' : '1';
     row.saved = false;
   }
 

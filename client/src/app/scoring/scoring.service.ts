@@ -7,7 +7,7 @@ import { Activity, ScoreRecord } from '../core/models/activity.model';
 
 @Injectable({ providedIn: 'root' })
 export class ScoringService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createActivity(body: {
     name: string;
@@ -16,6 +16,13 @@ export class ScoringService {
     event_id: number;
   }): Observable<Activity> {
     return this.http.post<Activity>(`${environment.apiUrl}/activities`, body);
+  }
+
+  processImage(formData: FormData): Observable<{ participant_id: number; value: string | number }[]> {
+    return this.http.post<{ participant_id: number; value: string | number }[]>(
+      `${environment.apiUrl}/records/process-image`,
+      formData
+    );
   }
 
   getEventActivities(eventId: number): Observable<Activity[]> {
