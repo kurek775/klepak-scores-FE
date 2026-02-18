@@ -1,8 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { jsPDF } from 'jspdf';
 
-import { ActivityLeaderboard, LeaderboardResponse } from '../../core/models/leaderboard.model';
+import { LeaderboardResponse } from '../../core/models/leaderboard.model';
+import { DiplomaTemplate } from '../../core/models/diploma.model';
+import { DiplomaService } from '../diploma.service';
 import { EventService } from '../event.service';
 
 @Component({
@@ -11,36 +14,43 @@ import { EventService } from '../event.service';
   imports: [RouterLink, TranslocoPipe],
 })
 export class Leaderboard implements OnInit {
-  leaderboard = signal<LeaderboardResponse | null>(null);
-  loading = signal(true);
+  leaderboard      = signal<LeaderboardResponse | null>(null);
+  loading          = signal(true);
   expandedActivities = signal<Set<number>>(new Set());
-  eventId = 0;
+  diplomaTemplate  = signal<DiplomaTemplate | null>(null);
+  generatingPdf    = signal(false);
+  eventId          = 0;
 
   constructor(
-    private route: ActivatedRoute,
+    private route:    ActivatedRoute,
     private eventService: EventService,
+    private diplomaService: DiplomaService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
+
     this.eventService.getLeaderboard(this.eventId).subscribe({
       next: (data) => {
         this.leaderboard.set(data);
-        this.expandedActivities.set(new Set(data.activities.map((a) => a.activity_id)));
+        this.expandedActivities.set(new Set(data.activities.map(a => a.activity_id)));
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
+
+    // Load diploma template silently — 404 just means no template yet
+    this.diplomaService.getTemplate(this.eventId).subscribe({
+      next: (t) => this.diplomaTemplate.set(t),
+      error: () => {},
+    });
   }
 
   toggleActivity(activityId: number): void {
-    this.expandedActivities.update((set) => {
+    this.expandedActivities.update(set => {
       const next = new Set(set);
-      if (next.has(activityId)) {
-        next.delete(activityId);
-      } else {
-        next.add(activityId);
-      }
+      next.has(activityId) ? next.delete(activityId) : next.add(activityId);
       return next;
     });
   }
@@ -50,19 +60,120 @@ export class Leaderboard implements OnInit {
   }
 
   genderLabel(g: string): string {
-    if (g === 'M') return 'Men';
-    if (g === 'F') return 'Women';
+    if (g === 'M') return this.transloco.translate('LEADERBOARD.MEN');
+    if (g === 'F') return this.transloco.translate('LEADERBOARD.WOMEN');
     return g;
   }
 
   formatValue(val: string, evalType: string): string {
-    if (evalType === 'BOOLEAN') {
-      return val === '1' ? '✓' : '✗';
-    }
-    return val;
+    return evalType === 'BOOLEAN' ? (val === '1' ? '✓' : '✗') : val;
   }
 
   rankMedal(rank: number): string {
     return { 1: '🥇', 2: '🥈', 3: '🥉' }[rank] ?? String(rank);
+  }
+
+  private resolveImageToBase64(url: string): Promise<string> {
+    if (url.startsWith('data:')) return Promise.resolve(url);
+    return new Promise((resolve, reject) => {
+      fetch(url)
+        .then(r => r.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onload  = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+        .catch(reject);
+    });
+  }
+
+  async downloadAllDiplomas(): Promise<void> {
+    const template = this.diplomaTemplate();
+    const lb       = this.leaderboard();
+    if (!template || !lb) return;
+
+    this.generatingPdf.set(true);
+    try {
+      const isLandscape = template.orientation === 'LANDSCAPE';
+      const pageW = isLandscape ? 297 : 210;
+      const pageH = isLandscape ? 210 : 297;
+
+      let bgBase64: string | null = null;
+      if (template.bg_image_url) {
+        bgBase64 = await this.resolveImageToBase64(template.bg_image_url);
+      }
+
+      const doc = new jsPDF({
+        orientation: isLandscape ? 'landscape' : 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      // Embed custom fonts
+      if (template.fonts) {
+        for (const font of template.fonts) {
+          const base64 = font.data.split(',')[1];
+          const fileName = `${font.name}.ttf`;
+          doc.addFileToVFS(fileName, base64);
+          doc.addFont(fileName, font.name, 'normal');
+        }
+      }
+
+      let firstPage = true;
+      for (const activity of lb.activities) {
+        for (const cat of activity.categories) {
+          for (const participant of cat.participants) {
+            if (!firstPage) doc.addPage();
+            firstPage = false;
+
+            if (bgBase64) {
+              const fmt = bgBase64.includes('data:image/png') ? 'PNG' : 'JPEG';
+              doc.addImage(bgBase64, fmt, 0, 0, pageW, pageH);
+            }
+
+            for (const item of template.items) {
+              const xMm = (item.x / 100) * pageW;
+              const yMm = (item.y / 100) * pageH;
+
+              doc.setFontSize(item.fontSize);
+              doc.setTextColor(item.color);
+
+              const pdfWeight = item.fontWeight === 'bold'   ? 'bold'
+                              : item.fontWeight === 'italic' ? 'italic'
+                              : 'normal';
+              const customFont = item.fontFamily && item.fontFamily !== 'default'
+                ? item.fontFamily : null;
+
+              if (customFont) {
+                doc.setFont(customFont, 'normal');
+              } else {
+                doc.setFont('helvetica', pdfWeight);
+              }
+
+              let text = '';
+              if (item.type === 'STATIC') {
+                text = item.text ?? '';
+              } else {
+                switch (item.key) {
+                  case 'participant_name': text = participant.display_name; break;
+                  case 'place':           text = `${participant.rank}.`; break;
+                  case 'activity':        text = activity.activity_name; break;
+                  case 'category':
+                    text = `${this.genderLabel(cat.gender)} · ${cat.age_category_name}`;
+                    break;
+                  default: text = '';
+                }
+              }
+              doc.text(text, xMm, yMm);
+            }
+          }
+        }
+      }
+
+      doc.save(`diplomas_event_${this.eventId}.pdf`);
+    } finally {
+      this.generatingPdf.set(false);
+    }
   }
 }

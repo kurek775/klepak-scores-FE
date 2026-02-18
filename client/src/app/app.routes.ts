@@ -45,6 +45,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'admin/events/:id/diploma',
+    loadComponent: () =>
+      import('./admin/diploma-editor/diploma-editor').then((m) => m.DiplomaEditor),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
     path: 'admin/users',
     loadComponent: () => import('./admin/user-list/user-list').then((m) => m.UserList),
     canActivate: [authGuard, adminGuard],

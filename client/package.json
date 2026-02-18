@@ -34,6 +34,7 @@
     "@ngx-translate/http-loader": "^17.0.0",
     "browser-image-compression": "^2.0.2",
     "dexie": "^4.3.0",
+    "jspdf": "^4.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

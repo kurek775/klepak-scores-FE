@@ -29,6 +29,12 @@
         >
           {{ 'EVENTS.EXPORT_CSV' | transloco }}
         </button>
+        <a
+          [routerLink]="['/admin/events', ev.id, 'diploma']"
+          class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors border border-amber-200"
+        >
+          {{ 'EVENTS.DESIGN_DIPLOMA' | transloco }}
+        </a>
       }
     </div>
   </div>
