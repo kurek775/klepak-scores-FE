@@ -1,0 +1,99 @@
+<div class="max-w-4xl mx-auto p-8">
+  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 hover:text-gray-700">&larr; Back to Event</a>
+
+  @if (loading()) {
+    <p class="text-gray-500 mt-6">Loading scoring view...</p>
+  } @else if (activity(); as act) {
+    <div class="mt-4 mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">{{ act.name }}</h1>
+      @if (act.description) {
+        <p class="text-sm text-gray-500 mt-1">{{ act.description }}</p>
+      }
+      <span class="inline-block mt-2 text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+        {{ act.evaluation_type }}
+      </span>
+    </div>
+
+    @if (rows().length === 0) {
+      <p class="text-gray-500">No participants found in your assigned group.</p>
+    } @else {
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr>
+              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase">Participant</th>
+              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase">Score</th>
+              <th class="text-center px-5 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (row of rows(); track row.participant.id; let i = $index) {
+              <tr
+                class="transition-colors duration-300"
+                [class.bg-green-50]="row.saved"
+              >
+                <td class="px-5 py-3 text-sm text-gray-900">{{ row.participant.display_name }}</td>
+                <td class="px-5 py-3">
+                  @if (isBoolean) {
+                    <button
+                      (click)="toggleBoolean(row)"
+                      class="w-10 h-6 rounded-full relative transition-colors"
+                      [class]="row.value === '1' ? 'bg-green-500' : 'bg-gray-300'"
+                    >
+                      <span
+                        class="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                        [class.left-0.5]="row.value !== '1'"
+                        [class.left-4]="row.value === '1'"
+                      ></span>
+                    </button>
+                  } @else if (isNumeric) {
+                    <input
+                      type="number"
+                      [(ngModel)]="row.value"
+                      (ngModelChange)="onValueChange(row)"
+                      class="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      placeholder="0"
+                    />
+                  } @else {
+                    <input
+                      type="text"
+                      [(ngModel)]="row.value"
+                      (ngModelChange)="onValueChange(row)"
+                      class="w-40 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      placeholder="Enter score"
+                    />
+                  }
+                </td>
+                <td class="px-5 py-3 text-center">
+                  @if (row.saved) {
+                    <span class="text-xs text-green-600 font-medium">Saved</span>
+                  } @else if (row.value) {
+                    <span class="text-xs text-yellow-600 font-medium">Unsaved</span>
+                  } @else {
+                    <span class="text-xs text-gray-400">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button
+          (click)="saveAll()"
+          [disabled]="saving()"
+          class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          @if (saving()) {
+            Saving...
+          } @else {
+            Save All
+          }
+        </button>
+      </div>
+    }
+  } @else {
+    <p class="text-gray-500 mt-6">Activity not found.</p>
+  }
+</div>

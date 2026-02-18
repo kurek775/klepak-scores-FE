@@ -27,6 +27,12 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
   },
   {
+    path: 'events/:eventId/score/:activityId',
+    loadComponent: () =>
+      import('./scoring/scoring-view/scoring-view').then((m) => m.ScoringView),
+    canActivate: [authGuard],
+  },
+  {
     path: 'events/:id',
     loadComponent: () =>
       import('./events/event-detail/event-detail').then((m) => m.EventDetailComponent),

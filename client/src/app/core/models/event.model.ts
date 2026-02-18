@@ -1,3 +1,5 @@
+import { Activity } from './activity.model';
+
 export enum EventStatus {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
@@ -58,6 +60,7 @@ export interface EventDetail {
   created_by_id: number;
   created_at: string;
   groups: GroupDetail[];
+  activities: Activity[];
 }
 
 export interface ImportSummary {

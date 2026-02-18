@@ -1,18 +1,21 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { EventDetail } from '../../core/models/event.model';
+import { Activity, EvaluationType } from '../../core/models/activity.model';
 import { User, UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../auth/auth.service';
 import { EventService } from '../event.service';
 import { GroupService } from '../group.service';
+import { ScoringService } from '../../scoring/scoring.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-event-detail',
   templateUrl: './event-detail.html',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
 })
 export class EventDetailComponent implements OnInit {
   event = signal<EventDetail | null>(null);
@@ -20,9 +23,15 @@ export class EventDetailComponent implements OnInit {
   expandedGroups = signal<Set<number>>(new Set());
   availableEvaluators = signal<User[]>([]);
 
+  // Activity form
+  newActivityName = '';
+  newActivityType: EvaluationType = EvaluationType.NUMERIC_HIGH;
+  evaluationTypes = Object.values(EvaluationType);
+
   constructor(
     private eventService: EventService,
     private groupService: GroupService,
+    private scoringService: ScoringService,
     private route: ActivatedRoute,
     public authService: AuthService,
     private http: HttpClient,
@@ -143,5 +152,34 @@ export class EventDetailComponent implements OnInit {
     if (!ev) return [];
     const assignedIds = new Set(ev.groups.flatMap((g) => g.evaluators.map((e) => e.id)));
     return this.availableEvaluators().filter((u) => !assignedIds.has(u.id));
+  }
+
+  createActivity(): void {
+    const ev = this.event();
+    if (!ev || !this.newActivityName.trim()) return;
+    this.scoringService
+      .createActivity({
+        name: this.newActivityName.trim(),
+        evaluation_type: this.newActivityType,
+        event_id: ev.id,
+      })
+      .subscribe({
+        next: (activity) => {
+          this.event.update((e) =>
+            e ? { ...e, activities: [...e.activities, activity] } : e,
+          );
+          this.newActivityName = '';
+        },
+      });
+  }
+
+  deleteActivity(activityId: number): void {
+    this.scoringService.deleteActivity(activityId).subscribe({
+      next: () => {
+        this.event.update((e) =>
+          e ? { ...e, activities: e.activities.filter((a) => a.id !== activityId) } : e,
+        );
+      },
+    });
   }
 }
