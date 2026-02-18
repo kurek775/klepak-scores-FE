@@ -18,11 +18,27 @@ export interface GroupSummary {
   participant_count: number;
 }
 
+export interface EvaluatorInfo {
+  id: number;
+  email: string;
+  full_name: string;
+}
+
 export interface GroupDetail {
   id: number;
   name: string;
   identifier: string;
   participants: Participant[];
+  evaluators: EvaluatorInfo[];
+}
+
+export interface MyGroup {
+  id: number;
+  name: string;
+  identifier: string;
+  event_id: number;
+  event_name: string;
+  participant_count: number;
 }
 
 export interface EventSummary {

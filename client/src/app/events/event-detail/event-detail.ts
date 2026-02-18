@@ -1,8 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { EventDetail, GroupDetail } from '../../core/models/event.model';
+import { EventDetail } from '../../core/models/event.model';
+import { User, UserRole } from '../../core/models/user.model';
+import { AuthService } from '../../auth/auth.service';
 import { EventService } from '../event.service';
+import { GroupService } from '../group.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-event-detail',
@@ -13,10 +18,14 @@ export class EventDetailComponent implements OnInit {
   event = signal<EventDetail | null>(null);
   loading = signal(false);
   expandedGroups = signal<Set<number>>(new Set());
+  availableEvaluators = signal<User[]>([]);
 
   constructor(
     private eventService: EventService,
+    private groupService: GroupService,
     private route: ActivatedRoute,
+    public authService: AuthService,
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -25,12 +34,21 @@ export class EventDetailComponent implements OnInit {
     this.eventService.getEvent(id).subscribe({
       next: (event) => {
         this.event.set(event);
-        // Expand all groups by default
         this.expandedGroups.set(new Set(event.groups.map((g) => g.id)));
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
+
+    if (this.authService.isAdmin()) {
+      this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
+        next: (users) => {
+          this.availableEvaluators.set(
+            users.filter((u) => u.is_active && u.role === UserRole.EVALUATOR),
+          );
+        },
+      });
+    }
   }
 
   toggleGroup(groupId: number): void {
@@ -51,5 +69,79 @@ export class EventDetailComponent implements OnInit {
 
   objectEntries(obj: Record<string, string> | null): [string, string][] {
     return obj ? Object.entries(obj) : [];
+  }
+
+  onDragStart(event: DragEvent, userId: number): void {
+    event.dataTransfer?.setData('text/plain', String(userId));
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  onDrop(event: DragEvent, groupId: number): void {
+    event.preventDefault();
+    const userId = Number(event.dataTransfer?.getData('text/plain'));
+    if (userId) {
+      this.assignEvaluator(groupId, userId);
+    }
+  }
+
+  assignEvaluator(groupId: number, userId: number): void {
+    this.groupService.assignEvaluator(groupId, userId).subscribe({
+      next: () => {
+        const evaluator = this.availableEvaluators().find((u) => u.id === userId);
+        if (evaluator) {
+          this.event.update((ev) => {
+            if (!ev) return ev;
+            return {
+              ...ev,
+              groups: ev.groups.map((g) =>
+                g.id === groupId
+                  ? {
+                      ...g,
+                      evaluators: [
+                        ...g.evaluators,
+                        { id: evaluator.id, email: evaluator.email, full_name: evaluator.full_name },
+                      ],
+                    }
+                  : g,
+              ),
+            };
+          });
+        }
+      },
+    });
+  }
+
+  removeEvaluator(groupId: number, userId: number): void {
+    this.groupService.removeEvaluator(groupId, userId).subscribe({
+      next: () => {
+        this.event.update((ev) => {
+          if (!ev) return ev;
+          return {
+            ...ev,
+            groups: ev.groups.map((g) =>
+              g.id === groupId
+                ? { ...g, evaluators: g.evaluators.filter((e) => e.id !== userId) }
+                : g,
+            ),
+          };
+        });
+      },
+    });
+  }
+
+  getUnassignedEvaluators(): User[] {
+    const ev = this.event();
+    if (!ev) return [];
+    const assignedIds = new Set(ev.groups.flatMap((g) => g.evaluators.map((e) => e.id)));
+    return this.availableEvaluators().filter((u) => !assignedIds.has(u.id));
   }
 }

@@ -20,6 +20,29 @@
       </span>
     </div>
 
+    @if (authService.isAdmin()) {
+      @let unassigned = getUnassignedEvaluators();
+      @if (unassigned.length > 0) {
+        <div class="mb-4 bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-3">
+          <span class="text-xs font-medium text-gray-500 uppercase mr-2">Available Evaluators:</span>
+          <div class="inline-flex flex-wrap gap-2 mt-1">
+            @for (user of unassigned; track user.id) {
+              <span
+                draggable="true"
+                (dragstart)="onDragStart($event, user.id)"
+                class="inline-flex items-center text-xs bg-green-100 text-green-800 rounded-full px-2.5 py-1 cursor-grab active:cursor-grabbing"
+                [style.opacity]="1"
+                (drag)="$event.target && ($any($event.target).style.opacity = '0.5')"
+                (dragend)="$event.target && ($any($event.target).style.opacity = '1')"
+              >
+                {{ user.full_name }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+    }
+
     @if (ev.groups.length === 0) {
       <p class="text-gray-500">No groups in this event.</p>
     } @else {
@@ -49,6 +72,39 @@
                 }}
               </span>
             </button>
+
+            <!-- Evaluators section -->
+            <div
+              class="px-5 py-2 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center gap-2 transition-colors"
+              [class.border-2]="false"
+              (dragover)="authService.isAdmin() && onDragOver($event)"
+              (dragenter)="$event.preventDefault(); $any($event.currentTarget).classList.add('!border-blue-400', '!bg-blue-50')"
+              (dragleave)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50')"
+              (drop)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50'); onDrop($event, group.id)"
+            >
+              <span class="text-xs font-medium text-gray-500 uppercase mr-1">Evaluators:</span>
+              @for (evaluator of group.evaluators; track evaluator.id) {
+                <span class="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-800 rounded-full px-2.5 py-1">
+                  {{ evaluator.full_name }}
+                  @if (authService.isAdmin()) {
+                    <button
+                      (click)="removeEvaluator(group.id, evaluator.id); $event.stopPropagation()"
+                      class="ml-0.5 text-blue-600 hover:text-red-600 font-bold"
+                      title="Remove evaluator"
+                    >&times;</button>
+                  }
+                </span>
+              }
+              @if (group.evaluators.length === 0) {
+                <span class="text-xs text-gray-400 italic">
+                  @if (authService.isAdmin()) {
+                    Drop evaluator here
+                  } @else {
+                    None assigned
+                  }
+                </span>
+              }
+            </div>
 
             @if (isExpanded(group.id)) {
               <div class="border-t border-gray-200">
