@@ -1,0 +1,68 @@
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+      <h2 class="text-xl font-semibold text-gray-900">Review AI Results</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Check the parsed scores and edit if needed before applying.</p>
+    </div>
+
+    <!-- Content -->
+    <div class="flex flex-1 min-h-0 overflow-hidden">
+
+      <!-- Image preview -->
+      <div class="w-1/2 p-4 border-r border-gray-200 overflow-auto bg-gray-50 flex items-center justify-center">
+        <img [src]="imageUrl()" alt="Score sheet" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">
+      </div>
+
+      <!-- Results table -->
+      <div class="w-1/2 p-4 overflow-auto">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Parsed Scores</h3>
+
+        @if (editableResults().length === 0) {
+          <p class="text-sm text-gray-400 italic">No scores were recognized. Try a clearer photo.</p>
+        } @else {
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th class="text-left text-xs font-medium text-gray-500 uppercase pb-2 pr-4">Participant</th>
+                <th class="text-left text-xs font-medium text-gray-500 uppercase pb-2">Score</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (result of editableResults(); track result.participant_id; let i = $index) {
+                <tr>
+                  <td class="py-2 pr-4 text-sm text-gray-900">{{ result.name }}</td>
+                  <td class="py-2">
+                    <input
+                      type="text"
+                      [ngModel]="result.value"
+                      (ngModelChange)="updateValue(i, $event)"
+                      class="w-28 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    />
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 flex-shrink-0">
+      <button
+        (click)="onDiscard()"
+        class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+      >
+        Discard
+      </button>
+      <button
+        (click)="onConfirm()"
+        class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Confirm & Apply
+      </button>
+    </div>
+  </div>
+</div>

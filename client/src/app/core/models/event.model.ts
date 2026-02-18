@@ -10,6 +10,8 @@ export interface Participant {
   id: number;
   display_name: string;
   external_id: string | null;
+  gender: string | null;
+  age: number | null;
   metadata: Record<string, string> | null;
 }
 

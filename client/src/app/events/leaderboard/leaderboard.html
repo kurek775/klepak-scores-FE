@@ -1,0 +1,98 @@
+<div class="max-w-4xl mx-auto p-8">
+  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 hover:text-gray-700">&larr; Back to Event</a>
+
+  @if (loading()) {
+    <p class="text-gray-500 mt-6">Loading leaderboard...</p>
+  } @else if (leaderboard(); as lb) {
+    <div class="mt-4 mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">{{ lb.event_name }}</h1>
+      <p class="text-sm text-gray-500 mt-1">Leaderboard</p>
+    </div>
+
+    @if (!lb.has_age_categories) {
+      <div class="mb-5 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
+        <span class="mt-0.5">&#9432;</span>
+        <span>No age brackets are configured for this event. All participants are shown in a single category. Admins can add age brackets on the event detail page.</span>
+      </div>
+    }
+
+    @if (lb.activities.length === 0) {
+      <p class="text-gray-500">No activities with records found for this event.</p>
+    } @else {
+      <div class="space-y-4">
+        @for (activity of lb.activities; track activity.activity_id) {
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+            <!-- Activity header -->
+            <button
+              (click)="toggleActivity(activity.activity_id)"
+              class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+            >
+              <span class="font-semibold text-gray-900 flex-1 text-base">{{ activity.activity_name }}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                [class]="activity.evaluation_type === 'BOOLEAN'
+                  ? 'bg-green-100 text-green-700'
+                  : activity.evaluation_type === 'NUMERIC_LOW'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-purple-100 text-purple-700'">
+                {{ activity.evaluation_type }}
+              </span>
+              <span class="text-xs text-gray-400 transition-transform" [class.rotate-90]="isExpanded(activity.activity_id)">
+                &#9654;
+              </span>
+            </button>
+
+            @if (isExpanded(activity.activity_id)) {
+              <div class="border-t border-gray-100">
+                @if (activity.categories.length === 0) {
+                  <p class="px-5 py-3 text-sm text-gray-500">No records for this activity.</p>
+                } @else {
+                  @for (cat of activity.categories; track cat.gender + cat.age_category_name) {
+                    <div class="border-t border-gray-100 first:border-t-0">
+                      <!-- Category subheading -->
+                      <div class="px-5 py-2 bg-gray-50 flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-700">
+                          {{ genderLabel(cat.gender) }}
+                        </span>
+                        <span class="text-gray-400">·</span>
+                        <span class="text-sm text-gray-600">{{ cat.age_category_name }}</span>
+                      </div>
+
+                      <!-- Participants table -->
+                      <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                          <tr>
+                            <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase w-12">Rank</th>
+                            <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="text-center px-3 py-2 text-xs font-medium text-gray-500 uppercase w-16">Age</th>
+                            <th class="text-right px-5 py-2 text-xs font-medium text-gray-500 uppercase w-24">Score</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                          @for (p of cat.participants; track p.participant_id) {
+                            <tr class="hover:bg-gray-50">
+                              <td class="px-5 py-2 text-sm text-center">{{ rankMedal(p.rank) }}</td>
+                              <td class="px-5 py-2 text-sm text-gray-900">{{ p.display_name }}</td>
+                              <td class="px-3 py-2 text-sm text-center text-gray-500">
+                                {{ p.age !== null ? p.age : '—' }}
+                              </td>
+                              <td class="px-5 py-2 text-sm text-right font-semibold text-gray-900">
+                                {{ formatValue(p.value, activity.evaluation_type) }}
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <p class="text-gray-500 mt-6">Leaderboard not available.</p>
+  }
+</div>

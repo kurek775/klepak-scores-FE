@@ -7,6 +7,7 @@ import { Participant } from '../../core/models/event.model';
 import { ScoringService } from '../scoring.service';
 import { GroupService } from '../../events/group.service';
 import { EventService } from '../../events/event.service';
+import { AIResult, AiReviewModal } from '../ai-review-modal/ai-review-modal';
 
 interface ScoreRow {
   participant: Participant;
@@ -17,16 +18,19 @@ interface ScoreRow {
 @Component({
   selector: 'app-scoring-view',
   templateUrl: './scoring-view.html',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AiReviewModal],
 })
 export class ScoringView implements OnInit {
   activity = signal<Activity | null>(null);
   rows = signal<ScoreRow[]>([]);
   loading = signal(false);
   saving = signal(false);
-  processingAI = signal(false); // New signal for AI loading state
+  processingAI = signal(false);
+  showReviewModal = signal(false);
+  pendingAIResults = signal<AIResult[]>([]);
+  previewImageUrl = signal<string>('');
   eventId = 0;
-  groupId = 0; // Storing this to make AI calls easier
+  groupId = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,8 +58,8 @@ export class ScoringView implements OnInit {
           this.loading.set(false);
           return;
         }
-        this.groupId = myGroup.id; // Store for AI usage
-        
+        this.groupId = myGroup.id;
+
         this.eventService.getEvent(this.eventId).subscribe({
           next: (event) => {
             const groupDetail = event.groups.find((g) => g.id === myGroup.id);
@@ -99,31 +103,51 @@ export class ScoringView implements OnInit {
 
     this.processingAI.set(true);
 
+    const previewUrl = URL.createObjectURL(file);
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('activity_id', act.id.toString());
     formData.append('group_id', this.groupId.toString());
 
     this.scoringService.processImage(formData).subscribe({
-      next: (results: { participant_id: number; value: string | number }[]) => {
-        this.rows.update((currentRows) =>
-          currentRows.map((row) => {
-            const aiMatch = results.find((r) => r.participant_id === row.participant.id);
-            if (aiMatch) {
-              return { ...row, value: aiMatch.value, saved: false };
-            }
-            return row;
-          })
-        );
+      next: (results) => {
+        this.previewImageUrl.set(previewUrl);
+        this.pendingAIResults.set(results);
+        this.showReviewModal.set(true);
         this.processingAI.set(false);
-        // Clear input so same file can be uploaded again if needed
         input.value = '';
       },
       error: () => {
+        URL.revokeObjectURL(previewUrl);
         this.processingAI.set(false);
         input.value = '';
       },
     });
+  }
+
+  onAIConfirm(results: AIResult[]): void {
+    this.rows.update((currentRows) =>
+      currentRows.map((row) => {
+        const match = results.find((r) => r.participant_id === row.participant.id);
+        if (match) {
+          return { ...row, value: match.value, saved: false };
+        }
+        return row;
+      }),
+    );
+    this.closeReviewModal();
+  }
+
+  onAIDiscard(): void {
+    this.closeReviewModal();
+  }
+
+  private closeReviewModal(): void {
+    this.showReviewModal.set(false);
+    this.pendingAIResults.set([]);
+    URL.revokeObjectURL(this.previewImageUrl());
+    this.previewImageUrl.set('');
   }
   // --- AI Logic End ---
 

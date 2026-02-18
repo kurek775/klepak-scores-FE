@@ -18,8 +18,8 @@ export class ScoringService {
     return this.http.post<Activity>(`${environment.apiUrl}/activities`, body);
   }
 
-  processImage(formData: FormData): Observable<{ participant_id: number; value: string | number }[]> {
-    return this.http.post<{ participant_id: number; value: string | number }[]>(
+  processImage(formData: FormData): Observable<{ participant_id: number; value: string | number; name: string }[]> {
+    return this.http.post<{ participant_id: number; value: string | number; name: string }[]>(
       `${environment.apiUrl}/records/process-image`,
       formData
     );

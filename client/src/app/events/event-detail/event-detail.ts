@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { EventDetail } from '../../core/models/event.model';
 import { Activity, EvaluationType } from '../../core/models/activity.model';
+import { AgeCategory } from '../../core/models/age-category.model';
 import { User, UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../auth/auth.service';
 import { EventService } from '../event.service';
@@ -22,11 +23,17 @@ export class EventDetailComponent implements OnInit {
   loading = signal(false);
   expandedGroups = signal<Set<number>>(new Set());
   availableEvaluators = signal<User[]>([]);
+  ageCategories = signal<AgeCategory[]>([]);
 
   // Activity form
   newActivityName = '';
   newActivityType: EvaluationType = EvaluationType.NUMERIC_HIGH;
   evaluationTypes = Object.values(EvaluationType);
+
+  // Age bracket form
+  newCatName = '';
+  newCatMinAge = 0;
+  newCatMaxAge = 17;
 
   constructor(
     private eventService: EventService,
@@ -47,6 +54,10 @@ export class EventDetailComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
+    });
+
+    this.eventService.getAgeCategories(id).subscribe({
+      next: (cats) => this.ageCategories.set(cats),
     });
 
     if (this.authService.isAdmin()) {
@@ -179,6 +190,39 @@ export class EventDetailComponent implements OnInit {
         this.event.update((e) =>
           e ? { ...e, activities: e.activities.filter((a) => a.id !== activityId) } : e,
         );
+      },
+    });
+  }
+
+  exportCsv(eventId: number): void {
+    this.eventService.exportCsv(eventId);
+  }
+
+  addAgeCategory(): void {
+    const ev = this.event();
+    if (!ev || !this.newCatName.trim()) return;
+    this.eventService
+      .createAgeCategory(ev.id, {
+        name: this.newCatName.trim(),
+        min_age: this.newCatMinAge,
+        max_age: this.newCatMaxAge,
+      })
+      .subscribe({
+        next: (cat) => {
+          this.ageCategories.update((cats) => [...cats, cat]);
+          this.newCatName = '';
+          this.newCatMinAge = 0;
+          this.newCatMaxAge = 17;
+        },
+      });
+  }
+
+  removeAgeCategory(categoryId: number): void {
+    const ev = this.event();
+    if (!ev) return;
+    this.eventService.deleteAgeCategory(ev.id, categoryId).subscribe({
+      next: () => {
+        this.ageCategories.update((cats) => cats.filter((c) => c.id !== categoryId));
       },
     });
   }

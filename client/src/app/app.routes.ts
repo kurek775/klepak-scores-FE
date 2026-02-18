@@ -33,6 +33,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'events/:id/leaderboard',
+    loadComponent: () =>
+      import('./events/leaderboard/leaderboard').then((m) => m.Leaderboard),
+    canActivate: [authGuard],
+  },
+  {
     path: 'events/:id',
     loadComponent: () =>
       import('./events/event-detail/event-detail').then((m) => m.EventDetailComponent),

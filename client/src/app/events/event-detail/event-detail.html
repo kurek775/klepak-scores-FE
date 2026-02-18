@@ -4,7 +4,7 @@
   @if (loading()) {
   <p class="text-gray-500 mt-6">Loading event...</p>
   } @else if (event(); as ev) {
-  <div class="mt-4 mb-6 flex items-center gap-3">
+  <div class="mt-4 mb-6 flex items-center gap-3 flex-wrap">
     <h1 class="text-2xl font-bold text-gray-900">{{ ev.name }}</h1>
     <span class="text-xs px-2 py-1 rounded-full font-medium" [class]="
           ev.status === 'ACTIVE'
@@ -15,6 +15,22 @@
         ">
       {{ ev.status }}
     </span>
+    <div class="ml-auto flex items-center gap-2">
+      <a
+        [routerLink]="['/events', ev.id, 'leaderboard']"
+        class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors border border-purple-200"
+      >
+        Leaderboard &rarr;
+      </a>
+      @if (authService.isAdmin()) {
+        <button
+          (click)="exportCsv(ev.id)"
+          class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition-colors border border-green-200"
+        >
+          Export CSV
+        </button>
+      }
+    </div>
   </div>
 
   @if (authService.isAdmin()) {
@@ -127,6 +143,50 @@
       }
     </div>
     }
+  </div>
+  }
+
+  <!-- Age Brackets Section (admin only) -->
+  @if (authService.isAdmin()) {
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-3">Age Brackets</h2>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-4">
+      <!-- Existing categories -->
+      @if (ageCategories().length > 0) {
+      <div class="flex flex-wrap gap-2 mb-4">
+        @for (cat of ageCategories(); track cat.id) {
+        <span class="inline-flex items-center gap-1.5 text-sm bg-orange-100 text-orange-800 rounded-full px-3 py-1.5">
+          {{ cat.name }} ({{ cat.min_age }}–{{ cat.max_age }})
+          <button (click)="removeAgeCategory(cat.id)" class="ml-0.5 text-orange-600 hover:text-red-600 font-bold" title="Remove">&times;</button>
+        </span>
+        }
+      </div>
+      } @else {
+      <p class="text-sm text-gray-400 italic mb-4">No age brackets configured. All participants will appear in a single "All" category.</p>
+      }
+      <!-- Add bracket form -->
+      <div class="flex items-end gap-3 flex-wrap">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Name</label>
+          <input type="text" [(ngModel)]="newCatName" placeholder="e.g. U18"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-28" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Min Age</label>
+          <input type="number" [(ngModel)]="newCatMinAge" min="0"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Max Age</label>
+          <input type="number" [(ngModel)]="newCatMaxAge" min="0"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
+        </div>
+        <button (click)="addAgeCategory()" [disabled]="!newCatName.trim()"
+          class="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          Add
+        </button>
+      </div>
+    </div>
   </div>
   }
 

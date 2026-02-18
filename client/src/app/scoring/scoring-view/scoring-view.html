@@ -124,3 +124,12 @@
     <p class="text-gray-500 mt-6">Activity not found.</p>
   }
 </div>
+
+@if (showReviewModal()) {
+  <app-ai-review-modal
+    [imageUrl]="previewImageUrl()"
+    [results]="pendingAIResults()"
+    (confirm)="onAIConfirm($event)"
+    (discard)="onAIDiscard()"
+  />
+}
