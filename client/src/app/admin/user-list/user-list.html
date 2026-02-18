@@ -1,18 +1,18 @@
 <div class="max-w-5xl mx-auto p-8">
-  <h1 class="text-2xl font-bold text-gray-900 mb-6">Manage Users</h1>
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ 'ADMIN.MANAGE_USERS' | transloco }}</h1>
 
   @if (loading()) {
-    <p class="text-gray-500">Loading users...</p>
+    <p class="text-gray-500">{{ 'ADMIN.LOADING' | transloco }}</p>
   } @else {
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <table class="w-full">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'ADMIN.NAME' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'ADMIN.EMAIL' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'ADMIN.ROLE' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'ADMIN.STATUS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'ADMIN.ACTIONS' | transloco }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -38,7 +38,7 @@
                     ? 'bg-green-100 text-green-700'
                     : 'bg-yellow-100 text-yellow-700'"
                 >
-                  {{ user.is_active ? 'Active' : 'Pending' }}
+                  {{ user.is_active ? ('ADMIN.ACTIVE' | transloco) : ('ADMIN.PENDING' | transloco) }}
                 </span>
               </td>
               <td class="px-6 py-4">
@@ -49,7 +49,7 @@
                     ? 'text-red-600 hover:text-red-800'
                     : 'text-green-600 hover:text-green-800'"
                 >
-                  {{ user.is_active ? 'Deactivate' : 'Approve' }}
+                  {{ user.is_active ? ('ADMIN.DEACTIVATE' | transloco) : ('ADMIN.APPROVE' | transloco) }}
                 </button>
               </td>
             </tr>

@@ -2,13 +2,12 @@
   @if (authService.user(); as user) {
     @if (!user.is_active) {
       <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-        <h1 class="text-2xl font-bold text-yellow-800 mb-2">Account Pending Approval</h1>
+        <h1 class="text-2xl font-bold text-yellow-800 mb-2">{{ 'DASHBOARD.PENDING_TITLE' | transloco }}</h1>
         <p class="text-yellow-700">
-          Welcome, {{ user.full_name }}. Your account is awaiting admin approval.
-          You'll get full access once an administrator activates your account.
+          {{ 'DASHBOARD.PENDING_MSG' | transloco }}
         </p>
         <p class="text-sm text-yellow-600 mt-3">
-          Signed in as <span class="font-medium">{{ user.email }}</span>
+          {{ 'DASHBOARD.SIGNED_IN_AS' | transloco }} <span class="font-medium">{{ user.email }}</span>
         </p>
       </div>
     } @else {
@@ -16,17 +15,17 @@
         Welcome, {{ user.full_name }}
       </h1>
       <p class="text-gray-600 mb-6">
-        You are signed in as
+        {{ 'DASHBOARD.SIGNED_IN_AS' | transloco }}
         <span class="font-medium">{{ user.role }}</span>.
       </p>
 
       @if (user.role === 'EVALUATOR') {
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">My Groups</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ 'DASHBOARD.MY_GROUPS' | transloco }}</h2>
 
         @if (loadingGroups()) {
-          <p class="text-gray-500">Loading your groups...</p>
+          <p class="text-gray-500">{{ 'DASHBOARD.LOADING_GROUPS' | transloco }}</p>
         } @else if (myGroups().length === 0) {
-          <p class="text-gray-500">You have no groups assigned yet.</p>
+          <p class="text-gray-500">{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
         } @else {
           <div class="grid gap-4 sm:grid-cols-2">
             @for (group of myGroups(); track group.id) {
@@ -37,7 +36,7 @@
                 <h3 class="font-semibold text-gray-900">{{ group.name }}</h3>
                 <p class="text-sm text-gray-500 mt-1">{{ group.event_name }}</p>
                 <p class="text-sm text-gray-400 mt-2">
-                  {{ group.participant_count }} participant{{ group.participant_count !== 1 ? 's' : '' }}
+                  {{ group.participant_count }} {{ group.participant_count !== 1 ? ('DASHBOARD.PARTICIPANTS_PLURAL' | transloco) : ('DASHBOARD.PARTICIPANTS' | transloco) }}
                 </p>
               </a>
             }

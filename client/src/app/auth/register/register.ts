@@ -1,37 +1,47 @@
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../auth.service';
-import { User } from '../../core/models/user.model';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
-  imports: [FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslocoPipe],
 })
-export class Register {
-  fullName = '';
-  email = '';
-  password = '';
+export class Register implements OnInit {
+  form!: FormGroup;
   error = signal('');
   loading = signal(false);
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
   ) {}
 
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      fullName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.pattern(passwordPattern)]],
+    });
+  }
+
   onSubmit(): void {
+    if (this.form.invalid) return;
     this.error.set('');
     this.loading.set(true);
 
+    const { fullName, email, password } = this.form.value;
     this.authService
-      .register({ full_name: this.fullName, email: this.email, password: this.password })
+      .register({ full_name: fullName, email, password })
       .subscribe({
         next: () => {
-          // Auto-login after registration
-          this.authService.login({ email: this.email, password: this.password }).subscribe({
+          this.authService.login({ email, password }).subscribe({
             next: () => {
               this.authService.fetchMe().subscribe({
                 next: () => this.router.navigateByUrl('/dashboard'),

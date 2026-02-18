@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../auth/auth.service';
 import { GroupService } from '../events/group.service';
@@ -9,7 +10,7 @@ import { UserRole } from '../core/models/user.model';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
 })
 export class Dashboard implements OnInit {
   myGroups = signal<MyGroup[]>([]);

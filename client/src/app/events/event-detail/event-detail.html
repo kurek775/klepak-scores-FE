@@ -1,8 +1,8 @@
 <div class="max-w-5xl mx-auto p-8">
-  <a routerLink="/events" class="text-sm text-gray-500 hover:text-gray-700">&larr; Back to Events</a>
+  <a routerLink="/events" class="text-sm text-gray-500 hover:text-gray-700">{{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
-  <p class="text-gray-500 mt-6">Loading event...</p>
+  <p class="text-gray-500 mt-6">{{ 'EVENTS.LOADING' | transloco }}</p>
   } @else if (event(); as ev) {
   <div class="mt-4 mb-6 flex items-center gap-3 flex-wrap">
     <h1 class="text-2xl font-bold text-gray-900">{{ ev.name }}</h1>
@@ -20,14 +20,14 @@
         [routerLink]="['/events', ev.id, 'leaderboard']"
         class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors border border-purple-200"
       >
-        Leaderboard &rarr;
+        {{ 'EVENTS.LEADERBOARD' | transloco }}
       </a>
       @if (authService.isAdmin()) {
         <button
           (click)="exportCsv(ev.id)"
           class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition-colors border border-green-200"
         >
-          Export CSV
+          {{ 'EVENTS.EXPORT_CSV' | transloco }}
         </button>
       }
     </div>
@@ -37,7 +37,7 @@
   @let unassigned = getUnassignedEvaluators();
   @if (unassigned.length > 0) {
   <div class="mb-4 bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-3">
-    <span class="text-xs font-medium text-gray-500 uppercase mr-2">Available Evaluators:</span>
+    <span class="text-xs font-medium text-gray-500 uppercase mr-2">{{ 'EVENTS.AVAILABLE_EVALUATORS' | transloco }}</span>
     <div class="inline-flex flex-wrap gap-2 mt-1">
       @for (user of unassigned; track user.id) {
       <span draggable="true" (dragstart)="onDragStart($event, user.id)"
@@ -53,7 +53,7 @@
   }
 
   @if (ev.groups.length === 0) {
-  <p class="text-gray-500">No groups in this event.</p>
+  <p class="text-gray-500">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
   } @else {
   <div class="space-y-3">
     @for (group of ev.groups; track group.id) {
@@ -68,9 +68,7 @@
         }
         <span class="font-medium text-gray-900">{{ group.name }}</span>
         <span class="text-sm text-gray-500 ml-auto">
-          {{ group.participants.length }} participant{{
-          group.participants.length !== 1 ? 's' : ''
-          }}
+          {{ group.participants.length }} {{ group.participants.length !== 1 ? ('EVENTS.PARTICIPANTS' | transloco) : ('EVENTS.PARTICIPANTS' | transloco) }}
         </span>
       </button>
 
@@ -80,7 +78,7 @@
         (dragenter)="$event.preventDefault(); $any($event.currentTarget).classList.add('!border-blue-400', '!bg-blue-50')"
         (dragleave)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50')"
         (drop)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50'); onDrop($event, group.id)">
-        <span class="text-xs font-medium text-gray-500 uppercase mr-1">Evaluators:</span>
+        <span class="text-xs font-medium text-gray-500 uppercase mr-1">{{ 'EVENTS.EVALUATORS' | transloco }}</span>
         @for (evaluator of group.evaluators; track evaluator.id) {
         <span class="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-800 rounded-full px-2.5 py-1">
           {{ evaluator.full_name }}
@@ -93,9 +91,9 @@
         @if (group.evaluators.length === 0) {
         <span class="text-xs text-gray-400 italic">
           @if (authService.isAdmin()) {
-          Drop evaluator here
+          {{ 'EVENTS.DROP_EVALUATOR' | transloco }}
           } @else {
-          None assigned
+          {{ 'EVENTS.NONE_ASSIGNED' | transloco }}
           }
         </span>
         }
@@ -104,29 +102,21 @@
       @if (isExpanded(group.id)) {
       <div class="border-t border-gray-200">
         @if (group.participants.length === 0) {
-        <p class="px-5 py-3 text-sm text-gray-500">No participants.</p>
+        <p class="px-5 py-3 text-sm text-gray-500">{{ 'EVENTS.NO_PARTICIPANTS' | transloco }}</p>
         } @else {
         <table class="w-full">
           <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
-              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">
-                Name
-              </th>
-              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">
-                External ID
-              </th>
-              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">
-                Metadata
-              </th>
+              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.PARTICIPANT_NAME' | transloco }}</th>
+              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.EXTERNAL_ID' | transloco }}</th>
+              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.METADATA' | transloco }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
             @for (p of group.participants; track p.id) {
             <tr>
               <td class="px-5 py-2 text-sm text-gray-900">{{ p.display_name }}</td>
-              <td class="px-5 py-2 text-sm text-gray-600">
-                {{ p.external_id ?? '—' }}
-              </td>
+              <td class="px-5 py-2 text-sm text-gray-600">{{ p.external_id ?? '—' }}</td>
               <td class="px-5 py-2">
                 @for (entry of objectEntries(p.metadata); track entry[0]) {
                 <span class="inline-block text-xs bg-gray-100 text-gray-700 rounded px-2 py-0.5 mr-1 mb-1">
@@ -149,9 +139,8 @@
   <!-- Age Brackets Section (admin only) -->
   @if (authService.isAdmin()) {
   <div class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900 mb-3">Age Brackets</h2>
+    <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ 'EVENTS.AGE_BRACKETS' | transloco }}</h2>
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-4">
-      <!-- Existing categories -->
       @if (ageCategories().length > 0) {
       <div class="flex flex-wrap gap-2 mb-4">
         @for (cat of ageCategories(); track cat.id) {
@@ -162,28 +151,27 @@
         }
       </div>
       } @else {
-      <p class="text-sm text-gray-400 italic mb-4">No age brackets configured. All participants will appear in a single "All" category.</p>
+      <p class="text-sm text-gray-400 italic mb-4">{{ 'EVENTS.NO_AGE_BRACKETS' | transloco }}</p>
       }
-      <!-- Add bracket form -->
       <div class="flex items-end gap-3 flex-wrap">
         <div>
-          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Name</label>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ 'EVENTS.AGE_BRACKET_NAME' | transloco }}</label>
           <input type="text" [(ngModel)]="newCatName" placeholder="e.g. U18"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-28" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Min Age</label>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ 'EVENTS.MIN_AGE' | transloco }}</label>
           <input type="number" [(ngModel)]="newCatMinAge" min="0"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Max Age</label>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ 'EVENTS.MAX_AGE' | transloco }}</label>
           <input type="number" [(ngModel)]="newCatMaxAge" min="0"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
         </div>
         <button (click)="addAgeCategory()" [disabled]="!newCatName.trim()"
           class="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-          Add
+          {{ 'EVENTS.ADD' | transloco }}
         </button>
       </div>
     </div>
@@ -193,20 +181,19 @@
   <!-- Activities Section -->
   @if (ev.activities) {
   <div class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900 mb-3">Activities</h2>
+    <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ 'EVENTS.ACTIVITIES' | transloco }}</h2>
 
     @if (authService.isAdmin()) {
-    <!-- Admin: Create activity form -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-4 mb-4">
       <div class="flex items-end gap-3">
         <div class="flex-1">
-          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Name</label>
-          <input type="text" [(ngModel)]="newActivityName" placeholder="Activity name"
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ 'EVENTS.ACTIVITY_NAME' | transloco }}</label>
+          <input type="text" [(ngModel)]="newActivityName" [placeholder]="'EVENTS.ACTIVITY_NAME' | transloco"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             (keydown.enter)="createActivity()" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Type</label>
+          <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ 'EVENTS.TYPE' | transloco }}</label>
           <select [(ngModel)]="newActivityType"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
             @for (t of evaluationTypes; track t) {
@@ -216,19 +203,18 @@
         </div>
         <button (click)="createActivity()" [disabled]="!newActivityName.trim()"
           class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-          Add
+          {{ 'EVENTS.ADD' | transloco }}
         </button>
       </div>
     </div>
     }
 
     @if (ev.activities.length === 0) {
-    <p class="text-gray-500 text-sm">No activities yet.</p>
+    <p class="text-gray-500 text-sm">{{ 'EVENTS.NO_ACTIVITIES' | transloco }}</p>
     } @else {
     <div class="flex flex-wrap gap-2">
       @for (activity of ev.activities; track activity.id) {
       @if (authService.isAdmin()) {
-      <!-- Admin: activity chip with delete -->
       <span class="inline-flex items-center gap-1.5 text-sm bg-purple-100 text-purple-800 rounded-full px-3 py-1.5">
         {{ activity.name }}
         <span class="text-xs text-purple-500">{{ activity.evaluation_type }}</span>
@@ -236,7 +222,6 @@
           title="Delete activity">&times;</button>
       </span>
       } @else {
-      <!-- Evaluator: clickable activity link -->
       <a [routerLink]="['/events', ev.id, 'score', activity.id]"
         class="inline-flex items-center gap-1.5 text-sm bg-purple-100 text-purple-800 rounded-full px-3 py-1.5 hover:bg-purple-200 transition-colors cursor-pointer">
         {{ activity.name }}

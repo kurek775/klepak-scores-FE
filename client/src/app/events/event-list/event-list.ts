@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { EventSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
@@ -8,7 +9,7 @@ import { AuthService } from '../../auth/auth.service';
 @Component({
   selector: 'app-event-list',
   templateUrl: './event-list.html',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
 })
 export class EventList implements OnInit {
   events = signal<EventSummary[]>([]);

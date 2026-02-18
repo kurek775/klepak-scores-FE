@@ -1,6 +1,6 @@
 <nav class="bg-white border-b border-gray-200 px-6 py-3">
   <div class="flex items-center justify-between max-w-7xl mx-auto">
-    
+
     <a routerLink="/dashboard" class="text-lg font-bold text-gray-900 whitespace-nowrap">
       Klepak Scores
     </a>
@@ -21,16 +21,29 @@
     <div class="hidden md:flex flex-1 items-center justify-between ml-8">
       <div class="flex items-center gap-6">
         <a routerLink="/events" routerLinkActive="text-blue-600" class="text-sm text-gray-600 hover:text-gray-900">
-          Events
+          {{ 'NAV.EVENTS' | transloco }}
         </a>
         @if (authService.isAdmin()) {
           <a routerLink="/admin/users" routerLinkActive="text-blue-600" class="text-sm text-gray-600 hover:text-gray-900">
-            Manage Users
+            {{ 'NAV.MANAGE_USERS' | transloco }}
           </a>
         }
       </div>
 
       <div class="flex items-center gap-4">
+        <!-- Language switcher -->
+        <div class="flex items-center gap-1 text-xs font-medium">
+          <button
+            (click)="setLang('cs')"
+            [class]="activeLang === 'cs' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-gray-700'"
+          >CS</button>
+          <span class="text-gray-300">|</span>
+          <button
+            (click)="setLang('en')"
+            [class]="activeLang === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-gray-700'"
+          >EN</button>
+        </div>
+
         @if (authService.user(); as user) {
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-700">{{ user.full_name }}</span>
@@ -43,7 +56,7 @@
           </div>
         }
         <button (click)="logout()" class="text-sm text-gray-500 hover:text-gray-700">
-          Sign Out
+          {{ 'COMMON.SIGN_OUT' | transloco }}
         </button>
       </div>
     </div>
@@ -51,14 +64,14 @@
 
   @if (isMobileMenuOpen) {
     <div class="md:hidden mt-4 pb-2 border-t border-gray-100 pt-4 space-y-4">
-      
+
       <div class="flex flex-col gap-4 px-2">
         <a routerLink="/events" (click)="closeMobileMenu()" routerLinkActive="text-blue-600" class="text-base text-gray-600 hover:text-gray-900">
-          Events
+          {{ 'NAV.EVENTS' | transloco }}
         </a>
         @if (authService.isAdmin()) {
           <a routerLink="/admin/users" (click)="closeMobileMenu()" routerLinkActive="text-blue-600" class="text-base text-gray-600 hover:text-gray-900">
-            Manage Users
+            {{ 'NAV.MANAGE_USERS' | transloco }}
           </a>
         }
       </div>
@@ -75,8 +88,16 @@
             </span>
           </div>
         }
+
+        <!-- Mobile lang switcher -->
+        <div class="flex items-center gap-2 text-sm font-medium">
+          <button (click)="setLang('cs')" [class]="activeLang === 'cs' ? 'text-blue-600 font-bold' : 'text-gray-400'">CS</button>
+          <span class="text-gray-300">|</span>
+          <button (click)="setLang('en')" [class]="activeLang === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400'">EN</button>
+        </div>
+
         <button (click)="logout(); closeMobileMenu()" class="text-left text-base text-red-600 hover:text-red-800 font-medium">
-          Sign Out
+          {{ 'COMMON.SIGN_OUT' | transloco }}
         </button>
       </div>
     </div>

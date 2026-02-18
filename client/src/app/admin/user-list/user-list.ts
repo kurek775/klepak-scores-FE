@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../../core/models/user.model';
@@ -8,7 +9,7 @@ import { User, UserRole } from '../../core/models/user.model';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.html',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslocoPipe],
 })
 export class UserList implements OnInit {
   users = signal<User[]>([]);

@@ -1,25 +1,25 @@
 <div class="max-w-5xl mx-auto p-8">
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Events</h1>
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'EVENTS.TITLE' | transloco }}</h1>
     @if (authService.isAdmin()) {
       <a
         routerLink="/events/import"
         class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
       >
-        Import Event
+        {{ 'EVENTS.IMPORT' | transloco }}
       </a>
     }
   </div>
 
   @if (loading()) {
-    <p class="text-gray-500">Loading events...</p>
+    <p class="text-gray-500">{{ 'COMMON.LOADING' | transloco }}</p>
   } @else if (events().length === 0) {
     <div class="text-center py-12 text-gray-500">
-      <p class="text-lg">No events yet.</p>
+      <p class="text-lg">{{ 'EVENTS.NO_EVENTS' | transloco }}</p>
       @if (authService.isAdmin()) {
         <p class="mt-2">
           <a routerLink="/events/import" class="text-blue-600 hover:text-blue-800">
-            Import your first event
+            {{ 'EVENTS.IMPORT_FIRST' | transloco }}
           </a>
         </p>
       }
@@ -29,19 +29,11 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
-              Status
-            </th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
-              Groups
-            </th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
-              Participants
-            </th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">
-              Actions
-            </th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.NAME' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.STATUS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.GROUPS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.PARTICIPANTS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.ACTIONS' | transloco }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -69,14 +61,14 @@
                   [routerLink]="['/events', event.id]"
                   class="text-sm font-medium text-blue-600 hover:text-blue-800"
                 >
-                  View
+                  {{ 'EVENTS.VIEW' | transloco }}
                 </a>
                 @if (authService.isAdmin()) {
                   <button
                     (click)="deleteEvent(event)"
                     class="text-sm font-medium text-red-600 hover:text-red-800"
                   >
-                    Delete
+                    {{ 'EVENTS.DELETE' | transloco }}
                   </button>
                 }
               </td>

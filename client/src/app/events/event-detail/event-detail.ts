@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { EventDetail } from '../../core/models/event.model';
 import { Activity, EvaluationType } from '../../core/models/activity.model';
@@ -17,7 +18,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-event-detail',
   templateUrl: './event-detail.html',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, TranslocoPipe],
 })
 export class EventDetailComponent implements OnInit {
   event = signal<EventDetail | null>(null);

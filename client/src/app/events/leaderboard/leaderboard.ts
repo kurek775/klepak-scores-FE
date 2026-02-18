@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ActivityLeaderboard, LeaderboardResponse } from '../../core/models/leaderboard.model';
 import { EventService } from '../event.service';
@@ -7,7 +8,7 @@ import { EventService } from '../event.service';
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.html',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
 })
 export class Leaderboard implements OnInit {
   leaderboard = signal<LeaderboardResponse | null>(null);

@@ -1,6 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
+import imageCompression from 'browser-image-compression';
 
 import { Activity, EvaluationType, ScoreRecord } from '../../core/models/activity.model';
 import { Participant } from '../../core/models/event.model';
@@ -8,6 +10,8 @@ import { ScoringService } from '../scoring.service';
 import { GroupService } from '../../events/group.service';
 import { EventService } from '../../events/event.service';
 import { AIResult, AiReviewModal } from '../ai-review-modal/ai-review-modal';
+import { OfflineSyncService } from '../../core/services/offline-sync.service';
+import { ToastService } from '../../shared/toast.service';
 
 interface ScoreRow {
   participant: Participant;
@@ -18,7 +22,7 @@ interface ScoreRow {
 @Component({
   selector: 'app-scoring-view',
   templateUrl: './scoring-view.html',
-  imports: [RouterLink, FormsModule, AiReviewModal],
+  imports: [RouterLink, FormsModule, AiReviewModal, TranslocoPipe],
 })
 export class ScoringView implements OnInit {
   activity = signal<Activity | null>(null);
@@ -29,6 +33,7 @@ export class ScoringView implements OnInit {
   showReviewModal = signal(false);
   pendingAIResults = signal<AIResult[]>([]);
   previewImageUrl = signal<string>('');
+  pendingCount = signal(0);
   eventId = 0;
   groupId = 0;
 
@@ -37,6 +42,8 @@ export class ScoringView implements OnInit {
     private scoringService: ScoringService,
     private groupService: GroupService,
     private eventService: EventService,
+    private offlineSync: OfflineSyncService,
+    private toast: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +88,7 @@ export class ScoringView implements OnInit {
                   })),
                 );
                 this.loading.set(false);
+                this.refreshPendingCount(activityId);
               },
               error: () => this.loading.set(false),
             });
@@ -92,8 +100,13 @@ export class ScoringView implements OnInit {
     });
   }
 
+  private async refreshPendingCount(activityId: number): Promise<void> {
+    const count = await this.offlineSync.getPendingCountForActivity(activityId);
+    this.pendingCount.set(count);
+  }
+
   // --- AI Logic Start ---
-  onPhotoSelected(event: Event): void {
+  async onPhotoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -105,8 +118,14 @@ export class ScoringView implements OnInit {
 
     const previewUrl = URL.createObjectURL(file);
 
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1280,
+      useWebWorker: true,
+    });
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', compressed, file.name);
     formData.append('activity_id', act.id.toString());
     formData.append('group_id', this.groupId.toString());
 
@@ -183,8 +202,32 @@ export class ScoringView implements OnInit {
           );
           this.saving.set(false);
         },
-        error: () => this.saving.set(false),
+        error: async () => {
+          // No network — save to IndexedDB
+          for (const e of entries) {
+            await this.offlineSync.saveRecord({
+              activityId: act.id,
+              groupId: this.groupId,
+              participantId: e.participant_id,
+              valueRaw: e.value_raw,
+              savedAt: new Date(),
+            });
+          }
+          this.saving.set(false);
+          await this.refreshPendingCount(act.id);
+          this.toast.success('Saved offline');
+        },
       });
+  }
+
+  async syncNow(): Promise<void> {
+    const act = this.activity();
+    if (!act) return;
+    const count = await this.offlineSync.syncAll(this.scoringService, act.id);
+    if (count > 0) {
+      this.rows.update((rows) => rows.map((r) => (r.value !== '' ? { ...r, saved: true } : r)));
+      await this.refreshPendingCount(act.id);
+    }
   }
 
   toggleBoolean(row: ScoreRow): void {
