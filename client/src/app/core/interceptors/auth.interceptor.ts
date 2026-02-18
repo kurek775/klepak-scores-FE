@@ -3,9 +3,11 @@ import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
+import { ToastService } from '../../shared/toast.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const toastService = inject(ToastService);
   const token = authService.token;
 
   if (token) {
@@ -18,6 +20,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err) => {
       if (err.status === 401) {
         authService.logout();
+      } else if (err.status >= 400) {
+        const message: string = err.error?.detail ?? 'Request failed';
+        toastService.error(message);
       }
       return throwError(() => err);
     }),

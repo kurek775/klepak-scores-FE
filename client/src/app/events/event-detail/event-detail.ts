@@ -10,6 +10,7 @@ import { AuthService } from '../../auth/auth.service';
 import { EventService } from '../event.service';
 import { GroupService } from '../group.service';
 import { ScoringService } from '../../scoring/scoring.service';
+import { ToastService } from '../../shared/toast.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
@@ -41,6 +42,7 @@ export class EventDetailComponent implements OnInit {
     private scoringService: ScoringService,
     private route: ActivatedRoute,
     public authService: AuthService,
+    private toast: ToastService,
     private http: HttpClient,
   ) { }
 
@@ -135,6 +137,7 @@ export class EventDetailComponent implements OnInit {
               ),
             };
           });
+          this.toast.success(`${evaluator.full_name} assigned`);
         }
       },
     });
@@ -154,6 +157,7 @@ export class EventDetailComponent implements OnInit {
             ),
           };
         });
+        this.toast.success('Evaluator removed');
       },
     });
   }
@@ -180,6 +184,7 @@ export class EventDetailComponent implements OnInit {
             e ? { ...e, activities: [...e.activities, activity] } : e,
           );
           this.newActivityName = '';
+          this.toast.success(`Activity "${activity.name}" created`);
         },
       });
   }
@@ -190,6 +195,7 @@ export class EventDetailComponent implements OnInit {
         this.event.update((e) =>
           e ? { ...e, activities: e.activities.filter((a) => a.id !== activityId) } : e,
         );
+        this.toast.success('Activity deleted');
       },
     });
   }
