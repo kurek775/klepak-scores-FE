@@ -3,8 +3,14 @@ import { vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { TranslocoTestingModule, TranslocoTestingOptions } from '@jsverse/transloco';
 
 import { App } from './app';
+
+const translocoOptions: TranslocoTestingOptions = {
+  langs: { en: {}, cs: {} },
+  translocoConfig: { defaultLang: 'en', availableLangs: ['en', 'cs'] },
+};
 
 describe('App', () => {
   beforeEach(async () => {
@@ -16,7 +22,7 @@ describe('App', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [App, TranslocoTestingModule.forRoot(translocoOptions)],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
