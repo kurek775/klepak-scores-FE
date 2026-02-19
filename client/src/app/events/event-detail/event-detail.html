@@ -1,5 +1,5 @@
 <div class="max-w-5xl mx-auto p-8">
-  <a routerLink="/events" class="text-sm text-gray-500 hover:text-gray-700">{{ 'EVENTS.BACK' | transloco }}</a>
+  <a routerLink="/dashboard" class="text-sm text-gray-500 hover:text-gray-700">{{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
   <p class="text-gray-500 mt-6">{{ 'EVENTS.LOADING' | transloco }}</p>
@@ -73,12 +73,8 @@
         <span class="w-3 h-3 rounded-full inline-block" [style.background-color]="group.identifier"></span>
         }
         <span class="font-medium text-gray-900">{{ group.name }}</span>
-        <span class="text-sm text-gray-500 ml-auto">
-          {{ group.participants.length }} {{ group.participants.length !== 1 ? ('EVENTS.PARTICIPANTS' | transloco) : ('EVENTS.PARTICIPANTS' | transloco) }}
-        </span>
+       
       </button>
-
-      <!-- Evaluators section -->
       <div class="px-5 py-2 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center gap-2 transition-colors"
         [class.border-2]="false" (dragover)="authService.isAdmin() && onDragOver($event)"
         (dragenter)="$event.preventDefault(); $any($event.currentTarget).classList.add('!border-blue-400', '!bg-blue-50')"
@@ -114,15 +110,12 @@
           <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
               <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.PARTICIPANT_NAME' | transloco }}</th>
-              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.EXTERNAL_ID' | transloco }}</th>
-              <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.METADATA' | transloco }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
             @for (p of group.participants; track p.id) {
             <tr>
               <td class="px-5 py-2 text-sm text-gray-900">{{ p.display_name }}</td>
-              <td class="px-5 py-2 text-sm text-gray-600">{{ p.external_id ?? '—' }}</td>
               <td class="px-5 py-2">
                 @for (entry of objectEntries(p.metadata); track entry[0]) {
                 <span class="inline-block text-xs bg-gray-100 text-gray-700 rounded px-2 py-0.5 mr-1 mb-1">
@@ -203,7 +196,7 @@
           <select [(ngModel)]="newActivityType"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
             @for (t of evaluationTypes; track t) {
-            <option [value]="t">{{ t }}</option>
+            <option [value]="t">{{ 'TYPES.' + t | transloco }}</option>
             }
           </select>
         </div>

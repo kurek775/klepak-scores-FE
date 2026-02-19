@@ -24,12 +24,17 @@
   "DASHBOARD": {
     "PENDING_TITLE": "Account Pending Approval",
     "PENDING_MSG": "Your account is awaiting admin approval. You'll get full access once an administrator activates your account.",
-    "SIGNED_IN_AS": "Signed in as",
     "MY_GROUPS": "My Groups",
     "LOADING_GROUPS": "Loading your groups...",
     "NO_GROUPS": "You have no groups assigned yet.",
     "PARTICIPANTS": "participant",
     "PARTICIPANTS_PLURAL": "participants"
+  },
+  "TYPES": {
+    "NUMERIC_LOW": "Numeric (Lower is better)",
+    "NUMERIC_HIGH": "Numeric (Higher is better)",
+    "BOOLEAN": "Pass / Fail",
+    "SCORE_SET": "Scoring Set"
   },
   "EVENTS": {
     "TITLE": "Events",
@@ -43,7 +48,7 @@
     "GROUPS": "Groups",
     "PARTICIPANTS": "Participants",
     "ACTIONS": "Actions",
-    "BACK": "← Back to Events",
+    "BACK": "Back to Events",
     "LEADERBOARD": "Leaderboard →",
     "EXPORT_CSV": "Export CSV",
     "AVAILABLE_EVALUATORS": "Available Evaluators:",
@@ -71,7 +76,7 @@
     "LEADERBOARD_UNAVAILABLE": "Leaderboard not available."
   },
   "SCORING": {
-    "BACK": "← Back to Event",
+    "BACK": "Back to Event",
     "LOADING": "Loading scoring view...",
     "NO_PARTICIPANTS": "No participants found in your assigned group.",
     "PARTICIPANT": "Participant",

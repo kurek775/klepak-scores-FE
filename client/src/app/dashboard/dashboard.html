@@ -6,21 +6,14 @@
         <p class="text-yellow-700">
           {{ 'DASHBOARD.PENDING_MSG' | transloco }}
         </p>
-        <p class="text-sm text-yellow-600 mt-3">
-          {{ 'DASHBOARD.SIGNED_IN_AS' | transloco }} <span class="font-medium">{{ user.email }}</span>
-        </p>
       </div>
     } @else {
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
-        Welcome, {{ user.full_name }}
-      </h1>
-      <p class="text-gray-600 mb-6">
-        {{ 'DASHBOARD.SIGNED_IN_AS' | transloco }}
-        <span class="font-medium">{{ user.role }}</span>.
-      </p>
 
+    @if (user.role === 'ADMIN') {
+      <app-event-list></app-event-list>
+      <app-user-list></app-user-list>
+    }
       @if (user.role === 'EVALUATOR') {
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ 'DASHBOARD.MY_GROUPS' | transloco }}</h2>
 
         @if (loadingGroups()) {
           <p class="text-gray-500">{{ 'DASHBOARD.LOADING_GROUPS' | transloco }}</p>

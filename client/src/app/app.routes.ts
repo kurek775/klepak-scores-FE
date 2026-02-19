@@ -14,12 +14,7 @@ export const routes: Routes = [
     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
     canActivate: [authGuard],
   },
-  {
-    path: 'events',
-    loadComponent: () =>
-      import('./events/event-list/event-list').then((m) => m.EventList),
-    canActivate: [authGuard],
-  },
+
   {
     path: 'events/import',
     loadComponent: () =>
@@ -50,10 +45,6 @@ export const routes: Routes = [
       import('./admin/diploma-editor/diploma-editor').then((m) => m.DiplomaEditor),
     canActivate: [authGuard, adminGuard],
   },
-  {
-    path: 'admin/users',
-    loadComponent: () => import('./admin/user-list/user-list').then((m) => m.UserList),
-    canActivate: [authGuard, adminGuard],
-  },
+
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

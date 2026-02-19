@@ -15,7 +15,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   template     = signal<DiplomaTemplate | null>(null);
   items        = signal<DiplomaItem[]>([]);
   bgImageUrl   = signal('');
-  orientation  = signal<'LANDSCAPE' | 'PORTRAIT'>('LANDSCAPE');
+  orientation  = signal<'LANDSCAPE' | 'PORTRAIT'>('PORTRAIT');
   fonts        = signal<DiplomaFont[]>([]);
   defaultFont  = signal<string>('');  
 

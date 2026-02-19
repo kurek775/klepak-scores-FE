@@ -24,12 +24,16 @@
   "DASHBOARD": {
     "PENDING_TITLE": "Účet čeká na schválení",
     "PENDING_MSG": "Váš účet čeká na schválení správcem. Plný přístup získáte po aktivaci.",
-    "SIGNED_IN_AS": "Přihlášen jako",
-    "MY_GROUPS": "Moje skupiny",
     "LOADING_GROUPS": "Načítání skupin...",
     "NO_GROUPS": "Zatím nemáte přiřazené žádné skupiny.",
     "PARTICIPANTS": "účastník",
     "PARTICIPANTS_PLURAL": "účastníků"
+  },
+  "TYPES": {
+    "NUMERIC_LOW": "Číselné (nižší je lepší)",
+    "NUMERIC_HIGH": "Číselné (vyšší je lepší)",
+    "BOOLEAN": "Číselné (vyšší je lepší)",
+    "SCORE_SET": "Bodová sada"
   },
   "EVENTS": {
     "TITLE": "Události",
@@ -43,13 +47,13 @@
     "GROUPS": "Skupiny",
     "PARTICIPANTS": "Účastníci",
     "ACTIONS": "Akce",
-    "BACK": "← Zpět na události",
+    "BACK": "Zpět na události",
     "LEADERBOARD": "Výsledková listina →",
     "EXPORT_CSV": "Exportovat CSV",
-    "AVAILABLE_EVALUATORS": "Dostupní hodnotitelé:",
+    "AVAILABLE_EVALUATORS": "Dostupní vedoucí:",
     "NO_GROUPS_IN_EVENT": "V této události nejsou žádné skupiny.",
-    "EVALUATORS": "Hodnotitelé:",
-    "DROP_EVALUATOR": "Sem přetáhněte hodnotitele",
+    "EVALUATORS": "Vedoucí:",
+    "DROP_EVALUATOR": "Sem přetáhněte vedoucí",
     "NONE_ASSIGNED": "Nikdo nepřiřazen",
     "NO_PARTICIPANTS": "Žádní účastníci.",
     "PARTICIPANT_NAME": "Jméno",
@@ -71,7 +75,7 @@
     "LEADERBOARD_UNAVAILABLE": "Výsledková listina není dostupná."
   },
   "SCORING": {
-    "BACK": "← Zpět na událost",
+    "BACK": "Zpět na událost",
     "LOADING": "Načítání...",
     "NO_PARTICIPANTS": "Ve vaší přiřazené skupině nejsou žádní účastníci.",
     "PARTICIPANT": "Účastník",
