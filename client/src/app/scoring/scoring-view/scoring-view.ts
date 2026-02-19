@@ -105,7 +105,6 @@ export class ScoringView implements OnInit {
     this.pendingCount.set(count);
   }
 
-  // --- AI Logic Start ---
   async onPhotoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -168,7 +167,6 @@ export class ScoringView implements OnInit {
     URL.revokeObjectURL(this.previewImageUrl());
     this.previewImageUrl.set('');
   }
-  // --- AI Logic End ---
 
   get isBoolean(): boolean {
     return this.activity()?.evaluation_type === EvaluationType.BOOLEAN;
@@ -203,7 +201,6 @@ export class ScoringView implements OnInit {
           this.saving.set(false);
         },
         error: async () => {
-          // No network — save to IndexedDB
           for (const e of entries) {
             await this.offlineSync.saveRecord({
               activityId: act.id,

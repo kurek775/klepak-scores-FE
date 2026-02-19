@@ -12,19 +12,16 @@ import { DiplomaService } from '../../events/diploma.service';
   imports: [FormsModule, RouterLink, TranslocoPipe],
 })
 export class DiplomaEditor implements OnInit, OnDestroy {
-  // ── Template state ──────────────────────────────────────────
   template     = signal<DiplomaTemplate | null>(null);
   items        = signal<DiplomaItem[]>([]);
   bgImageUrl   = signal('');
   orientation  = signal<'LANDSCAPE' | 'PORTRAIT'>('LANDSCAPE');
   fonts        = signal<DiplomaFont[]>([]);
-  defaultFont  = signal<string>('');  // '' means use Helvetica (no Czech support)
+  defaultFont  = signal<string>('');  
 
-  // ── UI state ─────────────────────────────────────────────────
   loading = signal(false);
   saving  = signal(false);
 
-  // ── Mock values (preview only, never sent to backend) ────────
   mockName        = signal('Jan Novák');
   mockPlace       = signal(1);
   mockActivity    = signal('Skok do dálky');
@@ -41,7 +38,6 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     private diplomaService: DiplomaService,
     private transloco: TranslocoService,
   ) {
-    // Inject @font-face rules into <head> whenever the fonts list changes
     effect(() => {
       const fonts = this.fonts();
       const old = document.getElementById('diploma-font-styles');
@@ -77,7 +73,6 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     document.getElementById('diploma-font-styles')?.remove();
   }
 
-  // ── Background image ─────────────────────────────────────────
   onBgFileChange(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -90,11 +85,10 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     this.bgImageUrl.set('');
   }
 
-  // ── Font management ──────────────────────────────────────────
   onFontUpload(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    const name = file.name.replace(/\.[^/.]+$/, ''); // strip extension
+    const name = file.name.replace(/\.[^/.]+$/, ''); 
     const reader = new FileReader();
     reader.onload = () => {
       this.fonts.update(arr => [
@@ -103,19 +97,16 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       ]);
     };
     reader.readAsDataURL(file);
-    // Reset the input so same file can be re-uploaded
     (event.target as HTMLInputElement).value = '';
   }
 
   removeFont(name: string): void {
     this.fonts.update(arr => arr.filter(f => f.name !== name));
-    // Reset items that used this font back to default
     this.items.update(arr =>
       arr.map(item => item.fontFamily === name ? { ...item, fontFamily: 'default' } : item)
     );
   }
 
-  // ── Items ─────────────────────────────────────────────────────
   addItem(): void {
     this.items.update(arr => [
       ...arr,
@@ -142,7 +133,6 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     );
   }
 
-  // ── Preview text (uses mock values) ──────────────────────────
   previewText(item: DiplomaItem): string {
     if (item.type === 'STATIC') return item.text ?? '';
     switch (item.key) {
@@ -174,7 +164,6 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     return parts.join(' ');
   }
 
-  // ── Save / Delete ─────────────────────────────────────────────
   saveTemplate(): void {
     this.saving.set(true);
     const isNew = this.template() === null;

@@ -40,7 +40,6 @@ export class Leaderboard implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    // Load diploma template silently — 404 just means no template yet
     this.diplomaService.getTemplate(this.eventId).subscribe({
       next: (t) => this.diplomaTemplate.set(t),
       error: () => {},
@@ -110,12 +109,10 @@ export class Leaderboard implements OnInit {
         format: 'a4',
       });
 
-      // Always embed Roboto as built-in fallback (supports Czech and full UTF-8)
       const robotoData = await this.resolveImageToBase64('/fonts/Roboto-Regular.ttf');
       doc.addFileToVFS('Roboto-Regular.ttf', robotoData.split(',')[1]);
       doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
 
-      // Embed additional user-uploaded fonts
       if (template.fonts) {
         for (const font of template.fonts) {
           const base64 = font.data.split(',')[1];
@@ -144,10 +141,6 @@ export class Leaderboard implements OnInit {
               doc.setFontSize(item.fontSize);
               doc.setTextColor(item.color);
 
-              const pdfWeight = item.fontWeight === 'bold'   ? 'bold'
-                              : item.fontWeight === 'italic' ? 'italic'
-                              : 'normal';
-              // Priority: item font → template default font → Roboto (always supports Czech)
               const itemFont = item.fontFamily && item.fontFamily !== 'default'
                 ? item.fontFamily : null;
               const resolvedFont = itemFont ?? template.default_font ?? 'Roboto';
