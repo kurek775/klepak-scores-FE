@@ -85,13 +85,13 @@ describe('authInterceptor', () => {
     expect(errorSpy).toHaveBeenCalledWith('Request failed');
   });
 
-  it('does NOT call toastService.error() on 401 (logout handles it)', () => {
+  it('calls toastService.error() with session expired message on 401', () => {
     vi.spyOn(authService, 'token', 'get').mockReturnValue('expired');
     const errorSpy = vi.spyOn(toastService, 'error');
     vi.spyOn(authService, 'logout').mockImplementation(() => {});
     http.get('/api/auth').subscribe({ error: () => {} });
     const req = httpMock.expectOne('/api/auth');
     req.flush({}, { status: 401, statusText: 'Unauthorized' });
-    expect(errorSpy).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith('Session expired. Please log in again.');
   });
 });
