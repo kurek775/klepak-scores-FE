@@ -4,7 +4,7 @@ export type FontWeight = 'normal' | 'bold' | 'italic';
 
 export interface DiplomaFont {
   name: string;
-  data: string; // full data URL (e.g. "data:font/ttf;base64,...")
+  data: string; 
 }
 
 export interface DiplomaItem {
@@ -16,9 +16,9 @@ export interface DiplomaItem {
   fontSize: number;
   fontWeight: FontWeight;
   color: string;
-  fontFamily?: string; // font name from uploaded fonts, or 'default'
-  centerH?: boolean;  // anchor text center at X (translateX -50%)
-  centerV?: boolean;  // anchor text center at Y (translateY -50%)
+  fontFamily?: string; 
+  centerH?: boolean;  
+  centerV?: boolean;  
 }
 
 export interface DiplomaTemplate {

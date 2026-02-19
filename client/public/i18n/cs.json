@@ -32,6 +32,10 @@
     "PARTICIPANTS_PLURAL": "účastníků"
   },
   "EVENTS": {
+    "NUMERIC_LOW": "Číselné (nižší je lepší)",
+    "NUMERIC_HIGH": "Číselné (vyšší je lepší)",
+    "BOOLEAN": "Ano/Ne",
+    "SCORE_SET": "Bodová sada",
     "TITLE": "Události",
     "IMPORT": "Importovat událost",
     "IMPORT_FIRST": "Importovat první událost",
@@ -127,6 +131,7 @@
     "MOCK_NOTE": "Tyto hodnoty jsou pouze pro náhled a neukládají se.",
     "ITEMS": "Textové prvky",
     "ADD_ITEM": "Přidat prvek",
+    "DELETE_ITEM": "Smazat prvek",
     "NO_ITEMS": "Zatím žádné prvky. Klikněte na tlačítko Přidat prvek.",
     "SAVE": "Uložit šablonu",
     "DELETE": "Smazat šablonu",

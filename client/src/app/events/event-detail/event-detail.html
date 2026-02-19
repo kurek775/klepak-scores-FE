@@ -196,7 +196,7 @@
           <select [(ngModel)]="newActivityType"
             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
             @for (t of evaluationTypes; track t) {
-            <option [value]="t">{{ 'TYPES.' + t | transloco }}</option>
+            <option [value]="t">{{ 'EVENTS.' + t | transloco }}</option>
             }
           </select>
         </div>
@@ -216,7 +216,6 @@
       @if (authService.isAdmin()) {
       <span class="inline-flex items-center gap-1.5 text-sm bg-purple-100 text-purple-800 rounded-full px-3 py-1.5">
         {{ activity.name }}
-        <span class="text-xs text-purple-500">{{ activity.evaluation_type }}</span>
         <button (click)="deleteActivity(activity.id)" class="ml-0.5 text-purple-600 hover:text-red-600 font-bold"
           title="Delete activity">&times;</button>
       </span>

@@ -32,6 +32,10 @@
     "PARTICIPANTS_PLURAL": "participants"
   },
   "EVENTS": {
+    "NUMERIC_LOW": "Numeric (Lower is better)",
+    "NUMERIC_HIGH": "Numeric (Higher is better)",
+    "BOOLEAN": "Pass / Fail",
+    "SCORE_SET": "Scoring Set",
     "TITLE": "Events",
     "IMPORT": "Import Event",
     "IMPORT_FIRST": "Import your first event",
@@ -127,6 +131,7 @@
     "MOCK_NOTE": "These values are only for preview and are not saved.",
     "ITEMS": "Text Items",
     "ADD_ITEM": "Add Item",
+    "DELETE_ITEM": "Remove Item",
     "NO_ITEMS": "No items yet. Click \"Add Item\".",
     "SAVE": "Save Template",
     "DELETE": "Delete Template",
