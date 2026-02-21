@@ -2,11 +2,21 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 import { vi, beforeEach, afterEach } from 'vitest';
 
 import { authInterceptor } from '../core/interceptors/auth.interceptor';
 import { AuthService } from './auth.service';
 import { ToastService } from '../shared/toast.service';
+
+const TRANSLATIONS: Record<string, string> = {
+  'ERRORS.SESSION_EXPIRED': 'Session expired. Please log in again.',
+  'ERRORS.REQUEST_FAILED': 'Request failed',
+};
+
+const mockTransloco = {
+  translate: (key: string) => TRANSLATIONS[key] ?? key,
+};
 
 describe('authInterceptor', () => {
   let http: HttpClient;
@@ -28,6 +38,7 @@ describe('authInterceptor', () => {
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         provideRouter([]),
+        { provide: TranslocoService, useValue: mockTransloco },
       ],
     });
     http = TestBed.inject(HttpClient);
