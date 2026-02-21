@@ -140,7 +140,11 @@
     "PREVIEW": "Náhled",
     "COORDS_NOTE": "X a Y jsou procenta šířky/výšky stránky",
     "TEMPLATE_NAME": "Název šablony",
-    "ADD_TEMPLATE": "Přidat šablonu"
+    "ADD_TEMPLATE": "Přidat šablonu",
+    "DUPLICATE_ITEM": "Duplikovat",
+    "MOVE_UP": "Posunout nahoru",
+    "MOVE_DOWN": "Posunout dolů",
+    "DRAG_HINT": "Přetáhněte prvky na náhledu pro změnu pozice"
   },
   "ADMIN": {
     "MANAGE_USERS": "Správa uživatelů",

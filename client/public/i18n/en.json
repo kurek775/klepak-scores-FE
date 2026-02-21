@@ -140,7 +140,11 @@
     "PREVIEW": "Preview",
     "COORDS_NOTE": "X and Y are percentages of page width/height",
     "TEMPLATE_NAME": "Template Name",
-    "ADD_TEMPLATE": "Add Template"
+    "ADD_TEMPLATE": "Add Template",
+    "DUPLICATE_ITEM": "Duplicate",
+    "MOVE_UP": "Move up",
+    "MOVE_DOWN": "Move down",
+    "DRAG_HINT": "Drag items on the preview to reposition them"
   },
   "ADMIN": {
     "MANAGE_USERS": "Manage Users",

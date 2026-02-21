@@ -162,100 +162,149 @@
           </button>
         </div>
 
-        <div class="space-y-4">
+        <!-- Drag hint -->
+        @if (items().length > 0) {
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic mb-3">{{ 'DIPLOMA.DRAG_HINT' | transloco }}</p>
+        }
+
+        <div class="space-y-2">
           @for (item of items(); track $index; let idx = $index) {
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-2 relative">
+          <div [id]="'item-card-' + idx"
+            class="border rounded-lg overflow-hidden transition-colors"
+            [class]="selectedItemIndex() === idx
+              ? 'border-blue-500 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
+              : 'border-gray-200 dark:border-gray-700'">
 
-            <!-- Type -->
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Type</label>
-              <select [ngModel]="item.type" (ngModelChange)="updateItem(idx, { type: $event })"
-                class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
-                <option value="DYNAMIC">DYNAMIC</option>
-                <option value="STATIC">STATIC</option>
-              </select>
+            <!-- Card header -->
+            <div class="flex items-center gap-1.5 px-3 py-2 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-700/50"
+              (click)="selectItem(idx)">
+
+              <!-- Collapse chevron -->
+              <button (click)="toggleItemCollapse(idx); $event.stopPropagation()"
+                class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 w-5 text-center text-xs shrink-0"
+                [title]="isItemCollapsed(idx) ? 'Expand' : 'Collapse'">
+                {{ isItemCollapsed(idx) ? '▶' : '▼' }}
+              </button>
+
+              <!-- Item label -->
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate min-w-0">
+                {{ itemLabel(item) }}
+              </span>
+
+              <!-- Coordinates badge -->
+              <span class="ml-auto text-xs text-gray-400 dark:text-gray-500 font-mono shrink-0">
+                {{ formatCoord(item.x) }}, {{ formatCoord(item.y) }}
+              </span>
+
+              <!-- Action buttons -->
+              <div class="flex items-center gap-0.5 ml-2 shrink-0">
+                <button (click)="moveItem(idx, -1); $event.stopPropagation()"
+                  [disabled]="idx === 0"
+                  class="p-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                  [title]="'DIPLOMA.MOVE_UP' | transloco">↑</button>
+                <button (click)="moveItem(idx, 1); $event.stopPropagation()"
+                  [disabled]="idx === items().length - 1"
+                  class="p-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                  [title]="'DIPLOMA.MOVE_DOWN' | transloco">↓</button>
+                <button (click)="duplicateItem(idx); $event.stopPropagation()"
+                  class="p-1 text-xs text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  [title]="'DIPLOMA.DUPLICATE_ITEM' | transloco">⧉</button>
+                <button (click)="removeItem(idx); $event.stopPropagation()"
+                  class="p-1 text-xs text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                  [title]="'DIPLOMA.DELETE_ITEM' | transloco">✕</button>
+              </div>
             </div>
 
-            <!-- Key or text -->
-            @if (item.type === 'DYNAMIC') {
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Key</label>
-              <select [ngModel]="item.key" (ngModelChange)="updateItem(idx, { key: $event })"
-                class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
-                @for (k of dynamicKeys; track k) {
-                <option [value]="k">{{ k }}</option>
-                }
-              </select>
-            </div>
-            } @else {
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Text</label>
-              <input type="text" [ngModel]="item.text" (ngModelChange)="updateItem(idx, { text: $event })"
-                placeholder="Static text..." class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+            <!-- Card body (collapsible) -->
+            @if (!isItemCollapsed(idx)) {
+            <div class="px-3 pb-3 pt-1 space-y-2 border-t border-gray-100 dark:border-gray-700">
+
+              <!-- Type -->
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Type</label>
+                <select [ngModel]="item.type" (ngModelChange)="updateItem(idx, { type: $event })"
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  <option value="DYNAMIC">DYNAMIC</option>
+                  <option value="STATIC">STATIC</option>
+                </select>
+              </div>
+
+              <!-- Key or text -->
+              @if (item.type === 'DYNAMIC') {
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Key</label>
+                <select [ngModel]="item.key" (ngModelChange)="updateItem(idx, { key: $event })"
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  @for (k of dynamicKeys; track k) {
+                  <option [value]="k">{{ k }}</option>
+                  }
+                </select>
+              </div>
+              } @else {
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Text</label>
+                <input type="text" [ngModel]="item.text" (ngModelChange)="updateItem(idx, { text: $event })"
+                  placeholder="Static text..." class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+              </div>
+              }
+
+              <!-- X / Y -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">X %</label>
+                <input type="number" min="0" max="100" step="0.5" [ngModel]="item.x"
+                  (ngModelChange)="updateItem(idx, { x: +$event })"
+                  class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                <button (click)="updateItem(idx, item.centerH ? { centerH: false } : { x: 50, centerH: true })"
+                  title="Center horizontally (text midpoint at X)"
+                  class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerH
+                        ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
+                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
+                  ↔
+                </button>
+                <label class="text-xs text-gray-500 dark:text-gray-400 ml-1">Y %</label>
+                <input type="number" min="0" max="100" step="0.5" [ngModel]="item.y"
+                  (ngModelChange)="updateItem(idx, { y: +$event })"
+                  class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                <button (click)="updateItem(idx, item.centerV ? { centerV: false } : { y: 50, centerV: true })"
+                  title="Center vertically (text midpoint at Y)"
+                  class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerV
+                        ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
+                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
+                  ↕
+                </button>
+              </div>
+
+              <!-- Font size + weight + color -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Size</label>
+                <input type="number" min="6" max="200" [ngModel]="item.fontSize"
+                  (ngModelChange)="updateItem(idx, { fontSize: +$event })"
+                  class="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                <select [ngModel]="item.fontWeight" (ngModelChange)="updateItem(idx, { fontWeight: $event })"
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  @for (fw of fontWeights; track fw) {
+                  <option [value]="fw">{{ fw }}</option>
+                  }
+                </select>
+                <input type="color" [ngModel]="item.color" (ngModelChange)="updateItem(idx, { color: $event })"
+                  class="w-8 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer p-0.5" />
+              </div>
+
+              <!-- Font family -->
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Font</label>
+                <select [ngModel]="item.fontFamily || 'default'" (ngModelChange)="updateItem(idx, { fontFamily: $event })"
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  <option value="default">{{ 'DIPLOMA.ROBOTO_BUILTIN' | transloco }}</option>
+                  @for (font of fonts(); track font.name) {
+                  <option [value]="font.name">{{ font.name }}</option>
+                  }
+                </select>
+              </div>
+
             </div>
             }
-
-            <!-- X / Y -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">X %</label>
-              <input type="number" min="0" max="100" step="0.5" [ngModel]="item.x"
-                (ngModelChange)="updateItem(idx, { x: +$event })"
-                class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
-              <button (click)="updateItem(idx, item.centerH ? { centerH: false } : { x: 50, centerH: true })"
-                title="Center horizontally (text midpoint at X)"
-                class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerH
-                      ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
-                      : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
-                ↔
-              </button>
-              <label class="text-xs text-gray-500 dark:text-gray-400 ml-1">Y %</label>
-              <input type="number" min="0" max="100" step="0.5" [ngModel]="item.y"
-                (ngModelChange)="updateItem(idx, { y: +$event })"
-                class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
-              <button (click)="updateItem(idx, item.centerV ? { centerV: false } : { y: 50, centerV: true })"
-                title="Center vertically (text midpoint at Y)"
-                class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerV
-                      ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
-                      : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
-                ↕
-              </button>
-            </div>
-
-            <!-- Font size + weight + color -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Size</label>
-              <input type="number" min="6" max="200" [ngModel]="item.fontSize"
-                (ngModelChange)="updateItem(idx, { fontSize: +$event })"
-                class="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
-              <select [ngModel]="item.fontWeight" (ngModelChange)="updateItem(idx, { fontWeight: $event })"
-                class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
-                @for (fw of fontWeights; track fw) {
-                <option [value]="fw">{{ fw }}</option>
-                }
-              </select>
-              <input type="color" [ngModel]="item.color" (ngModelChange)="updateItem(idx, { color: $event })"
-                class="w-8 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer p-0.5" />
-            </div>
-
-            <!-- Font family -->
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Font</label>
-              <select [ngModel]="item.fontFamily || 'default'" (ngModelChange)="updateItem(idx, { fontFamily: $event })"
-                class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
-                <option value="default">{{ 'DIPLOMA.ROBOTO_BUILTIN' | transloco }}</option>
-                @for (font of fonts(); track font.name) {
-                <option [value]="font.name">{{ font.name }}</option>
-                }
-              </select>
-            </div>
-
-
           </div>
-          <button (click)="removeItem(idx)"
-            class="px-3 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800">
-            x {{ 'DIPLOMA.DELETE_ITEM' | transloco }}
-          </button>
-
           }
 
           @if (items().length === 0) {
@@ -280,19 +329,26 @@
     </div>
 
     <!-- ═══ RIGHT PANEL — live preview ════════════════════════ -->
-    <div class="flex-1 min-w-0">
-  
-      <div [style.aspectRatio]="orientation() === 'LANDSCAPE' ? '297/210' : '210/297'"
+    <div class="flex-1 min-w-0 sticky top-8">
+
+      <div #previewContainer
+        [style.aspectRatio]="orientation() === 'LANDSCAPE' ? '297/210' : '210/297'"
         [style.backgroundImage]="bgImageUrl() ? 'url(' + bgImageUrl() + ')' : ''"
         class="relative w-full bg-cover bg-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
-        [class.bg-gray-100]="!bgImageUrl()">
+        [class.bg-gray-100]="!bgImageUrl()"
+        (click)="onPreviewBackgroundClick()">
 
-        @for (item of items(); track $index) {
+        @for (item of items(); track $index; let idx = $index) {
         <div [style.left]="item.x + '%'" [style.top]="item.y + '%'" [style.fontSize]="item.fontSize + 'pt'"
           [style.fontWeight]="item.fontWeight === 'bold' ? 'bold' : 'normal'"
           [style.fontStyle]="item.fontWeight === 'italic' ? 'italic' : 'normal'" [style.color]="item.color"
           [style.fontFamily]="previewFontFamily(item)" [style.transform]="previewTransform(item)"
-          class="absolute whitespace-nowrap select-none pointer-events-none">
+          class="absolute whitespace-nowrap select-none cursor-grab active:cursor-grabbing transition-shadow"
+          [class]="selectedItemIndex() === idx
+            ? 'ring-2 ring-blue-500 ring-offset-1 bg-blue-500/10 rounded'
+            : 'hover:ring-1 hover:ring-blue-300 hover:ring-offset-1 rounded'"
+          (pointerdown)="onItemPointerDown($event, idx, previewContainer)"
+          (click)="$event.stopPropagation()">
           {{ previewText(item) }}
         </div>
         }
