@@ -35,12 +35,18 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   selectedItemIndex = signal<number | null>(null);
   collapsedItems    = signal<Set<number>>(new Set());
 
+  // Snap guides — visible when dragging near center
+  snapGuideX = signal(false);
+  snapGuideY = signal(false);
+  private readonly SNAP_THRESHOLD = 1.5; // percentage distance to snap
+
   // Drag state (not signals — mutated imperatively during pointer events)
   private dragging = false;
   private dragItemIndex = -1;
   private dragStartPointer = { x: 0, y: 0 };
   private dragStartItemPos = { x: 0, y: 0 };
   private dragPreviewEl: HTMLElement | null = null;
+  private dragItemEl: HTMLElement | null = null;
   private boundPointerMove: ((e: PointerEvent) => void) | null = null;
   private boundPointerUp: ((e: PointerEvent) => void) | null = null;
 
@@ -331,6 +337,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     this.dragStartPointer = { x: event.clientX, y: event.clientY };
     this.dragStartItemPos = { x: item.x, y: item.y };
     this.dragPreviewEl = previewEl;
+    this.dragItemEl = event.currentTarget as HTMLElement;
 
     const target = event.target as HTMLElement;
     target.setPointerCapture(event.pointerId);
@@ -346,21 +353,47 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   private onDragPointerMove(event: PointerEvent): void {
     if (!this.dragging || !this.dragPreviewEl) return;
 
-    const rect = this.dragPreviewEl.getBoundingClientRect();
+    const containerRect = this.dragPreviewEl.getBoundingClientRect();
     const dx = event.clientX - this.dragStartPointer.x;
     const dy = event.clientY - this.dragStartPointer.y;
 
-    const percentDx = (dx / rect.width) * 100;
-    const percentDy = (dy / rect.height) * 100;
+    const percentDx = (dx / containerRect.width) * 100;
+    const percentDy = (dy / containerRect.height) * 100;
 
-    const newX = Math.round(Math.min(100, Math.max(0, this.dragStartItemPos.x + percentDx)) * 10) / 10;
-    const newY = Math.round(Math.min(100, Math.max(0, this.dragStartItemPos.y + percentDy)) * 10) / 10;
+    let newX = Math.round(Math.min(100, Math.max(0, this.dragStartItemPos.x + percentDx)) * 10) / 10;
+    let newY = Math.round(Math.min(100, Math.max(0, this.dragStartItemPos.y + percentDy)) * 10) / 10;
+
+    // Compute visual center of the item in % coordinates
+    const item = this.items()[this.dragItemIndex];
+    let halfW = 0;
+    let halfH = 0;
+    if (this.dragItemEl) {
+      halfW = (this.dragItemEl.offsetWidth / containerRect.width) * 100 / 2;
+      halfH = (this.dragItemEl.offsetHeight / containerRect.height) * 100 / 2;
+    }
+    // If centerH/centerV transform is active, the anchor IS the center already
+    const visualCenterX = item?.centerH ? newX : newX + halfW;
+    const visualCenterY = item?.centerV ? newY : newY + halfH;
+
+    // Snap when visual center is near 50%
+    const snappedX = Math.abs(visualCenterX - 50) <= this.SNAP_THRESHOLD;
+    const snappedY = Math.abs(visualCenterY - 50) <= this.SNAP_THRESHOLD;
+    if (snappedX) newX = item?.centerH ? 50 : 50 - halfW;
+    if (snappedY) newY = item?.centerV ? 50 : 50 - halfH;
+    // Round after snap adjustment
+    if (snappedX) newX = Math.round(newX * 10) / 10;
+    if (snappedY) newY = Math.round(newY * 10) / 10;
+
+    this.snapGuideX.set(snappedX);
+    this.snapGuideY.set(snappedY);
 
     this.updateItem(this.dragItemIndex, { x: newX, y: newY });
   }
 
   private onDragPointerUp(event: PointerEvent): void {
     this.dragging = false;
+    this.snapGuideX.set(false);
+    this.snapGuideY.set(false);
 
     const target = event.target as HTMLElement;
     target.releasePointerCapture(event.pointerId);
@@ -375,6 +408,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     this.boundPointerMove = null;
     this.boundPointerUp = null;
     this.dragPreviewEl = null;
+    this.dragItemEl = null;
   }
 
   // ── Helpers ────────────────────────────────────────────

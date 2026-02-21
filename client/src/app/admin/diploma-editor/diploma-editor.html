@@ -338,6 +338,16 @@
         [class.bg-gray-100]="!bgImageUrl()"
         (click)="onPreviewBackgroundClick()">
 
+        <!-- Snap guide lines -->
+        @if (snapGuideX()) {
+        <div class="absolute top-0 bottom-0 left-1/2 -translate-x-px w-0.5 bg-green-500/60 pointer-events-none z-10"
+          style="border-left: 1px dashed rgba(34,197,94,0.7)"></div>
+        }
+        @if (snapGuideY()) {
+        <div class="absolute left-0 right-0 top-1/2 -translate-y-px h-0.5 bg-green-500/60 pointer-events-none z-10"
+          style="border-top: 1px dashed rgba(34,197,94,0.7)"></div>
+        }
+
         @for (item of items(); track $index; let idx = $index) {
         <div [style.left]="item.x + '%'" [style.top]="item.y + '%'" [style.fontSize]="item.fontSize + 'pt'"
           [style.fontWeight]="item.fontWeight === 'bold' ? 'bold' : 'normal'"
