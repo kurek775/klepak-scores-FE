@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoService, TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../../../auth/auth.service';
+import { ThemeService } from '../../theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,7 @@ export class Navbar {
 
   constructor(
     public authService: AuthService,
+    public themeService: ThemeService,
     private transloco: TranslocoService,
   ) {}
 

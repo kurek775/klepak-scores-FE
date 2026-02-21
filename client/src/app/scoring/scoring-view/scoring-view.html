@@ -1,24 +1,21 @@
 <div class="max-w-4xl mx-auto p-8">
-  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 hover:text-gray-700">{{ 'SCORING.BACK' | transloco }}</a>
+  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'SCORING.BACK' | transloco }}</a>
 
   @if (loading()) {
-    <p class="text-gray-500 mt-6">{{ 'SCORING.LOADING' | transloco }}</p>
+    <p class="text-gray-500 dark:text-gray-400 mt-6">{{ 'SCORING.LOADING' | transloco }}</p>
   } @else if (activity(); as act) {
     <div class="mt-4 mb-6 flex justify-between items-start">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{ act.name }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ act.name }}</h1>
         @if (act.description) {
-          <p class="text-sm text-gray-500 mt-1">{{ act.description }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ act.description }}</p>
         }
-        <span class="inline-block mt-2 text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
-          {{ act.evaluation_type }}
-        </span>
       </div>
     </div>
 
     <!-- Offline pending banner -->
     @if (pendingCount() > 0) {
-      <div class="mb-4 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
+      <div class="mb-4 flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
         <span>{{ 'SCORING.OFFLINE_PENDING' | transloco: { count: pendingCount() } }}</span>
         <button
           (click)="syncNow()"
@@ -30,38 +27,38 @@
     }
 
     @if (rows().length === 0) {
-      <p class="text-gray-500">{{ 'SCORING.NO_PARTICIPANTS' | transloco }}</p>
+      <p class="text-gray-500 dark:text-gray-400">{{ 'SCORING.NO_PARTICIPANTS' | transloco }}</p>
     } @else {
-      <div class="relative bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
         @if (processingAI()) {
-          <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
+          <div class="absolute inset-0 bg-white/60 dark:bg-gray-800/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
             <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-blue-700 font-semibold animate-pulse">{{ 'SCORING.AI_SCANNING' | transloco }}</p>
+            <p class="mt-4 text-blue-700 dark:text-blue-400 font-semibold animate-pulse">{{ 'SCORING.AI_SCANNING' | transloco }}</p>
           </div>
         }
 
         <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-100">
+          <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
             <tr>
-              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'SCORING.PARTICIPANT' | transloco }}</th>
-              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'SCORING.SCORE' | transloco }}</th>
-              <th class="text-center px-5 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'SCORING.STATUS' | transloco }}</th>
+              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'SCORING.PARTICIPANT' | transloco }}</th>
+              <th class="text-left px-5 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'SCORING.SCORE' | transloco }}</th>
+              <th class="text-center px-5 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'SCORING.STATUS' | transloco }}</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
             @for (row of rows(); track row.participant.id; let i = $index) {
               <tr
                 class="transition-colors duration-300"
                 [class.bg-green-50]="row.saved"
               >
-                <td class="px-5 py-3 text-sm text-gray-900">{{ row.participant.display_name }}</td>
+                <td class="px-5 py-3 text-sm text-gray-900 dark:text-white">{{ row.participant.display_name }}</td>
                 <td class="px-5 py-3">
                   @if (isBoolean) {
                     <button
                       (click)="toggleBoolean(row)"
                       class="w-10 h-6 rounded-full relative transition-colors"
-                      [class]="row.value === '1' ? 'bg-green-500' : 'bg-gray-300'"
+                      [class]="row.value === '1' ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'"
                     >
                       <span
                         class="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
@@ -74,7 +71,7 @@
                       type="number"
                       [(ngModel)]="row.value"
                       (ngModelChange)="onValueChange(row)"
-                      class="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      class="w-24 px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       placeholder="0"
                     />
                   } @else {
@@ -82,17 +79,17 @@
                       type="text"
                       [(ngModel)]="row.value"
                       (ngModelChange)="onValueChange(row)"
-                      class="w-40 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      class="w-40 px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                     />
                   }
                 </td>
                 <td class="px-5 py-3 text-center">
                   @if (row.saved) {
-                    <span class="text-xs text-green-600 font-medium">{{ 'SCORING.SAVED' | transloco }}</span>
+                    <span class="text-xs text-green-600 dark:text-green-400 font-medium">{{ 'SCORING.SAVED' | transloco }}</span>
                   } @else if (row.value) {
-                    <span class="text-xs text-yellow-600 font-medium">{{ 'SCORING.UNSAVED' | transloco }}</span>
+                    <span class="text-xs text-yellow-600 dark:text-yellow-400 font-medium">{{ 'SCORING.UNSAVED' | transloco }}</span>
                   } @else {
-                    <span class="text-xs text-gray-400">—</span>
+                    <span class="text-xs text-gray-400 dark:text-gray-500">—</span>
                   }
                 </td>
               </tr>
@@ -114,7 +111,7 @@
         <button
           (click)="cameraInput.click()"
           [disabled]="processingAI() || saving()"
-          class="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-700 text-sm font-medium rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-200"
+          class="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-sm font-medium rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors border border-indigo-200 dark:border-indigo-800"
         >
           <span>📸</span> {{ 'SCORING.AI_SCAN' | transloco }}
         </button>
@@ -133,7 +130,7 @@
       </div>
     }
   } @else {
-    <p class="text-gray-500 mt-6">{{ 'SCORING.ACTIVITY_NOT_FOUND' | transloco }}</p>
+    <p class="text-gray-500 dark:text-gray-400 mt-6">{{ 'SCORING.ACTIVITY_NOT_FOUND' | transloco }}</p>
   }
 </div>
 

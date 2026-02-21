@@ -1,6 +1,6 @@
 <div class="max-w-5xl mx-auto p-8">
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">{{ 'EVENTS.TITLE' | transloco }}</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ 'EVENTS.TITLE' | transloco }}</h1>
     @if (authService.isAdmin()) {
       <a
         routerLink="/events/import"
@@ -12,9 +12,9 @@
   </div>
 
   @if (loading()) {
-    <p class="text-gray-500">{{ 'COMMON.LOADING' | transloco }}</p>
+    <p class="text-gray-500 dark:text-gray-400">{{ 'COMMON.LOADING' | transloco }}</p>
   } @else if (events().length === 0) {
-    <div class="text-center py-12 text-gray-500">
+    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
       <p class="text-lg">{{ 'EVENTS.NO_EVENTS' | transloco }}</p>
       @if (authService.isAdmin()) {
         <p class="mt-2">
@@ -25,37 +25,37 @@
       }
     </div>
   } @else {
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
       <table class="w-full">
-        <thead class="bg-gray-50 border-b border-gray-200">
+        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
           <tr>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.NAME' | transloco }}</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.STATUS' | transloco }}</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.GROUPS' | transloco }}</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.PARTICIPANTS' | transloco }}</th>
-            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{{ 'EVENTS.ACTIONS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.NAME' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.STATUS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.GROUPS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.PARTICIPANTS' | transloco }}</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.ACTIONS' | transloco }}</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
           @for (event of events(); track event.id) {
             <tr>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ event.name }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">{{ event.name }}</td>
               <td class="px-6 py-4">
                 <span
                   class="text-xs px-2 py-1 rounded-full font-medium"
                   [class]="
                     event.status === 'ACTIVE'
-                      ? 'bg-green-100 text-green-700'
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                       : event.status === 'ARCHIVED'
-                        ? 'bg-gray-100 text-gray-600'
-                        : 'bg-yellow-100 text-yellow-700'
+                        ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
                   "
                 >
                   {{ event.status }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ event.group_count }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ event.participant_count }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ event.group_count }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ event.participant_count }}</td>
               <td class="px-6 py-4 flex items-center gap-3">
                 <a
                   [routerLink]="['/events', event.id]"

@@ -1,5 +1,7 @@
-@if (authService.isAuthenticated()) {
-  <app-navbar />
-}
-<router-outlet />
-<app-toast />
+<div class="min-h-screen bg-white dark:bg-gray-900">
+  @if (authService.isAuthenticated()) {
+    <app-navbar />
+  }
+  <router-outlet />
+  <app-toast />
+</div>

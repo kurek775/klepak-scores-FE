@@ -24,6 +24,7 @@ export interface DiplomaItem {
 export interface DiplomaTemplate {
   id: number;
   event_id: number;
+  name: string;
   bg_image_url: string | null;
   orientation: 'LANDSCAPE' | 'PORTRAIT';
   items: DiplomaItem[];

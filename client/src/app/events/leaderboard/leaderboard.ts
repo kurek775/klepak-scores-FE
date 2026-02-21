@@ -14,12 +14,12 @@ import { EventService } from '../event.service';
   imports: [RouterLink, TranslocoPipe],
 })
 export class Leaderboard implements OnInit {
-  leaderboard      = signal<LeaderboardResponse | null>(null);
-  loading          = signal(true);
+  leaderboard        = signal<LeaderboardResponse | null>(null);
+  loading            = signal(true);
   expandedActivities = signal<Set<number>>(new Set());
-  diplomaTemplate  = signal<DiplomaTemplate | null>(null);
-  generatingPdf    = signal(false);
-  eventId          = 0;
+  diplomaTemplates   = signal<DiplomaTemplate[]>([]);
+  generatingPdf      = signal(false);
+  eventId            = 0;
 
   constructor(
     private route:    ActivatedRoute,
@@ -40,8 +40,8 @@ export class Leaderboard implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    this.diplomaService.getTemplate(this.eventId).subscribe({
-      next: (t) => this.diplomaTemplate.set(t),
+    this.diplomaService.getTemplates(this.eventId).subscribe({
+      next: (templates) => this.diplomaTemplates.set(templates),
       error: () => {},
     });
   }
@@ -88,23 +88,26 @@ export class Leaderboard implements OnInit {
   }
 
   async downloadAllDiplomas(): Promise<void> {
-    const template = this.diplomaTemplate();
-    const lb       = this.leaderboard();
-    if (!template || !lb) return;
+    const templates = this.diplomaTemplates();
+    const lb        = this.leaderboard();
+    if (templates.length === 0 || !lb) return;
 
     this.generatingPdf.set(true);
     try {
-      const isLandscape = template.orientation === 'LANDSCAPE';
-      const pageW = isLandscape ? 297 : 210;
-      const pageH = isLandscape ? 210 : 297;
-
-      let bgBase64: string | null = null;
-      if (template.bg_image_url) {
-        bgBase64 = await this.resolveImageToBase64(template.bg_image_url);
+      // Pre-resolve all background images
+      const bgCache = new Map<string, string | null>();
+      for (const tpl of templates) {
+        if (tpl.bg_image_url && !bgCache.has(tpl.bg_image_url)) {
+          bgCache.set(tpl.bg_image_url, await this.resolveImageToBase64(tpl.bg_image_url));
+        }
       }
 
+      // Use orientation of first template to initialise the document
+      const firstTpl = templates[0];
+      const isFirstLandscape = firstTpl.orientation === 'LANDSCAPE';
+
       const doc = new jsPDF({
-        orientation: isLandscape ? 'landscape' : 'portrait',
+        orientation: isFirstLandscape ? 'landscape' : 'portrait',
         unit: 'mm',
         format: 'a4',
       });
@@ -113,28 +116,47 @@ export class Leaderboard implements OnInit {
       doc.addFileToVFS('Roboto-Regular.ttf', robotoData.split(',')[1]);
       doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
 
-      if (template.fonts) {
-        for (const font of template.fonts) {
-          const base64 = font.data.split(',')[1];
-          const fileName = `${font.name}.ttf`;
-          doc.addFileToVFS(fileName, base64);
-          doc.addFont(fileName, font.name, 'normal');
+      // Register all custom fonts across all templates
+      const registeredFonts = new Set<string>();
+      for (const tpl of templates) {
+        if (tpl.fonts) {
+          for (const font of tpl.fonts) {
+            if (!registeredFonts.has(font.name)) {
+              const base64 = font.data.split(',')[1];
+              const fileName = `${font.name}.ttf`;
+              doc.addFileToVFS(fileName, base64);
+              doc.addFont(fileName, font.name, 'normal');
+              registeredFonts.add(font.name);
+            }
+          }
         }
       }
 
+      let participantIndex = 0;
       let firstPage = true;
+
       for (const activity of lb.activities) {
         for (const cat of activity.categories) {
           for (const participant of cat.participants) {
-            if (!firstPage) doc.addPage();
+            const tpl = templates[participantIndex % templates.length];
+            participantIndex++;
+
+            const isLandscape = tpl.orientation === 'LANDSCAPE';
+            const pageW = isLandscape ? 297 : 210;
+            const pageH = isLandscape ? 210 : 297;
+
+            if (!firstPage) {
+              doc.addPage('a4', isLandscape ? 'landscape' : 'portrait');
+            }
             firstPage = false;
 
+            const bgBase64 = tpl.bg_image_url ? (bgCache.get(tpl.bg_image_url) ?? null) : null;
             if (bgBase64) {
               const fmt = bgBase64.includes('data:image/png') ? 'PNG' : 'JPEG';
               doc.addImage(bgBase64, fmt, 0, 0, pageW, pageH);
             }
 
-            for (const item of template.items) {
+            for (const item of tpl.items) {
               const xMm = (item.x / 100) * pageW;
               const yMm = (item.y / 100) * pageH;
 
@@ -143,7 +165,7 @@ export class Leaderboard implements OnInit {
 
               const itemFont = item.fontFamily && item.fontFamily !== 'default'
                 ? item.fontFamily : null;
-              const resolvedFont = itemFont ?? template.default_font ?? 'Roboto';
+              const resolvedFont = itemFont ?? tpl.default_font ?? 'Roboto';
 
               if (resolvedFont === 'Roboto') {
                 doc.setFont('Roboto', 'normal');

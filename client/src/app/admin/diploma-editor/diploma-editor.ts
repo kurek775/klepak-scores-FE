@@ -12,12 +12,15 @@ import { DiplomaService } from '../../events/diploma.service';
   imports: [FormsModule, RouterLink, TranslocoPipe],
 })
 export class DiplomaEditor implements OnInit, OnDestroy {
-  template     = signal<DiplomaTemplate | null>(null);
+  templates           = signal<DiplomaTemplate[]>([]);
+  selectedTemplateId  = signal<number | null>(null);
+
   items        = signal<DiplomaItem[]>([]);
   bgImageUrl   = signal('');
   orientation  = signal<'LANDSCAPE' | 'PORTRAIT'>('PORTRAIT');
   fonts        = signal<DiplomaFont[]>([]);
-  defaultFont  = signal<string>('');  
+  defaultFont  = signal<string>('');
+  templateName = signal<string>('');
 
   loading = signal(false);
   saving  = signal(false);
@@ -55,14 +58,12 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.loading.set(true);
-    this.diplomaService.getTemplate(this.eventId).subscribe({
-      next: (t) => {
-        this.template.set(t);
-        this.bgImageUrl.set(t.bg_image_url ?? '');
-        this.orientation.set(t.orientation);
-        this.items.set(t.items.map(i => ({ ...i })));
-        this.fonts.set(t.fonts ? t.fonts.map(f => ({ ...f })) : []);
-        this.defaultFont.set(t.default_font ?? '');
+    this.diplomaService.getTemplates(this.eventId).subscribe({
+      next: (templates) => {
+        this.templates.set(templates);
+        if (templates.length > 0) {
+          this._loadTemplate(templates[0]);
+        }
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -71,6 +72,38 @@ export class DiplomaEditor implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.getElementById('diploma-font-styles')?.remove();
+  }
+
+  private _loadTemplate(t: DiplomaTemplate): void {
+    this.selectedTemplateId.set(t.id);
+    this.templateName.set(t.name);
+    this.bgImageUrl.set(t.bg_image_url ?? '');
+    this.orientation.set(t.orientation);
+    this.items.set(t.items.map(i => ({ ...i })));
+    this.fonts.set(t.fonts ? t.fonts.map(f => ({ ...f })) : []);
+    this.defaultFont.set(t.default_font ?? '');
+  }
+
+  selectTemplate(t: DiplomaTemplate): void {
+    this._loadTemplate(t);
+  }
+
+  addTemplate(): void {
+    const n = this.templates().length + 1;
+    const body = {
+      name: `Template ${n}`,
+      orientation: 'LANDSCAPE' as const,
+      items: [],
+      fonts: [],
+      default_font: null,
+      bg_image_url: null,
+    };
+    this.diplomaService.createTemplate(this.eventId, body).subscribe({
+      next: (t) => {
+        this.templates.update(arr => [...arr, t]);
+        this._loadTemplate(t);
+      },
+    });
   }
 
   onBgFileChange(event: Event): void {
@@ -88,7 +121,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   onFontUpload(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    const name = file.name.replace(/\.[^/.]+$/, ''); 
+    const name = file.name.replace(/\.[^/.]+$/, '');
     const reader = new FileReader();
     reader.onload = () => {
       this.fonts.update(arr => [
@@ -165,31 +198,45 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   }
 
   saveTemplate(): void {
+    const templateId = this.selectedTemplateId();
+    if (templateId === null) return;
     this.saving.set(true);
-    const isNew = this.template() === null;
     const body = {
+      name: this.templateName(),
       bg_image_url: this.bgImageUrl() || null,
       orientation: this.orientation(),
       items: this.items(),
       fonts: this.fonts(),
       default_font: this.defaultFont() || null,
     };
-    this.diplomaService.saveTemplate(this.eventId, body, isNew).subscribe({
-      next: (t) => { this.template.set(t); this.saving.set(false); },
-      error: ()  => this.saving.set(false),
+    this.diplomaService.updateTemplate(this.eventId, templateId, body).subscribe({
+      next: (t) => {
+        this.templates.update(arr => arr.map(x => x.id === t.id ? t : x));
+        this.templateName.set(t.name);
+        this.saving.set(false);
+      },
+      error: () => this.saving.set(false),
     });
   }
 
   deleteTemplate(): void {
-    if (!this.template()) return;
-    this.diplomaService.deleteTemplate(this.eventId).subscribe({
+    const templateId = this.selectedTemplateId();
+    if (templateId === null) return;
+    this.diplomaService.deleteTemplate(this.eventId, templateId).subscribe({
       next: () => {
-        this.template.set(null);
-        this.items.set([]);
-        this.fonts.set([]);
-        this.defaultFont.set('');
-        this.bgImageUrl.set('');
-        this.orientation.set('LANDSCAPE');
+        const remaining = this.templates().filter(t => t.id !== templateId);
+        this.templates.set(remaining);
+        if (remaining.length > 0) {
+          this._loadTemplate(remaining[0]);
+        } else {
+          this.selectedTemplateId.set(null);
+          this.templateName.set('');
+          this.items.set([]);
+          this.fonts.set([]);
+          this.defaultFont.set('');
+          this.bgImageUrl.set('');
+          this.orientation.set('LANDSCAPE');
+        }
       },
     });
   }

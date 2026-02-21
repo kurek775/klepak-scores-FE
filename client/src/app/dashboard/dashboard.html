@@ -1,9 +1,9 @@
 <div class="max-w-4xl mx-auto p-8">
   @if (authService.user(); as user) {
     @if (!user.is_active) {
-      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-        <h1 class="text-2xl font-bold text-yellow-800 mb-2">{{ 'DASHBOARD.PENDING_TITLE' | transloco }}</h1>
-        <p class="text-yellow-700">
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 text-center">
+        <h1 class="text-2xl font-bold text-yellow-800 dark:text-yellow-300 mb-2">{{ 'DASHBOARD.PENDING_TITLE' | transloco }}</h1>
+        <p class="text-yellow-700 dark:text-yellow-400">
           {{ 'DASHBOARD.PENDING_MSG' | transloco }}
         </p>
       </div>
@@ -16,19 +16,19 @@
       @if (user.role === 'EVALUATOR') {
 
         @if (loadingGroups()) {
-          <p class="text-gray-500">{{ 'DASHBOARD.LOADING_GROUPS' | transloco }}</p>
+          <p class="text-gray-500 dark:text-gray-400">{{ 'DASHBOARD.LOADING_GROUPS' | transloco }}</p>
         } @else if (myGroups().length === 0) {
-          <p class="text-gray-500">{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
+          <p class="text-gray-500 dark:text-gray-400">{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
         } @else {
           <div class="grid gap-4 sm:grid-cols-2">
             @for (group of myGroups(); track group.id) {
               <a
                 [routerLink]="['/events', group.event_id]"
-                class="block bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:border-blue-300 hover:shadow transition"
+                class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow transition"
               >
-                <h3 class="font-semibold text-gray-900">{{ group.name }}</h3>
-                <p class="text-sm text-gray-500 mt-1">{{ group.event_name }}</p>
-                <p class="text-sm text-gray-400 mt-2">
+                <h3 class="font-semibold text-gray-900 dark:text-white">{{ group.name }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ group.event_name }}</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
                   {{ group.participant_count }} {{ group.participant_count !== 1 ? ('DASHBOARD.PARTICIPANTS_PLURAL' | transloco) : ('DASHBOARD.PARTICIPANTS' | transloco) }}
                 </p>
               </a>

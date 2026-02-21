@@ -138,7 +138,9 @@
     "GENERATING": "Generating PDF...",
     "DOWNLOAD_ALL": "Download All Diplomas",
     "PREVIEW": "Preview",
-    "COORDS_NOTE": "X and Y are percentages of page width/height"
+    "COORDS_NOTE": "X and Y are percentages of page width/height",
+    "TEMPLATE_NAME": "Template Name",
+    "ADD_TEMPLATE": "Add Template"
   },
   "ADMIN": {
     "MANAGE_USERS": "Manage Users",
@@ -152,6 +154,29 @@
     "PENDING": "Pending",
     "DEACTIVATE": "Deactivate",
     "APPROVE": "Approve"
+  },
+  "ERRORS": {
+    "SESSION_EXPIRED": "Session expired. Please log in again.",
+    "REQUEST_FAILED": "Request failed. Please try again.",
+    "EMAIL_EXISTS": "This email address is already registered.",
+    "INVALID_CREDENTIALS": "Invalid email or password.",
+    "CSV_INVALID": "File must be a .csv file.",
+    "CSV_TOO_LARGE": "CSV file exceeds the 5 MB limit.",
+    "CSV_ENCODING": "File must be UTF-8 encoded.",
+    "CSV_EMPTY": "CSV file is empty or has no headers.",
+    "CSV_NO_DATA": "CSV file contains no data rows.",
+    "IMAGE_TOO_LARGE": "Image file exceeds the 5 MB limit.",
+    "EVENT_NOT_FOUND": "Event not found.",
+    "ACTIVITY_NOT_FOUND": "Activity not found.",
+    "GROUP_NOT_FOUND": "Group not found.",
+    "USER_NOT_FOUND": "User not found.",
+    "AGE_CATEGORY_NOT_FOUND": "Age category not found.",
+    "ASSIGNMENT_NOT_FOUND": "Assignment not found.",
+    "NOT_ASSIGNED_GROUP": "You are not assigned to this group.",
+    "NOT_ASSIGNED_PARTICIPANT": "You are not assigned to this participant's group.",
+    "ADMIN_REQUIRED": "Admin access required.",
+    "EVALUATOR_ALREADY_ASSIGNED": "Evaluator is already assigned to this group.",
+    "CANNOT_MODIFY_ADMIN": "Cannot modify admin accounts."
   },
   "COMMON": {
     "LOADING": "Loading...",

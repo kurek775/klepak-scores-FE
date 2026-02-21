@@ -138,7 +138,9 @@
     "GENERATING": "Generuji PDF...",
     "DOWNLOAD_ALL": "Stáhnout všechna vysvědčení",
     "PREVIEW": "Náhled",
-    "COORDS_NOTE": "X a Y jsou procenta šířky/výšky stránky"
+    "COORDS_NOTE": "X a Y jsou procenta šířky/výšky stránky",
+    "TEMPLATE_NAME": "Název šablony",
+    "ADD_TEMPLATE": "Přidat šablonu"
   },
   "ADMIN": {
     "MANAGE_USERS": "Správa uživatelů",
@@ -152,6 +154,29 @@
     "PENDING": "Čekající",
     "DEACTIVATE": "Deaktivovat",
     "APPROVE": "Schválit"
+  },
+  "ERRORS": {
+    "SESSION_EXPIRED": "Relace vypršela. Přihlaste se znovu.",
+    "REQUEST_FAILED": "Požadavek selhal. Zkuste to prosím znovu.",
+    "EMAIL_EXISTS": "Tato e-mailová adresa je již registrována.",
+    "INVALID_CREDENTIALS": "Neplatný e-mail nebo heslo.",
+    "CSV_INVALID": "Soubor musí být ve formátu .csv.",
+    "CSV_TOO_LARGE": "CSV soubor překračuje limit 5 MB.",
+    "CSV_ENCODING": "Soubor musí být kódován v UTF-8.",
+    "CSV_EMPTY": "CSV soubor je prázdný nebo nemá záhlaví.",
+    "CSV_NO_DATA": "CSV soubor neobsahuje žádné datové řádky.",
+    "IMAGE_TOO_LARGE": "Obrázek překračuje limit 5 MB.",
+    "EVENT_NOT_FOUND": "Událost nenalezena.",
+    "ACTIVITY_NOT_FOUND": "Aktivita nenalezena.",
+    "GROUP_NOT_FOUND": "Skupina nenalezena.",
+    "USER_NOT_FOUND": "Uživatel nenalezen.",
+    "AGE_CATEGORY_NOT_FOUND": "Věková kategorie nenalezena.",
+    "ASSIGNMENT_NOT_FOUND": "Přiřazení nenalezeno.",
+    "NOT_ASSIGNED_GROUP": "Nejste přiřazen k této skupině.",
+    "NOT_ASSIGNED_PARTICIPANT": "Nejste přiřazen ke skupině tohoto účastníka.",
+    "ADMIN_REQUIRED": "Vyžadován přístup správce.",
+    "EVALUATOR_ALREADY_ASSIGNED": "Hodnotitel je již přiřazen k této skupině.",
+    "CANNOT_MODIFY_ADMIN": "Nelze upravovat účty správce."
   },
   "COMMON": {
     "LOADING": "Načítání...",

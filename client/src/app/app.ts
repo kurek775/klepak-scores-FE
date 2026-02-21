@@ -5,6 +5,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { AuthService } from './auth/auth.service';
 import { Navbar } from './shared/layout/navbar/navbar';
 import { ToastComponent } from './shared/toast.component';
+import { ThemeService } from './shared/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,11 @@ export class App implements OnInit {
   constructor(
     public authService: AuthService,
     private transloco: TranslocoService,
+    private themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
+    this.themeService.init();
     this.authService.tryRestoreSession();
     const saved = localStorage.getItem('lang');
     if (saved) {
