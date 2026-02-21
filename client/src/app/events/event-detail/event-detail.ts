@@ -30,7 +30,12 @@ export class EventDetailComponent implements OnInit {
   // Activity form
   newActivityName = '';
   newActivityType: EvaluationType = EvaluationType.NUMERIC_HIGH;
-  evaluationTypes = Object.values(EvaluationType);
+  evaluationTypes: { value: EvaluationType; key: string }[] = [
+    { value: EvaluationType.NUMERIC_HIGH, key: 'EVENTS.NUMERIC_HIGH' },
+    { value: EvaluationType.NUMERIC_LOW,  key: 'EVENTS.NUMERIC_LOW'  },
+    { value: EvaluationType.BOOLEAN,      key: 'EVENTS.BOOLEAN'      },
+    { value: EvaluationType.SCORE_SET,    key: 'EVENTS.SCORE_SET'    },
+  ];
 
   // Age bracket form
   newCatName = '';

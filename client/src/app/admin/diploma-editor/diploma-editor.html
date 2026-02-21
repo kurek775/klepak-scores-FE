@@ -281,7 +281,7 @@
 
     <!-- ═══ RIGHT PANEL — live preview ════════════════════════ -->
     <div class="flex-1 min-w-0">
-      <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">{{ 'DIPLOMA.PREVIEW' | transloco }}</p>
+  
       <div [style.aspectRatio]="orientation() === 'LANDSCAPE' ? '297/210' : '210/297'"
         [style.backgroundImage]="bgImageUrl() ? 'url(' + bgImageUrl() + ')' : ''"
         class="relative w-full bg-cover bg-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
@@ -303,10 +303,6 @@
         </div>
         }
       </div>
-      <p class="mt-2 text-xs text-gray-400 dark:text-gray-500">
-        {{ orientation() === 'LANDSCAPE' ? 'A4 297 × 210 mm' : 'A4 210 × 297 mm' }}
-        · {{ 'DIPLOMA.COORDS_NOTE' | transloco }}
-      </p>
     </div>
 
   </div>
