@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { vi } from 'vitest';
 
 import { EventService } from './event.service';
@@ -26,7 +27,13 @@ describe('EventService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [
+        HttpClientTestingModule,
+        TranslocoTestingModule.forRoot({
+          langs: { en: {} },
+          translocoConfig: { defaultLang: 'en', availableLangs: ['en'] },
+        }),
+      ],
     });
     service = TestBed.inject(EventService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -62,7 +69,7 @@ describe('EventService', () => {
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
-    expect(toastSpy).toHaveBeenCalledWith('Event deleted');
+    expect(toastSpy).toHaveBeenCalledWith('EVENTS.EVENT_DELETED');
   });
 
   it('importEvent() calls POST /events/import and shows success toast', () => {
@@ -79,7 +86,7 @@ describe('EventService', () => {
     const req = httpMock.expectOne(`${environment.apiUrl}/events/import`);
     expect(req.request.method).toBe('POST');
     req.flush(summary);
-    expect(toastSpy).toHaveBeenCalledWith('Event imported: 1 groups, 1 participants');
+    expect(toastSpy).toHaveBeenCalledWith('EVENTS.EVENT_IMPORTED');
   });
 
   it('getLeaderboard(id) calls GET /events/{id}/leaderboard', () => {
@@ -94,7 +101,7 @@ describe('EventService', () => {
     service.createAgeCategory(1, { name: 'Junior', min_age: 0, max_age: 17 }).subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1/age-categories`);
     req.flush({ id: 10, name: 'Junior', min_age: 0, max_age: 17 });
-    expect(toastSpy).toHaveBeenCalledWith('Age category added');
+    expect(toastSpy).toHaveBeenCalledWith('EVENTS.AGE_CATEGORY_ADDED');
   });
 
   it('deleteAgeCategory() calls DELETE and shows success toast', () => {
@@ -102,6 +109,6 @@ describe('EventService', () => {
     service.deleteAgeCategory(1, 10).subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1/age-categories/10`);
     req.flush(null);
-    expect(toastSpy).toHaveBeenCalledWith('Age category removed');
+    expect(toastSpy).toHaveBeenCalledWith('EVENTS.AGE_CATEGORY_REMOVED');
   });
 });
