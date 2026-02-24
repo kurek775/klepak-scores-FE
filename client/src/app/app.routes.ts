@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./auth/login/login').then((m) => m.Login) },
@@ -10,11 +11,29 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/register/register').then((m) => m.Register),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./auth/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./auth/reset-password/reset-password').then((m) => m.ResetPassword),
+  },
+  {
+    path: 'setup-account',
+    loadComponent: () => import('./auth/setup-account/setup-account').then((m) => m.SetupAccount),
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
     canActivate: [authGuard],
   },
 
+  {
+    path: 'events/create',
+    loadComponent: () =>
+      import('./events/event-create/event-create').then((m) => m.EventCreate),
+    canActivate: [authGuard, adminGuard],
+  },
   {
     path: 'events/import',
     loadComponent: () =>
@@ -45,6 +64,22 @@ export const routes: Routes = [
       import('./admin/diploma-editor/diploma-editor').then((m) => m.DiplomaEditor),
     canActivate: [authGuard, adminGuard],
   },
+  {
+    path: 'admin/invitations',
+    loadComponent: () =>
+      import('./admin/invitation-list/invitation-list').then((m) => m.InvitationList),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'admin/users',
+    loadComponent: () =>
+      import('./admin/user-list/user-list').then((m) => m.UserList),
+    canActivate: [authGuard, superAdminGuard],
+  },
 
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: '',
+    loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing),
+    pathMatch: 'full',
+  },
 ];

@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto p-8">
+<div class="max-w-4xl mx-auto p-8 page-enter">
   @if (authService.user(); as user) {
     @if (!user.is_active) {
       <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 text-center">
@@ -9,18 +9,40 @@
       </div>
     } @else {
 
-    @if (user.role === 'ADMIN') {
+    @if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+      <!-- Quick actions for admins -->
+      <div class="grid gap-4 sm:grid-cols-2 mb-8">
+        <a
+          routerLink="/admin/invitations"
+          class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow transition"
+        >
+          <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'INVITATIONS.INVITE' | transloco }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.INVITE_DESC' | transloco }}</p>
+        </a>
+        @if (user.role === 'SUPER_ADMIN') {
+          <a
+            routerLink="/admin/users"
+            class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow transition"
+          >
+            <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'NAV.USERS' | transloco }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.MANAGE_USERS_DESC' | transloco }}</p>
+          </a>
+        }
+      </div>
+
       <app-event-list></app-event-list>
-      <app-user-list></app-user-list>
     }
       @if (user.role === 'EVALUATOR') {
 
         @if (loadingGroups()) {
-          <p class="text-gray-500 dark:text-gray-400">{{ 'DASHBOARD.LOADING_GROUPS' | transloco }}</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="skeleton h-28 w-full"></div>
+            <div class="skeleton h-28 w-full"></div>
+          </div>
         } @else if (myGroups().length === 0) {
           <p class="text-gray-500 dark:text-gray-400">{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
         } @else {
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-4 sm:grid-cols-2 animate-stagger-list">
             @for (group of myGroups(); track group.id) {
               <a
                 [routerLink]="['/events', group.event_id]"

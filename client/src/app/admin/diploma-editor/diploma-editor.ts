@@ -69,6 +69,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       const style = document.createElement('style');
       style.id = 'diploma-font-styles';
       style.textContent = fonts
+        .filter(f => this._isSafeFontName(f.name) && this._isSafeFontData(f.data))
         .map(f => `@font-face { font-family: '${f.name}'; src: url('${f.data}'); }`)
         .join('\n');
       document.head.appendChild(style);
@@ -84,6 +85,14 @@ export class DiplomaEditor implements OnInit, OnDestroy {
         el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
+  }
+
+  private _isSafeFontName(name: string): boolean {
+    return /^[\w\s\-]+$/.test(name) && !name.includes("'") && !name.includes('"');
+  }
+
+  private _isSafeFontData(data: string): boolean {
+    return data.startsWith('data:font/') || data.startsWith('data:application/');
   }
 
   ngOnInit(): void {

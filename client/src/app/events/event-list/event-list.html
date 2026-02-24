@@ -1,31 +1,36 @@
-<div class="max-w-5xl mx-auto p-8">
+<div class="max-w-5xl mx-auto p-8 page-enter">
   <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ 'EVENTS.TITLE' | transloco }}</h1>
     @if (authService.isAdmin()) {
-      <a
-        routerLink="/events/import"
-        class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
-      >
-        {{ 'EVENTS.IMPORT' | transloco }}
-      </a>
+      <div class="flex items-center gap-2">
+        <a
+          routerLink="/events/create"
+          class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          {{ 'EVENTS.CREATE' | transloco }}
+        </a>
+        <a
+          routerLink="/events/import"
+          class="px-4 py-2 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          {{ 'EVENTS.IMPORT' | transloco }}
+        </a>
+      </div>
     }
   </div>
 
   @if (loading()) {
-    <p class="text-gray-500 dark:text-gray-400">{{ 'COMMON.LOADING' | transloco }}</p>
+    <div class="space-y-3">
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+    </div>
   } @else if (events().length === 0) {
     <div class="text-center py-12 text-gray-500 dark:text-gray-400">
       <p class="text-lg">{{ 'EVENTS.NO_EVENTS' | transloco }}</p>
-      @if (authService.isAdmin()) {
-        <p class="mt-2">
-          <a routerLink="/events/import" class="text-blue-600 hover:text-blue-800">
-            {{ 'EVENTS.IMPORT_FIRST' | transloco }}
-          </a>
-        </p>
-      }
     </div>
   } @else {
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="animate-fade-in bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
       <table class="w-full">
         <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
           <tr>

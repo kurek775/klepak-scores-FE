@@ -5,6 +5,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../../core/models/user.model';
+import { AuthService } from '../../auth/auth.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-user-list',
@@ -14,9 +16,11 @@ import { User, UserRole } from '../../core/models/user.model';
 export class UserList implements OnInit {
   users = signal<User[]>([]);
   loading = signal(false);
-  roles = Object.values(UserRole);
+  roles = Object.values(UserRole).filter((r) => r !== UserRole.SUPER_ADMIN);
 
-  constructor(private http: HttpClient) {}
+  private destroy$ = untilDestroyed();
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -24,9 +28,10 @@ export class UserList implements OnInit {
 
   loadUsers(): void {
     this.loading.set(true);
-    this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
+    this.http.get<User[]>(`${environment.apiUrl}/admin/users`).pipe(this.destroy$()).subscribe({
       next: (users) => {
-        this.users.set(users);
+        const myId = this.authService.user()?.id;
+        this.users.set(users.filter((u) => u.id !== myId));
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -53,5 +58,9 @@ export class UserList implements OnInit {
           this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
         },
       });
+  }
+
+  isSuperAdmin(user: User): boolean {
+    return user.role === UserRole.SUPER_ADMIN;
   }
 }

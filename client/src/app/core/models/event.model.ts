@@ -63,6 +63,7 @@ export interface EventDetail {
   created_at: string;
   groups: GroupDetail[];
   activities: Activity[];
+  event_evaluators: EvaluatorInfo[];
 }
 
 export interface ImportSummary {
@@ -70,4 +71,33 @@ export interface ImportSummary {
   event_name: string;
   groups_created: number;
   participants_created: number;
+}
+
+export interface MoveEvaluatorsRequest {
+  source_event_id: number;
+  user_ids: number[];
+}
+
+export interface CsvPreviewResponse {
+  headers: string[];
+  sample_rows: string[][];
+  total_rows: number;
+}
+
+export interface ParticipantInput {
+  display_name: string;
+  external_id?: string;
+  gender?: string;
+  age?: number | null;
+}
+
+export interface GroupInput {
+  name: string;
+  identifier: string;
+  participants: ParticipantInput[];
+}
+
+export interface ManualEventCreate {
+  name: string;
+  groups: GroupInput[];
 }

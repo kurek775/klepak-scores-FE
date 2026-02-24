@@ -21,15 +21,21 @@
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ user.full_name }}</td>
               <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ user.email }}</td>
               <td class="px-6 py-4">
-                <select
-                  [ngModel]="user.role"
-                  (ngModelChange)="changeRole(user, $event)"
-                  class="text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md px-2 py-1"
-                >
-                  @for (role of roles; track role) {
-                    <option [value]="role">{{ role }}</option>
-                  }
-                </select>
+                @if (isSuperAdmin(user)) {
+                  <span class="text-xs px-2 py-1 rounded-full font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                    {{ user.role }}
+                  </span>
+                } @else {
+                  <select
+                    [ngModel]="user.role"
+                    (ngModelChange)="changeRole(user, $event)"
+                    class="text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md px-2 py-1"
+                  >
+                    @for (role of roles; track role) {
+                      <option [value]="role">{{ role }}</option>
+                    }
+                  </select>
+                }
               </td>
               <td class="px-6 py-4">
                 <span
@@ -42,15 +48,17 @@
                 </span>
               </td>
               <td class="px-6 py-4">
-                <button
-                  (click)="toggleActive(user)"
-                  class="text-sm font-medium"
-                  [class]="user.is_active
-                    ? 'text-red-600 hover:text-red-800'
-                    : 'text-green-600 hover:text-green-800'"
-                >
-                  {{ user.is_active ? ('ADMIN.DEACTIVATE' | transloco) : ('ADMIN.APPROVE' | transloco) }}
-                </button>
+                @if (!isSuperAdmin(user)) {
+                  <button
+                    (click)="toggleActive(user)"
+                    class="text-sm font-medium"
+                    [class]="user.is_active
+                      ? 'text-red-600 hover:text-red-800'
+                      : 'text-green-600 hover:text-green-800'"
+                  >
+                    {{ user.is_active ? ('ADMIN.DEACTIVATE' | transloco) : ('ADMIN.APPROVE' | transloco) }}
+                  </button>
+                }
               </td>
             </tr>
           }

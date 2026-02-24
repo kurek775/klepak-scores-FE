@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { forkJoin, switchMap, map } from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
 import { Activity, EvaluationType, ScoreRecord } from '../../core/models/activity.model';
@@ -12,6 +13,7 @@ import { EventService } from '../../events/event.service';
 import { AIResult, AiReviewModal } from '../ai-review-modal/ai-review-modal';
 import { OfflineSyncService } from '../../core/services/offline-sync.service';
 import { ToastService } from '../../shared/toast.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 interface ScoreRow {
   participant: Participant;
@@ -37,6 +39,8 @@ export class ScoringView implements OnInit {
   eventId = 0;
   groupId = 0;
 
+  private destroy$ = untilDestroyed();
+
   constructor(
     private route: ActivatedRoute,
     private scoringService: ScoringService,
@@ -51,53 +55,54 @@ export class ScoringView implements OnInit {
     const activityId = Number(this.route.snapshot.paramMap.get('activityId'));
     this.loading.set(true);
 
-    this.eventService.getEvent(this.eventId).subscribe({
-      next: (event) => {
-        const act = event.activities.find((a) => a.id === activityId);
-        if (act) this.activity.set(act);
-      },
-    });
+    forkJoin({
+      event: this.eventService.getEvent(this.eventId),
+      groups: this.groupService.getMyGroups(),
+    })
+      .pipe(
+        switchMap(({ event, groups }) => {
+          const act = event.activities.find((a) => a.id === activityId);
+          if (act) this.activity.set(act);
 
-    this.groupService.getMyGroups().subscribe({
-      next: (groups) => {
-        const myGroup = groups.find((g) => g.event_id === this.eventId);
-        if (!myGroup) {
+          const myGroup = groups.find((g) => g.event_id === this.eventId);
+          if (!myGroup) {
+            this.loading.set(false);
+            return [];
+          }
+          this.groupId = myGroup.id;
+
+          const groupDetail = event.groups.find((g) => g.id === myGroup.id);
+          if (!groupDetail) {
+            this.loading.set(false);
+            return [];
+          }
+
+          return this.scoringService.getActivityRecords(activityId).pipe(
+            map((records) => ({ groupDetail, records })),
+          );
+        }),
+        this.destroy$(),
+      )
+      .subscribe({
+        next: (result) => {
+          if (!result) return;
+          const { groupDetail, records } = result as { groupDetail: any; records: ScoreRecord[] };
+          const recordMap = new Map<number, ScoreRecord>();
+          for (const r of records) {
+            recordMap.set(r.participant_id, r);
+          }
+          this.rows.set(
+            groupDetail.participants.map((p: Participant) => ({
+              participant: p,
+              value: recordMap.get(p.id)?.value_raw ?? '',
+              saved: recordMap.has(p.id),
+            })),
+          );
           this.loading.set(false);
-          return;
-        }
-        this.groupId = myGroup.id;
-
-        this.eventService.getEvent(this.eventId).subscribe({
-          next: (event) => {
-            const groupDetail = event.groups.find((g) => g.id === myGroup.id);
-            if (!groupDetail) {
-              this.loading.set(false);
-              return;
-            }
-            this.scoringService.getActivityRecords(activityId).subscribe({
-              next: (records) => {
-                const recordMap = new Map<number, ScoreRecord>();
-                for (const r of records) {
-                  recordMap.set(r.participant_id, r);
-                }
-                this.rows.set(
-                  groupDetail.participants.map((p) => ({
-                    participant: p,
-                    value: recordMap.get(p.id)?.value_raw ?? '',
-                    saved: recordMap.has(p.id),
-                  })),
-                );
-                this.loading.set(false);
-                this.refreshPendingCount(activityId);
-              },
-              error: () => this.loading.set(false),
-            });
-          },
-          error: () => this.loading.set(false),
-        });
-      },
-      error: () => this.loading.set(false),
-    });
+          this.refreshPendingCount(activityId);
+        },
+        error: () => this.loading.set(false),
+      });
   }
 
   private async refreshPendingCount(activityId: number): Promise<void> {
@@ -128,20 +133,23 @@ export class ScoringView implements OnInit {
     formData.append('activity_id', act.id.toString());
     formData.append('group_id', this.groupId.toString());
 
-    this.scoringService.processImage(formData).subscribe({
-      next: (results) => {
-        this.previewImageUrl.set(previewUrl);
-        this.pendingAIResults.set(results);
-        this.showReviewModal.set(true);
-        this.processingAI.set(false);
-        input.value = '';
-      },
-      error: () => {
-        URL.revokeObjectURL(previewUrl);
-        this.processingAI.set(false);
-        input.value = '';
-      },
-    });
+    this.scoringService
+      .processImage(formData)
+      .pipe(this.destroy$())
+      .subscribe({
+        next: (results) => {
+          this.previewImageUrl.set(previewUrl);
+          this.pendingAIResults.set(results);
+          this.showReviewModal.set(true);
+          this.processingAI.set(false);
+          input.value = '';
+        },
+        error: () => {
+          URL.revokeObjectURL(previewUrl);
+          this.processingAI.set(false);
+          input.value = '';
+        },
+      });
   }
 
   onAIConfirm(results: AIResult[]): void {
@@ -193,6 +201,7 @@ export class ScoringView implements OnInit {
     this.saving.set(true);
     this.scoringService
       .submitBulkRecords({ activity_id: act.id, records: entries })
+      .pipe(this.destroy$())
       .subscribe({
         next: () => {
           this.rows.update((rows) =>

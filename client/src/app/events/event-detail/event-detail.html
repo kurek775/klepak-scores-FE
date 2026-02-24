@@ -1,4 +1,4 @@
-<div class="max-w-5xl mx-auto p-8">
+<div class="max-w-5xl mx-auto p-8 page-enter">
   <a routerLink="/dashboard" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
@@ -39,7 +39,59 @@
     </div>
   </div>
 
+  <!-- Event Evaluator Pool (admin only) -->
   @if (authService.isAdmin()) {
+  <div class="mb-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.EVENT_EVALUATORS' | transloco }}</span>
+      <button
+        (click)="openMoveModal()"
+        class="ml-auto text-xs px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800"
+      >
+        {{ 'EVENTS.MOVE_FROM_EVENT' | transloco }}
+      </button>
+    </div>
+
+    <!-- Pool chips -->
+    <div class="flex flex-wrap gap-2 mb-3">
+      @for (evaluator of ev.event_evaluators; track evaluator.id) {
+        <span
+          draggable="true"
+          (dragstart)="onDragStart($event, evaluator.id)"
+          class="inline-flex items-center gap-1 text-xs bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 rounded-full px-2.5 py-1 cursor-grab active:cursor-grabbing"
+        >
+          {{ evaluator.full_name }}
+          <button (click)="removeFromPool(evaluator.id); $event.stopPropagation()"
+            class="ml-0.5 text-teal-600 hover:text-red-600 font-bold" title="Remove from pool">&times;</button>
+        </span>
+      }
+      @if (ev.event_evaluators.length === 0) {
+        <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_POOL_EVALUATORS' | transloco }}</span>
+      }
+    </div>
+
+    <!-- Add to pool -->
+    <div class="flex items-center gap-2">
+      <select
+        [(ngModel)]="addToPoolUserId"
+        class="px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+      >
+        <option [ngValue]="null">{{ 'EVENTS.SELECT_EVALUATOR' | transloco }}</option>
+        @for (user of getEvaluatorsNotInPool(); track user.id) {
+          <option [ngValue]="user.id">{{ user.full_name }} ({{ user.email }})</option>
+        }
+      </select>
+      <button
+        (click)="addToPool()"
+        [disabled]="!addToPoolUserId"
+        class="px-3 py-1.5 bg-teal-500 text-white text-xs font-medium rounded-lg hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ 'EVENTS.ADD_TO_POOL' | transloco }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Unassigned evaluators from pool (drag source) -->
   @let unassigned = getUnassignedEvaluators();
   @if (unassigned.length > 0) {
   <div class="mb-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-3">
@@ -61,7 +113,7 @@
   @if (ev.groups.length === 0) {
   <p class="text-gray-500 dark:text-gray-400">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
   } @else {
-  <div class="space-y-3">
+  <div class="space-y-3 animate-stagger-list">
     @for (group of ev.groups; track group.id) {
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
       <button (click)="toggleGroup(group.id)"
@@ -116,7 +168,7 @@
             @for (p of group.participants; track p.id) {
             <tr>
               <td class="px-5 py-2 text-sm text-gray-900 dark:text-white">{{ p.display_name }}</td>
-             
+
             </tr>
             }
           </tbody>
@@ -222,6 +274,64 @@
       }
     </div>
     }
+  </div>
+  }
+
+  <!-- Move Evaluators Modal -->
+  @if (showMoveModal()) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 modal-backdrop" (click)="closeMoveModal()">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full mx-4 p-6 modal-content" (click)="$event.stopPropagation()">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ 'EVENTS.MOVE_FROM_EVENT' | transloco }}</h2>
+
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.SOURCE_EVENT' | transloco }}</label>
+        <select
+          [(ngModel)]="sourceEventId"
+          (ngModelChange)="onSourceEventChange()"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"
+        >
+          <option [ngValue]="null">{{ 'EVENTS.SELECT_EVENT' | transloco }}</option>
+          @for (evt of allEvents(); track evt.id) {
+            <option [ngValue]="evt.id">{{ evt.name }}</option>
+          }
+        </select>
+      </div>
+
+      @if (sourceEvaluators().length > 0) {
+        <div class="max-h-60 overflow-y-auto space-y-1 mb-4">
+          @for (evaluator of sourceEvaluators(); track evaluator.id) {
+            <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                [checked]="moveSelection().has(evaluator.id)"
+                (change)="toggleMoveSelection(evaluator.id)"
+                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span class="text-sm text-gray-900 dark:text-white">{{ evaluator.full_name }}</span>
+              <span class="text-xs text-gray-400 dark:text-gray-500">{{ evaluator.email }}</span>
+            </label>
+          }
+        </div>
+      } @else if (sourceEventId) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic mb-4">{{ 'EVENTS.NO_POOL_EVALUATORS' | transloco }}</p>
+      }
+
+      <div class="flex justify-end gap-3">
+        <button
+          (click)="closeMoveModal()"
+          class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
+        >
+          {{ 'COMMON.CANCEL' | transloco }}
+        </button>
+        <button
+          (click)="confirmMove()"
+          [disabled]="moveSelection().size === 0"
+          class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ 'EVENTS.CONFIRM_MOVE' | transloco }}
+        </button>
+      </div>
+    </div>
   </div>
   }
   }

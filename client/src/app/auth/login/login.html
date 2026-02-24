@@ -34,6 +34,10 @@
         />
       </div>
 
+      <div class="text-right">
+        <a routerLink="/forgot-password" class="text-sm text-blue-600 hover:underline">{{ 'AUTH.FORGOT_PASSWORD' | transloco }}</a>
+      </div>
+
       <button
         type="submit"
         [disabled]="loading()"

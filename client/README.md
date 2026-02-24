@@ -1,59 +1,149 @@
-# Client
+# klepak-scores-FE
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+Angular SPA for the Klepak Scores competition-management platform. Provides event management, live scoring with offline support, AI-assisted OCR review, leaderboards, diploma editing, and multi-language support.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+| Component | Library / Version |
+|---|---|
+| Framework | Angular 21.1 (standalone components) |
+| CSS | Tailwind CSS v4 (CSS-first config) |
+| Offline storage | Dexie 4.3 (IndexedDB) |
+| PDF generation | jsPDF 4.1 |
+| i18n | @jsverse/transloco 8.2 (Czech + English) |
+| PWA | @angular/service-worker |
+| Image compression | browser-image-compression 2.0 |
+| Test runner | Vitest 4.0 |
+| Build system | Angular CLI (esbuild) |
 
-```bash
-ng serve
+## Key Features
+
+- **Dark mode** — Class-based toggle with anti-FOUC, persisted via `ThemeService`
+- **Offline scoring** — Dexie-backed queue, syncs bulk records when back online
+- **AI OCR review** — Modal for reviewing Gemini-extracted scores before saving
+- **Diploma editor** — Visual template designer with jsPDF generation
+- **Signal-based state** — `signal()`, `input()`, `output()`, `effect()` throughout
+- **Lazy-loaded routes** — All feature components loaded on demand
+- **PWA** — Service worker with prefetch for app shell, freshness strategy for API
+- **i18n** — Czech (default) and English via Transloco
+- **Invitation flow** — Token-based account setup for new evaluators
+- **Password reset** — Forgot/reset flow with email token
+
+## Project Structure
+
+```
+src/app/
+├── auth/                     # Authentication pages
+│   ├── login/
+│   ├── register/
+│   ├── forgot-password/
+│   ├── reset-password/
+│   ├── setup-account/        # Invitation-based onboarding
+│   └── auth.service.ts
+│
+├── events/                   # Event management
+│   ├── event-list/
+│   ├── event-create/
+│   ├── event-detail/
+│   ├── event-import/         # CSV import wizard (preview → map → import)
+│   ├── leaderboard/
+│   ├── event.service.ts
+│   ├── group.service.ts
+│   └── diploma.service.ts
+│
+├── scoring/                  # Score entry
+│   ├── scoring-view/         # Main scoring interface
+│   ├── ai-review-modal/      # OCR result review
+│   └── scoring.service.ts
+│
+├── admin/                    # Admin-only pages
+│   ├── diploma-editor/       # Visual diploma template designer
+│   ├── invitation-list/      # Manage user invitations
+│   ├── user-list/            # Super-admin user management
+│   └── invitation.service.ts
+│
+├── dashboard/                # Post-login landing
+├── pages/
+│   └── landing/              # Public landing page
+│
+├── core/
+│   ├── guards/               # auth, admin, super-admin guards
+│   ├── interceptors/         # JWT auth interceptor
+│   ├── models/               # TypeScript interfaces (6 model files)
+│   ├── services/             # offline-scores.db.ts, offline-sync.service.ts
+│   ├── validators/           # Shared password validator
+│   └── utils/                # destroy helper
+│
+├── shared/
+│   ├── layout/navbar/        # Top navigation bar
+│   ├── theme.service.ts      # Dark mode toggle
+│   ├── toast.component.ts    # Toast notifications
+│   └── toast.service.ts
+│
+├── app.routes.ts             # All routes (lazy-loaded)
+├── app.config.ts             # Providers (Transloco, SW, HttpClient)
+└── transloco-loader.ts       # i18n JSON loader
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Routes
 
-## Code scaffolding
+| Path | Component | Guards |
+|---|---|---|
+| `/` | Landing | — |
+| `login` | Login | — |
+| `register` | Register | — |
+| `forgot-password` | ForgotPassword | — |
+| `reset-password` | ResetPassword | — |
+| `setup-account` | SetupAccount | — |
+| `dashboard` | Dashboard | auth |
+| `events/create` | EventCreate | auth, admin |
+| `events/import` | EventImport | auth, admin |
+| `events/:id` | EventDetail | auth |
+| `events/:id/leaderboard` | Leaderboard | auth |
+| `events/:eventId/score/:activityId` | ScoringView | auth |
+| `admin/events/:id/diploma` | DiplomaEditor | auth, admin |
+| `admin/invitations` | InvitationList | auth, admin |
+| `admin/users` | UserList | auth, superAdmin |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Development
 
 ```bash
-ng test
+cd klepak-scores-FE/client
+
+# Install dependencies
+npm install
+
+# Start dev server (port 4200, proxies /api → localhost:8001)
+npm start
 ```
 
-## Running end-to-end tests
+The proxy config (`proxy.conf.json`) rewrites `/api/*` requests to `http://localhost:8001` with the `/api` prefix stripped. Make sure the backend is running via `docker compose up` from the repo root.
 
-For end-to-end (e2e) testing, run:
+## Build
 
 ```bash
-ng e2e
+# Production build
+npm run build
+
+# Output: dist/client/browser/
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Production builds enable the service worker, output hashing, and tree shaking. Budget limits: 500kB warning / 1MB error for initial bundle.
 
-## Additional Resources
+## Tests
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+# Run unit tests (Vitest)
+npm test
+```
+
+## Angular Patterns
+
+- **Standalone components** — No NgModules, all components use `imports: [...]` in decorator
+- **Signal-based state** — `signal()`, `input()`, `output()`, `effect()` for reactive state
+- **Lazy loading** — All routes use `loadComponent` for code splitting
+- **Cleanup** — All subscriptions use `takeUntilDestroyed(destroyRef)` pattern
+- **Signal inputs** — React to changes via `effect()` (not `ngOnChanges`)
+- **Auth guard** — Checks JWT expiry, not just token existence
+- **Dark mode** — `ThemeService` toggles `.dark` class on `<html>`, anti-FOUC inline script in `index.html`
+- **Tailwind v4** — CSS-first config with `@custom-variant dark` in `styles.css`

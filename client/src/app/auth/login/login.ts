@@ -1,9 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
 
 import { AuthService } from '../auth.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +16,8 @@ export class Login implements OnInit {
   form!: FormGroup;
   error = signal('');
   loading = signal(false);
+
+  private destroy$ = untilDestroyed();
 
   constructor(
     private fb: FormBuilder,
@@ -34,20 +38,18 @@ export class Login implements OnInit {
     this.loading.set(true);
 
     const { email, password } = this.form.value;
-    this.authService.login({ email, password }).subscribe({
-      next: () => {
-        this.authService.fetchMe().subscribe({
-          next: () => this.router.navigateByUrl('/dashboard'),
-          error: () => {
-            this.loading.set(false);
-            this.error.set('Failed to load user profile');
-          },
-        });
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set(err.error?.detail ?? 'Login failed');
-      },
-    });
+    this.authService
+      .login({ email, password })
+      .pipe(
+        switchMap(() => this.authService.fetchMe()),
+        this.destroy$(),
+      )
+      .subscribe({
+        next: () => this.router.navigateByUrl('/dashboard'),
+        error: (err) => {
+          this.loading.set(false);
+          this.error.set(err.error?.detail ?? 'Login failed');
+        },
+      });
   }
 }

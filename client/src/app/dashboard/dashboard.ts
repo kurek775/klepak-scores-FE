@@ -6,16 +6,18 @@ import { AuthService } from '../auth/auth.service';
 import { GroupService } from '../events/group.service';
 import { MyGroup } from '../core/models/event.model';
 import { UserRole } from '../core/models/user.model';
-import { UserList } from "../admin/user-list/user-list";
+import { untilDestroyed } from '../core/utils/destroy';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [RouterLink, TranslocoPipe, EventList, UserList],
+  imports: [RouterLink, TranslocoPipe, EventList],
 })
 export class Dashboard implements OnInit {
   myGroups = signal<MyGroup[]>([]);
   loadingGroups = signal(false);
+
+  private destroy$ = untilDestroyed();
 
   constructor(
     public authService: AuthService,
@@ -26,7 +28,7 @@ export class Dashboard implements OnInit {
     const user = this.authService.user();
     if (user?.is_active && user.role === UserRole.EVALUATOR) {
       this.loadingGroups.set(true);
-      this.groupService.getMyGroups().subscribe({
+      this.groupService.getMyGroups().pipe(this.destroy$()).subscribe({
         next: (groups) => {
           this.myGroups.set(groups);
           this.loadingGroups.set(false);

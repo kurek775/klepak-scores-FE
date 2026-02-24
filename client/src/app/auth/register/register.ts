@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../auth.service';
 import { TranslocoPipe } from '@jsverse/transloco';
-
-const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+import { PASSWORD_PATTERN } from '../../core/validators/password.validator';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-register',
@@ -16,18 +16,20 @@ export class Register implements OnInit {
   form!: FormGroup;
   error = signal('');
   loading = signal(false);
+  pendingApproval = signal(false);
+
+  private destroy$ = untilDestroyed();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(passwordPattern)]],
+      password: ['', [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
     });
   }
 
@@ -39,23 +41,11 @@ export class Register implements OnInit {
     const { fullName, email, password } = this.form.value;
     this.authService
       .register({ full_name: fullName, email, password })
+      .pipe(this.destroy$())
       .subscribe({
         next: () => {
-          this.authService.login({ email, password }).subscribe({
-            next: () => {
-              this.authService.fetchMe().subscribe({
-                next: () => this.router.navigateByUrl('/dashboard'),
-                error: () => {
-                  this.loading.set(false);
-                  this.error.set('Registration succeeded but auto-login failed');
-                },
-              });
-            },
-            error: () => {
-              this.loading.set(false);
-              this.error.set('Registration succeeded but auto-login failed');
-            },
-          });
+          this.loading.set(false);
+          this.pendingApproval.set(true);
         },
         error: (err) => {
           this.loading.set(false);

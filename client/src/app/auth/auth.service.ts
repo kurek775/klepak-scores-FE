@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
+  AcceptInvitationRequest,
   LoginRequest,
   RegisterRequest,
   TokenResponse,
@@ -20,8 +21,13 @@ export class AuthService {
 
   readonly user = this.userSignal.asReadonly();
   readonly isAuthenticated = computed(() => this.userSignal() !== null);
-  readonly isAdmin = computed(() => this.userSignal()?.role === UserRole.ADMIN);
+  readonly isAdmin = computed(() => {
+    const role = this.userSignal()?.role;
+    return role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN;
+  });
+  readonly isSuperAdmin = computed(() => this.userSignal()?.role === UserRole.SUPER_ADMIN);
   readonly id = computed(() => this.userSignal()?.id);
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -60,6 +66,24 @@ export class AuthService {
   fetchMe(): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/auth/me`).pipe(
       tap((user) => this.userSignal.set(user)),
+    );
+  }
+
+  validateInvitation(token: string): Observable<{ email: string; role: string }> {
+    return this.http.get<{ email: string; role: string }>(
+      `${environment.apiUrl}/auth/validate-invitation`,
+      { params: { token } },
+    );
+  }
+
+  acceptInvitation(body: AcceptInvitationRequest): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(
+      `${environment.apiUrl}/auth/accept-invitation`,
+      body,
+    ).pipe(
+      tap((res) => {
+        localStorage.setItem(TOKEN_KEY, res.access_token);
+      }),
     );
   }
 }

@@ -7,6 +7,7 @@ import { LeaderboardResponse } from '../../core/models/leaderboard.model';
 import { DiplomaTemplate } from '../../core/models/diploma.model';
 import { DiplomaService } from '../diploma.service';
 import { EventService } from '../event.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-leaderboard',
@@ -21,6 +22,8 @@ export class Leaderboard implements OnInit {
   generatingPdf      = signal(false);
   eventId            = 0;
 
+  private destroy$ = untilDestroyed();
+
   constructor(
     private route:    ActivatedRoute,
     private eventService: EventService,
@@ -31,7 +34,7 @@ export class Leaderboard implements OnInit {
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.eventService.getLeaderboard(this.eventId).subscribe({
+    this.eventService.getLeaderboard(this.eventId).pipe(this.destroy$()).subscribe({
       next: (data) => {
         this.leaderboard.set(data);
         this.expandedActivities.set(new Set(data.activities.map(a => a.activity_id)));
@@ -40,7 +43,7 @@ export class Leaderboard implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    this.diplomaService.getTemplates(this.eventId).subscribe({
+    this.diplomaService.getTemplates(this.eventId).pipe(this.destroy$()).subscribe({
       next: (templates) => this.diplomaTemplates.set(templates),
       error: () => {},
     });
