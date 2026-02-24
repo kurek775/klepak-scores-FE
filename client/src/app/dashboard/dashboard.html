@@ -14,7 +14,7 @@
       <div class="grid gap-4 sm:grid-cols-2 mb-8">
         <a
           routerLink="/admin/invitations"
-          class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow transition"
+          class="block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition"
         >
           <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'INVITATIONS.INVITE' | transloco }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.INVITE_DESC' | transloco }}</p>
@@ -22,7 +22,7 @@
         @if (user.role === 'SUPER_ADMIN') {
           <a
             routerLink="/admin/users"
-            class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow transition"
+            class="block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition"
           >
             <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'NAV.USERS' | transloco }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.MANAGE_USERS_DESC' | transloco }}</p>
@@ -46,7 +46,7 @@
             @for (group of myGroups(); track group.id) {
               <a
                 [routerLink]="['/events', group.event_id]"
-                class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow transition"
+                class="block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition"
               >
                 <h3 class="font-semibold text-gray-900 dark:text-white">{{ group.name }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ group.event_name }}</p>

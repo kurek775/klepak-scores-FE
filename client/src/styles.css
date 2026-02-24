@@ -31,6 +31,12 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
 /* ── Utility classes ───────────────────────────────────────── */
 
 .animate-fade-in {
@@ -60,7 +66,7 @@
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
 }
 
 /* ── Modal animations ──────────────────────────────────────── */
@@ -83,7 +89,7 @@
 }
 
 :where(.dark, .dark *) .skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, #1e1e2e 25%, #2a2a3e 50%, #1e1e2e 75%);
   background-size: 200% 100%;
 }
 
@@ -111,6 +117,8 @@
   .animate-fade-in-up,
   .animate-fade-in-down,
   .animate-scale-in,
+  .animate-float,
+  [class*="animate-[float"],
   .page-enter,
   .modal-backdrop,
   .modal-content,

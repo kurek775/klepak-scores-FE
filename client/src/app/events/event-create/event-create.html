@@ -20,16 +20,16 @@
           type="text"
           [(ngModel)]="eventName"
           required
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           placeholder="e.g. Summer Camp 2026"
         />
       </div>
 
       <!-- Groups -->
       @for (group of groups(); track $index; let gi = $index) {
-        <div class="animate-fade-in-up bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div class="animate-fade-in-up bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-white/[0.06] shadow-sm overflow-hidden">
           <!-- Group header -->
-          <div class="px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+          <div class="px-5 py-4 bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/[0.06]">
             <div class="flex items-center justify-between mb-3">
               <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase">
                 {{ 'CREATE.GROUP_NAME' | transloco }} #{{ gi + 1 }}
@@ -50,14 +50,14 @@
                 (ngModelChange)="updateGroup(gi, 'name', $event)"
                 [placeholder]="'CREATE.GROUP_NAME' | transloco"
                 required
-                class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
               <input
                 type="text"
                 [ngModel]="group.identifier"
                 (ngModelChange)="updateGroup(gi, 'identifier', $event)"
                 [placeholder]="'CREATE.GROUP_IDENTIFIER' | transloco"
-                class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
             </div>
           </div>
@@ -85,7 +85,7 @@
                           [ngModel]="p.display_name"
                           (ngModelChange)="updateParticipant(gi, pi, 'display_name', $event)"
                           required
-                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </td>
                       <td class="pr-2 pb-2">
@@ -93,14 +93,14 @@
                           type="text"
                           [ngModel]="p.external_id"
                           (ngModelChange)="updateParticipant(gi, pi, 'external_id', $event)"
-                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </td>
                       <td class="pr-2 pb-2">
                         <select
                           [ngModel]="p.gender"
                           (ngModelChange)="updateParticipant(gi, pi, 'gender', $event)"
-                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         >
                           <option value="">—</option>
                           <option value="M">M</option>
@@ -114,7 +114,7 @@
                           (ngModelChange)="updateParticipant(gi, pi, 'age', $event)"
                           min="0"
                           max="200"
-                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          class="w-full px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </td>
                       <td class="pb-2 text-center">
@@ -135,7 +135,7 @@
 
             <button
               (click)="addParticipant(gi)"
-              class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              class="text-sm text-emerald-500 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium"
             >
               + {{ 'CREATE.ADD_PARTICIPANT' | transloco }}
             </button>
@@ -146,7 +146,7 @@
       <!-- Add group button -->
       <button
         (click)="addGroup()"
-        class="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-colors"
+        class="w-full py-3 border-2 border-dashed border-gray-300 dark:border-white/10 rounded-xl text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-emerald-400 hover:text-emerald-600 dark:hover:border-emerald-500 dark:hover:text-emerald-400 transition-colors"
       >
         + {{ 'CREATE.ADD_GROUP' | transloco }}
       </button>
@@ -155,7 +155,7 @@
       <button
         (click)="submit()"
         [disabled]="loading() || !isValid"
-        class="w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {{ loading() ? ('COMMON.LOADING' | transloco) : ('CREATE.SUBMIT' | transloco) }}
       </button>
@@ -185,7 +185,7 @@
           </button>
           <a
             routerLink="/dashboard"
-            class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+            class="px-4 py-2 bg-white dark:bg-white/[0.05] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.08]"
           >
             {{ 'COMMON.BACK' | transloco }}
           </a>

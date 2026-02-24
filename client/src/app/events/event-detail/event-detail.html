@@ -10,7 +10,7 @@
           ev.status === 'ACTIVE'
             ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
             : ev.status === 'ARCHIVED'
-              ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+              ? 'bg-gray-100 text-gray-600 dark:bg-white/[0.05] dark:text-gray-400'
               : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
         ">
       {{ ('EVENTS.STATUS_' + ev.status) | transloco }}
@@ -18,7 +18,7 @@
     <div class="ml-auto flex items-center gap-2 flex-wrap">
       <a
         [routerLink]="['/events', ev.id, 'leaderboard']"
-        class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors border border-purple-200 dark:border-purple-800"
+        class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-800"
       >
         {{ 'EVENTS.LEADERBOARD' | transloco }}
       </a>
@@ -41,7 +41,7 @@
 
   <!-- Event Evaluator Pool (admin only) -->
   @if (authService.isAdmin()) {
-  <div class="mb-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+  <div class="mb-4 bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
     <div class="flex items-center gap-2 mb-2">
       <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.EVENT_EVALUATORS' | transloco }}</span>
       <button
@@ -74,7 +74,7 @@
     <div class="flex flex-col sm:flex-row gap-2">
       <select
         [(ngModel)]="addToPoolUserId"
-        class="w-full sm:flex-1 px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+        class="w-full sm:flex-1 px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
       >
         <option [ngValue]="null">{{ 'EVENTS.SELECT_EVALUATOR' | transloco }}</option>
         @for (user of getEvaluatorsNotInPool(); track user.id) {
@@ -84,7 +84,7 @@
       <button
         (click)="addToPool()"
         [disabled]="!addToPoolUserId"
-        class="px-3 py-1.5 bg-teal-500 text-white text-xs font-medium rounded-lg hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-xs font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {{ 'EVENTS.ADD_TO_POOL' | transloco }}
       </button>
@@ -94,7 +94,7 @@
   <!-- Unassigned evaluators from pool (drag source) -->
   @let unassigned = getUnassignedEvaluators();
   @if (unassigned.length > 0) {
-  <div class="mb-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-3">
+  <div class="mb-4 bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-3">
     <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mr-2">{{ 'EVENTS.AVAILABLE_EVALUATORS' | transloco }}</span>
     <div class="inline-flex flex-wrap gap-2 mt-1">
       @for (user of unassigned; track user.id) {
@@ -115,9 +115,9 @@
   } @else {
   <div class="space-y-3 animate-stagger-list">
     @for (group of ev.groups; track group.id) {
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-hidden">
       <button (click)="toggleGroup(group.id)"
-        class="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700">
+        class="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-white/[0.06]">
         <span class="text-xs transition-transform" [class.rotate-90]="isExpanded(group.id)">
           &#9654;
         </span>
@@ -127,18 +127,18 @@
         <span class="font-medium text-gray-900 dark:text-white">{{ group.name }}</span>
 
       </button>
-      <div class="px-5 py-2 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex flex-wrap items-center gap-2 transition-colors"
+      <div class="px-5 py-2 border-t border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.03] flex flex-wrap items-center gap-2 transition-colors"
         [class.border-2]="false" (dragover)="authService.isAdmin() && onDragOver($event)"
         (dragenter)="$event.preventDefault(); $any($event.currentTarget).classList.add('!border-blue-400', '!bg-blue-50')"
         (dragleave)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50')"
         (drop)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50'); onDrop($event, group.id)">
         <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mr-1">{{ 'EVENTS.EVALUATORS' | transloco }}</span>
         @for (evaluator of group.evaluators; track evaluator.id) {
-        <span class="inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full px-2.5 py-1">
+        <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-2.5 py-1">
           {{ evaluator.full_name }}
           @if (authService.isAdmin()) {
           <button (click)="removeEvaluator(group.id, evaluator.id); $event.stopPropagation()"
-            class="ml-0.5 text-blue-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_EVALUATOR' | transloco">&times;</button>
+            class="ml-0.5 text-emerald-500 hover:text-red-500 font-bold" [title]="'EVENTS.REMOVE_EVALUATOR' | transloco">&times;</button>
           }
         </span>
         }
@@ -154,17 +154,17 @@
       </div>
 
       @if (isExpanded(group.id)) {
-      <div class="border-t border-gray-200 dark:border-gray-700">
+      <div class="border-t border-gray-200 dark:border-white/[0.06]">
         @if (group.participants.length === 0) {
         <p class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{{ 'EVENTS.NO_PARTICIPANTS' | transloco }}</p>
         } @else {
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+          <thead class="bg-gray-50 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/[0.06]">
             <tr>
               <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.PARTICIPANT_NAME' | transloco }}</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+          <tbody class="divide-y divide-gray-100 dark:divide-white/[0.06]">
             @for (p of group.participants; track p.id) {
             <tr>
               <td class="px-5 py-2 text-sm text-gray-900 dark:text-white">{{ p.display_name }}</td>
@@ -185,7 +185,7 @@
   @if (authService.isAdmin()) {
   <div class="mt-8">
     <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.AGE_BRACKETS' | transloco }}</h2>
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
       @if (ageCategories().length > 0) {
       <div class="flex flex-wrap gap-2 mb-4">
         @for (cat of ageCategories(); track cat.id) {
@@ -202,20 +202,20 @@
         <div>
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.AGE_BRACKET_NAME' | transloco }}</label>
           <input type="text" [(ngModel)]="newCatName" [placeholder]="'EVENTS.AGE_BRACKET_NAME' | transloco"
-            class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-28" />
+            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-28" />
         </div>
         <div>
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.MIN_AGE' | transloco }}</label>
           <input type="number" [(ngModel)]="newCatMinAge" min="0"
-            class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
+            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-20" />
         </div>
         <div>
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.MAX_AGE' | transloco }}</label>
           <input type="number" [(ngModel)]="newCatMaxAge" min="0"
-            class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-20" />
+            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-20" />
         </div>
         <button (click)="addAgeCategory()" [disabled]="!newCatName.trim()"
-          class="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          class="px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
           {{ 'EVENTS.ADD' | transloco }}
         </button>
       </div>
@@ -229,25 +229,25 @@
     <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.ACTIVITIES' | transloco }}</h2>
 
     @if (authService.isAdmin()) {
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4 mb-4">
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4 mb-4">
       <div class="flex items-end gap-3 flex-wrap">
         <div class="flex-1">
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.ACTIVITY_NAME' | transloco }}</label>
           <input type="text" [(ngModel)]="newActivityName" [placeholder]="'EVENTS.ACTIVITY_NAME' | transloco"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
             (keydown.enter)="createActivity()" />
         </div>
         <div>
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.TYPE' | transloco }}</label>
           <select [(ngModel)]="newActivityType"
-            class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
             @for (t of evaluationTypes; track t.value) {
             <option [value]="t.value">{{ t.key | transloco }}</option>
             }
           </select>
         </div>
         <button (click)="createActivity()" [disabled]="!newActivityName.trim()"
-          class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          class="px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
           {{ 'EVENTS.ADD' | transloco }}
         </button>
       </div>
@@ -260,15 +260,15 @@
     <div class="flex flex-wrap gap-2">
       @for (activity of ev.activities; track activity.id) {
       @if (authService.isAdmin()) {
-      <span class="inline-flex items-center gap-1 text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-md px-2 py-1 border border-purple-200 dark:border-purple-700">
+      <span class="inline-flex items-center gap-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 rounded-md px-2 py-1 border border-emerald-200 dark:border-emerald-700">
         {{ activity.name }}
         <button (click)="deleteActivity(activity.id)"
-          class="ml-0.5 text-purple-500 hover:text-red-600"
+          class="ml-0.5 text-emerald-500 hover:text-red-600"
           [title]="'EVENTS.DELETE_ACTIVITY' | transloco">&times;</button>
       </span>
       } @else {
       <a [routerLink]="['/events', ev.id, 'score', activity.id]"
-        class="inline-flex items-center text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-md px-2 py-1 border border-purple-200 dark:border-purple-700 hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors cursor-pointer">
+        class="inline-flex items-center text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 rounded-md px-2 py-1 border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer">
         {{ activity.name }}
       </a>
       }
@@ -281,7 +281,7 @@
   <!-- Move Evaluators Modal -->
   @if (showMoveModal()) {
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 modal-backdrop" (click)="closeMoveModal()">
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full mx-4 p-6 modal-content" (click)="$event.stopPropagation()">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-white/[0.06] max-w-lg w-full mx-4 p-6 modal-content" (click)="$event.stopPropagation()">
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ 'EVENTS.MOVE_FROM_EVENT' | transloco }}</h2>
 
       <div class="mb-4">
@@ -289,7 +289,7 @@
         <select
           [(ngModel)]="sourceEventId"
           (ngModelChange)="onSourceEventChange()"
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm"
         >
           <option [ngValue]="null">{{ 'EVENTS.SELECT_EVENT' | transloco }}</option>
           @for (evt of allEvents(); track evt.id) {
@@ -301,12 +301,12 @@
       @if (sourceEvaluators().length > 0) {
         <div class="max-h-60 overflow-y-auto space-y-1 mb-4">
           @for (evaluator of sourceEvaluators(); track evaluator.id) {
-            <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+            <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.06] cursor-pointer">
               <input
                 type="checkbox"
                 [checked]="moveSelection().has(evaluator.id)"
                 (change)="toggleMoveSelection(evaluator.id)"
-                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
               />
               <span class="text-sm text-gray-900 dark:text-white">{{ evaluator.full_name }}</span>
               <span class="text-xs text-gray-400 dark:text-gray-500">{{ evaluator.email }}</span>
@@ -320,14 +320,14 @@
       <div class="flex justify-end gap-3">
         <button
           (click)="closeMoveModal()"
-          class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
+          class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-white/[0.05] border border-gray-300 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.08]"
         >
           {{ 'COMMON.CANCEL' | transloco }}
         </button>
         <button
           (click)="confirmMove()"
           [disabled]="moveSelection().size === 0"
-          class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-4 py-2 text-sm text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ 'EVENTS.CONFIRM_MOVE' | transloco }}
         </button>

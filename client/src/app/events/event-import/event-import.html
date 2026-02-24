@@ -7,12 +7,12 @@
       <div class="flex items-center gap-2">
         <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
           [class]="step() >= s
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'">
+            ? 'bg-gradient-to-r from-blue-600 to-emerald-600 text-white'
+            : 'bg-gray-200 dark:bg-white/[0.05] text-gray-500 dark:text-gray-400'">
           {{ s }}
         </span>
         @if (s < 3) {
-          <span class="w-8 h-0.5" [class]="step() > s ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'"></span>
+          <span class="w-8 h-0.5" [class]="step() > s ? 'bg-gradient-to-r from-blue-600 to-emerald-600' : 'bg-gray-200 dark:bg-white/[0.05]'"></span>
         }
       </div>
     }
@@ -37,7 +37,7 @@
           [(ngModel)]="eventName"
           name="eventName"
           required
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           placeholder="e.g. Summer Camp 2026"
         />
       </div>
@@ -58,7 +58,7 @@
       <button
         type="submit"
         [disabled]="loading() || !eventName.trim() || !selectedFile"
-        class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {{ loading() ? ('COMMON.LOADING' | transloco) : ('IMPORT.PREVIEW_MAP' | transloco) }}
       </button>
@@ -76,16 +76,16 @@
         {{ 'IMPORT.MAP_INSTRUCTIONS' | transloco }} ({{ p.total_rows }} {{ 'IMPORT.ROWS' | transloco }})
       </p>
 
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-x-auto">
+      <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+          <thead class="bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/[0.06]">
             <tr>
               <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'IMPORT.CSV_COLUMN' | transloco }}</th>
               <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'IMPORT.MAP_TO' | transloco }}</th>
               <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'IMPORT.SAMPLE' | transloco }}</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+          <tbody class="divide-y divide-gray-100 dark:divide-white/[0.06]">
             @for (header of p.headers; track header; let i = $index) {
               <tr>
                 <td class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-white">{{ header }}</td>
@@ -94,7 +94,7 @@
                     [ngModel]="getMappedField(header)"
                     (ngModelChange)="setMapping(header, $event)"
                     name="mapping_{{ i }}"
-                    class="px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    class="px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                   >
                     @for (field of systemFields; track field.value) {
                       <option
@@ -126,14 +126,14 @@
       <div class="flex gap-3 mt-4">
         <button
           (click)="backToUpload()"
-          class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+          class="px-4 py-2 bg-white dark:bg-white/[0.05] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.08]"
         >
           {{ 'COMMON.BACK' | transloco }}
         </button>
         <button
           (click)="confirmImport()"
           [disabled]="loading() || !mappingValid"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ loading() ? ('COMMON.LOADING' | transloco) : ('IMPORT.CONFIRM_IMPORT' | transloco) }}
         </button>
@@ -160,7 +160,7 @@
           </button>
           <a
             routerLink="/dashboard"
-            class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+            class="px-4 py-2 bg-white dark:bg-white/[0.05] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.08]"
           >
             {{ 'COMMON.BACK' | transloco }}
           </a>

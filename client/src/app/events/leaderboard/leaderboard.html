@@ -30,11 +30,11 @@
     } @else {
       <div class="space-y-4">
         @for (activity of lb.activities; track activity.activity_id) {
-          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <button
               (click)="toggleActivity(activity.activity_id)"
-              class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              class="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-white/[0.06] transition-colors"
             >
               <span class="font-semibold text-gray-900 dark:text-white flex-1 text-base">{{ activity.activity_name }}</span>
               <span class="text-xs text-gray-400 dark:text-gray-500 transition-transform" [class.rotate-90]="isExpanded(activity.activity_id)">
@@ -43,13 +43,13 @@
             </button>
 
             @if (isExpanded(activity.activity_id)) {
-              <div class="border-t border-gray-100 dark:border-gray-700">
+              <div class="border-t border-gray-100 dark:border-white/[0.06]">
                 @if (activity.categories.length === 0) {
                   <p class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{{ 'LEADERBOARD.NO_RECORDS' | transloco }}</p>
                 } @else {
                   @for (cat of activity.categories; track cat.gender + cat.age_category_name) {
-                    <div class="border-t border-gray-100 dark:border-gray-700 first:border-t-0">
-                      <div class="px-5 py-2 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-2">
+                    <div class="border-t border-gray-100 dark:border-white/[0.06] first:border-t-0">
+                      <div class="px-5 py-2 bg-gray-50 dark:bg-white/[0.03] flex items-center gap-2">
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {{ genderLabel(cat.gender) }}
                         </span>
@@ -59,7 +59,7 @@
 
                       <div class="overflow-x-auto">
                       <table class="w-full">
-                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+                        <thead class="bg-gray-50 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/[0.06]">
                           <tr>
                             <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-12">{{ 'LEADERBOARD.RANK' | transloco }}</th>
                             <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'LEADERBOARD.NAME' | transloco }}</th>
@@ -67,9 +67,9 @@
                             <th class="text-right px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-24">{{ 'LEADERBOARD.SCORE' | transloco }}</th>
                           </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
+                        <tbody class="divide-y divide-gray-50 dark:divide-white/[0.06]">
                           @for (p of cat.participants; track p.participant_id) {
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.06]">
                               <td class="px-5 py-2 text-sm text-center dark:text-gray-300">{{ rankMedal(p.rank) }}</td>
                               <td class="px-5 py-2 text-sm text-gray-900 dark:text-white">{{ p.display_name }}</td>
                               <td class="px-3 py-2 text-sm text-center text-gray-500 dark:text-gray-400">

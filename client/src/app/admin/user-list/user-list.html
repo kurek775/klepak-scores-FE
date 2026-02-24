@@ -4,9 +4,9 @@
   @if (loading()) {
     <p class="text-gray-500 dark:text-gray-400">{{ 'ADMIN.LOADING' | transloco }}</p>
   } @else {
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-x-auto">
+    <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-x-auto">
       <table class="w-full">
-        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <thead class="bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/[0.06]">
           <tr>
             <th class="text-left px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'ADMIN.NAME' | transloco }}</th>
             <th class="text-left px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'ADMIN.EMAIL' | transloco }}</th>
@@ -15,21 +15,21 @@
             <th class="text-left px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'ADMIN.ACTIONS' | transloco }}</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody class="divide-y divide-gray-200 dark:divide-white/[0.06]">
           @for (user of users(); track user.id) {
             <tr>
               <td class="px-3 sm:px-6 py-4 text-sm text-gray-900 dark:text-white">{{ user.full_name }}</td>
               <td class="px-3 sm:px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ user.email }}</td>
               <td class="px-3 sm:px-6 py-4">
                 @if (isSuperAdmin(user)) {
-                  <span class="text-xs px-2 py-1 rounded-full font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                     {{ ('ADMIN.ROLE_' + user.role) | transloco }}
                   </span>
                 } @else {
                   <select
                     [ngModel]="user.role"
                     (ngModelChange)="changeRole(user, $event)"
-                    class="text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md px-2 py-1"
+                    class="text-sm border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-md px-2 py-1"
                   >
                     @for (role of roles; track role) {
                       <option [value]="role">{{ ('ADMIN.ROLE_' + role) | transloco }}</option>

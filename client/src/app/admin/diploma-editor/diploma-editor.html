@@ -14,13 +14,13 @@
     <button (click)="selectTemplate(t)"
       class="px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors"
       [class]="selectedTemplateId() === t.id
-        ? 'bg-blue-600 text-white border-blue-600'
-        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'">
+        ? 'bg-gradient-to-r from-blue-600 to-emerald-600 text-white border-emerald-600'
+        : 'bg-white dark:bg-gray-900/50 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.06]'">
       {{ t.name }}
     </button>
     }
     <button (click)="addTemplate()"
-      class="px-3 py-1.5 text-sm font-medium rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+      class="px-3 py-1.5 text-sm font-medium rounded-lg border border-dashed border-gray-300 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/[0.06] transition-colors">
       + {{ 'DIPLOMA.ADD_TEMPLATE' | transloco }}
     </button>
   </div>
@@ -31,18 +31,18 @@
     <div class="w-full lg:w-[420px] lg:shrink-0 space-y-4">
 
       <!-- Template name -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
         <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">{{ 'DIPLOMA.TEMPLATE_NAME' | transloco }}</p>
         <input type="text" [ngModel]="templateName()" (ngModelChange)="templateName.set($event)"
-          class="w-full px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm" />
+          class="w-full px-3 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm" />
       </div>
 
       <!-- Background -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
         <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">{{ 'DIPLOMA.BACKGROUND' | transloco }}</p>
         <div class="flex items-center gap-2">
           <label
-            class="flex-1 flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-600 dark:text-gray-400">
+            class="flex-1 flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-white/10 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.06] text-sm text-gray-600 dark:text-gray-400">
             <span>{{ 'DIPLOMA.UPLOAD_BG' | transloco }}</span>
             <input type="file" accept="image/*" (change)="onBgFileChange($event)" class="hidden" />
           </label>
@@ -56,7 +56,7 @@
       </div>
 
       <!-- Orientation -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
         <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">{{ 'DIPLOMA.ORIENTATION' | transloco }}</p>
         <div class="flex gap-5">
           <label class="flex items-center gap-2 cursor-pointer">
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Custom Fonts -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
         <div class="flex items-center justify-between mb-2">
           <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'DIPLOMA.FONTS' | transloco }}</p>
           <label
@@ -106,7 +106,7 @@
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-500 dark:text-gray-400 shrink-0">{{ 'DIPLOMA.DEFAULT_FONT_LABEL' | transloco }}</label>
           <select [ngModel]="defaultFont()" (ngModelChange)="defaultFont.set($event)"
-            class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+            class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
             <option value="">{{ 'DIPLOMA.ROBOTO_BUILTIN' | transloco }}</option>
             @for (font of fonts(); track font.name) {
             <option [value]="font.name">{{ font.name }}</option>
@@ -117,28 +117,28 @@
       </div>
 
       <!-- Mock values (preview only) -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-amber-200 dark:border-amber-800 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-amber-200 dark:border-amber-800 px-5 py-4">
         <p class="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase mb-3">{{ 'DIPLOMA.MOCK_VALUES' | transloco }}</p>
         <div class="space-y-2">
           <div class="flex items-center gap-2">
             <label class="text-xs text-gray-500 dark:text-gray-400 w-28 shrink-0">{{ 'DIPLOMA.MOCK_NAME' | transloco }}</label>
             <input type="text" [ngModel]="mockName()" (ngModelChange)="mockName.set($event)"
-              class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+              class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
           </div>
           <div class="flex items-center gap-2">
             <label class="text-xs text-gray-500 dark:text-gray-400 w-28 shrink-0">{{ 'DIPLOMA.MOCK_PLACE' | transloco }}</label>
             <input type="number" min="1" [ngModel]="mockPlace()" (ngModelChange)="mockPlace.set(+$event)"
-              class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+              class="w-20 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
           </div>
           <div class="flex items-center gap-2">
             <label class="text-xs text-gray-500 dark:text-gray-400 w-28 shrink-0">{{ 'DIPLOMA.MOCK_ACTIVITY' | transloco }}</label>
             <input type="text" [ngModel]="mockActivity()" (ngModelChange)="mockActivity.set($event)"
-              class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+              class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
           </div>
           <div class="flex items-center gap-2">
             <label class="text-xs text-gray-500 dark:text-gray-400 w-28 shrink-0">{{ 'DIPLOMA.MOCK_GENDER' | transloco }}</label>
             <select [ngModel]="mockGender()" (ngModelChange)="mockGender.set($event)"
-              class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+              class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
               <option value="M">{{ 'LEADERBOARD.MEN' | transloco }}</option>
               <option value="F">{{ 'LEADERBOARD.WOMEN' | transloco }}</option>
             </select>
@@ -146,18 +146,18 @@
           <div class="flex items-center gap-2">
             <label class="text-xs text-gray-500 dark:text-gray-400 w-28 shrink-0">{{ 'DIPLOMA.MOCK_AGE_CAT' | transloco }}</label>
             <input type="text" [ngModel]="mockAgeCategory()" (ngModelChange)="mockAgeCategory.set($event)"
-              class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+              class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
           </div>
         </div>
         <p class="mt-2 text-xs text-amber-500 dark:text-amber-400 italic">{{ 'DIPLOMA.MOCK_NOTE' | transloco }}</p>
       </div>
 
       <!-- Items -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4">
+      <div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
         <div class="flex items-center justify-between mb-3">
           <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'DIPLOMA.ITEMS' | transloco }}</p>
           <button (click)="addItem()"
-            class="px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+            class="px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800">
             + {{ 'DIPLOMA.ADD_ITEM' | transloco }}
           </button>
         </div>
@@ -172,11 +172,11 @@
           <div [id]="'item-card-' + idx"
             class="border rounded-lg overflow-hidden transition-colors"
             [class]="selectedItemIndex() === idx
-              ? 'border-blue-500 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
-              : 'border-gray-200 dark:border-gray-700'">
+              ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/10'
+              : 'border-gray-200 dark:border-white/[0.06]'">
 
             <!-- Card header -->
-            <div class="flex items-center gap-1.5 px-3 py-2 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-700/50"
+            <div class="flex items-center gap-1.5 px-3 py-2 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-white/[0.06]"
               (click)="selectItem(idx)">
 
               <!-- Collapse chevron -->
@@ -207,7 +207,7 @@
                   class="p-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
                   [title]="'DIPLOMA.MOVE_DOWN' | transloco">↓</button>
                 <button (click)="duplicateItem(idx); $event.stopPropagation()"
-                  class="p-1 text-xs text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  class="p-1 text-xs text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400"
                   [title]="'DIPLOMA.DUPLICATE_ITEM' | transloco">⧉</button>
                 <button (click)="removeItem(idx); $event.stopPropagation()"
                   class="p-1 text-xs text-gray-400 hover:text-red-600 dark:hover:text-red-400"
@@ -217,13 +217,13 @@
 
             <!-- Card body (collapsible) -->
             @if (!isItemCollapsed(idx)) {
-            <div class="px-3 pb-3 pt-1 space-y-2 border-t border-gray-100 dark:border-gray-700">
+            <div class="px-3 pb-3 pt-1 space-y-2 border-t border-gray-100 dark:border-white/[0.06]">
 
               <!-- Type -->
               <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Type</label>
                 <select [ngModel]="item.type" (ngModelChange)="updateItem(idx, { type: $event })"
-                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
                   <option value="DYNAMIC">DYNAMIC</option>
                   <option value="STATIC">STATIC</option>
                 </select>
@@ -234,7 +234,7 @@
               <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Key</label>
                 <select [ngModel]="item.key" (ngModelChange)="updateItem(idx, { key: $event })"
-                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
                   @for (k of dynamicKeys; track k) {
                   <option [value]="k">{{ k }}</option>
                   }
@@ -244,7 +244,7 @@
               <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Text</label>
                 <input type="text" [ngModel]="item.text" (ngModelChange)="updateItem(idx, { text: $event })"
-                  placeholder="Static text..." class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                  placeholder="Static text..." class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
               </div>
               }
 
@@ -253,23 +253,23 @@
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">X %</label>
                 <input type="number" min="0" max="100" step="0.5" [ngModel]="item.x"
                   (ngModelChange)="updateItem(idx, { x: +$event })"
-                  class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                  class="w-20 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
                 <button (click)="updateItem(idx, item.centerH ? { centerH: false } : { x: 50, centerH: true })"
                   title="Center horizontally (text midpoint at X)"
                   class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerH
-                        ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
-                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-400 font-semibold dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700'
+                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-emerald-600 dark:text-gray-400 dark:border-white/10 dark:hover:bg-white/[0.06]'">
                   ↔
                 </button>
                 <label class="text-xs text-gray-500 dark:text-gray-400 ml-1">Y %</label>
                 <input type="number" min="0" max="100" step="0.5" [ngModel]="item.y"
                   (ngModelChange)="updateItem(idx, { y: +$event })"
-                  class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                  class="w-20 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
                 <button (click)="updateItem(idx, item.centerV ? { centerV: false } : { y: 50, centerV: true })"
                   title="Center vertically (text midpoint at Y)"
                   class="px-2 py-1 text-xs border rounded transition-colors" [class]="item.centerV
-                        ? 'bg-blue-100 text-blue-700 border-blue-400 font-semibold dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
-                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700'">
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-400 font-semibold dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700'
+                        : 'text-gray-500 border-gray-300 hover:bg-gray-100 hover:text-emerald-600 dark:text-gray-400 dark:border-white/10 dark:hover:bg-white/[0.06]'">
                   ↕
                 </button>
               </div>
@@ -279,22 +279,22 @@
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Size</label>
                 <input type="number" min="6" max="200" [ngModel]="item.fontSize"
                   (ngModelChange)="updateItem(idx, { fontSize: +$event })"
-                  class="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm" />
+                  class="w-16 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
                 <select [ngModel]="item.fontWeight" (ngModelChange)="updateItem(idx, { fontWeight: $event })"
-                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
                   @for (fw of fontWeights; track fw) {
                   <option [value]="fw">{{ fw }}</option>
                   }
                 </select>
                 <input type="color" [ngModel]="item.color" (ngModelChange)="updateItem(idx, { color: $event })"
-                  class="w-8 h-8 rounded border border-gray-300 dark:border-gray-600 cursor-pointer p-0.5" />
+                  class="w-8 h-8 rounded border border-gray-300 dark:border-white/10 cursor-pointer p-0.5" />
               </div>
 
               <!-- Font family -->
               <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Font</label>
                 <select [ngModel]="item.fontFamily || 'default'" (ngModelChange)="updateItem(idx, { fontFamily: $event })"
-                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm">
+                  class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm">
                   <option value="default">{{ 'DIPLOMA.ROBOTO_BUILTIN' | transloco }}</option>
                   @for (font of fonts(); track font.name) {
                   <option [value]="font.name">{{ font.name }}</option>
@@ -316,7 +316,7 @@
       <!-- Actions -->
       <div class="flex gap-3">
         <button (click)="saveTemplate()" [disabled]="saving()"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
           @if (saving()) { {{ 'COMMON.LOADING' | transloco }} } @else { {{ 'DIPLOMA.SAVE' | transloco }} }
         </button>
         @if (selectedTemplateId() !== null) {
@@ -334,7 +334,7 @@
       <div #previewContainer
         [style.aspectRatio]="orientation() === 'LANDSCAPE' ? '297/210' : '210/297'"
         [style.backgroundImage]="bgImageUrl() ? 'url(' + bgImageUrl() + ')' : ''"
-        class="relative w-full bg-cover bg-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
+        class="relative w-full bg-cover bg-center border border-gray-300 dark:border-white/10 rounded-lg overflow-hidden"
         [class.bg-gray-100]="!bgImageUrl()"
         (click)="onPreviewBackgroundClick()">
 
@@ -355,8 +355,8 @@
           [style.fontFamily]="previewFontFamily(item)" [style.transform]="previewTransform(item)"
           class="absolute whitespace-nowrap select-none cursor-grab active:cursor-grabbing transition-shadow"
           [class]="selectedItemIndex() === idx
-            ? 'ring-2 ring-blue-500 ring-offset-1 bg-blue-500/10 rounded'
-            : 'hover:ring-1 hover:ring-blue-300 hover:ring-offset-1 rounded'"
+            ? 'ring-2 ring-emerald-500 ring-offset-1 bg-emerald-500/10 rounded'
+            : 'hover:ring-1 hover:ring-emerald-300 hover:ring-offset-1 rounded'"
           (pointerdown)="onItemPointerDown($event, idx, previewContainer)"
           (click)="$event.stopPropagation()">
           {{ previewText(item) }}

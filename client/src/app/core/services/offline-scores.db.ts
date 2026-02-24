@@ -13,7 +13,7 @@ export class OfflineScoresDb extends Dexie {
   pendingRecords!: Table<PendingRecord>;
 
   constructor() {
-    super('klepakOffline');
+    super('vorOffline');
     this.version(1).stores({
       pendingRecords: '++id, activityId, groupId',
     });
