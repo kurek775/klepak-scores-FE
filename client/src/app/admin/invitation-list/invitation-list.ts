@@ -1,10 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 
 import { InvitationService } from '../invitation.service';
 import { AuthService } from '../../auth/auth.service';
+import { ToastService } from '../../shared/toast.service';
 import { InvitationRead } from '../../core/models/user.model';
 import { untilDestroyed } from '../../core/utils/destroy';
 
@@ -26,6 +27,8 @@ export class InvitationList implements OnInit {
   constructor(
     private invitationService: InvitationService,
     public authService: AuthService,
+    private toast: ToastService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +61,7 @@ export class InvitationList implements OnInit {
       },
       error: (err) => {
         this.inviteLoading.set(false);
-        this.inviteError.set(err.error?.detail ?? 'Failed to send invitation');
+        this.inviteError.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
       },
     });
   }
@@ -66,6 +69,7 @@ export class InvitationList implements OnInit {
   revoke(id: number): void {
     this.invitationService.revoke(id).pipe(this.destroy$()).subscribe({
       next: () => this.loadInvitations(),
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 }

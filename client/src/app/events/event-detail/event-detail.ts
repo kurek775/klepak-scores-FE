@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { EventDetail, EventSummary, EvaluatorInfo } from '../../core/models/event.model';
 import { Activity, EvaluationType } from '../../core/models/activity.model';
@@ -64,13 +64,14 @@ export class EventDetailComponent implements OnInit {
     private route: ActivatedRoute,
     public authService: AuthService,
     private toast: ToastService,
+    private transloco: TranslocoService,
     private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loading.set(true);
-    this.eventService.getEvent(id).subscribe({
+    this.eventService.getEvent(id).pipe(this.destroy$()).subscribe({
       next: (event) => {
         this.event.set(event);
         this.expandedGroups.set(new Set(event.groups.map((g) => g.id)));
@@ -79,17 +80,19 @@ export class EventDetailComponent implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    this.eventService.getAgeCategories(id).subscribe({
+    this.eventService.getAgeCategories(id).pipe(this.destroy$()).subscribe({
       next: (cats) => this.ageCategories.set(cats),
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
 
     if (this.authService.isAdmin()) {
-      this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
+      this.http.get<User[]>(`${environment.apiUrl}/admin/users`).pipe(this.destroy$()).subscribe({
         next: (users) => {
           this.availableEvaluators.set(
             users.filter((u) => u.is_active && u.role === UserRole.EVALUATOR),
           );
         },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
     }
   }
@@ -127,17 +130,18 @@ export class EventDetailComponent implements OnInit {
     const ev = this.event();
     if (!ev || !this.addToPoolUserId) return;
     const userId = this.addToPoolUserId;
-    this.eventService.assignEventEvaluator(ev.id, userId).subscribe({
+    this.eventService.assignEventEvaluator(ev.id, userId).pipe(this.destroy$()).subscribe({
       next: () => {
         const user = this.availableEvaluators().find((u) => u.id === userId);
         if (user) {
           this.event.update((e) =>
             e ? { ...e, event_evaluators: [...e.event_evaluators, { id: user.id, email: user.email, full_name: user.full_name }] } : e,
           );
-          this.toast.success(`${user.full_name} added to pool`);
+          this.toast.success(this.transloco.translate('EVENTS.ADDED_TO_POOL', { name: user.full_name }));
         }
         this.addToPoolUserId = null;
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
@@ -147,10 +151,10 @@ export class EventDetailComponent implements OnInit {
     const evaluator = ev.event_evaluators.find((e) => e.id === userId);
     // Check if evaluator is assigned to any group
     const inGroup = ev.groups.some((g) => g.evaluators.some((e) => e.id === userId));
-    if (inGroup && !confirm('This evaluator is assigned to a group. Removing from pool will also remove group assignment. Continue?')) {
+    if (inGroup && !confirm(this.transloco.translate('EVENTS.CONFIRM_REMOVE_POOL_EVALUATOR'))) {
       return;
     }
-    this.eventService.removeEventEvaluator(ev.id, userId).subscribe({
+    this.eventService.removeEventEvaluator(ev.id, userId).pipe(this.destroy$()).subscribe({
       next: () => {
         this.event.update((e) => {
           if (!e) return e;
@@ -163,18 +167,20 @@ export class EventDetailComponent implements OnInit {
             })),
           };
         });
-        this.toast.success('Removed from pool');
+        this.toast.success(this.transloco.translate('EVENTS.REMOVED_FROM_POOL'));
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
   openMoveModal(): void {
-    this.eventService.listEvents().subscribe({
+    this.eventService.listEvents().pipe(this.destroy$()).subscribe({
       next: (events) => {
         const ev = this.event();
         this.allEvents.set(events.filter((e) => e.id !== ev?.id));
         this.showMoveModal.set(true);
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
@@ -190,11 +196,12 @@ export class EventDetailComponent implements OnInit {
       this.sourceEvaluators.set([]);
       return;
     }
-    this.eventService.listEventEvaluators(this.sourceEventId).subscribe({
+    this.eventService.listEventEvaluators(this.sourceEventId).pipe(this.destroy$()).subscribe({
       next: (evals) => {
         this.sourceEvaluators.set(evals);
         this.moveSelection.set(new Set());
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
@@ -218,15 +225,17 @@ export class EventDetailComponent implements OnInit {
         source_event_id: this.sourceEventId,
         user_ids: Array.from(this.moveSelection()),
       })
+      .pipe(this.destroy$())
       .subscribe({
         next: () => {
           // Refresh event to get updated evaluator pool
-          this.eventService.getEvent(ev.id).subscribe({
+          this.eventService.getEvent(ev.id).pipe(this.destroy$()).subscribe({
             next: (updated) => this.event.set(updated),
           });
           this.closeMoveModal();
-          this.toast.success('Evaluators moved');
+          this.toast.success(this.transloco.translate('EVENTS.EVALUATORS_MOVED'));
         },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
   }
 
@@ -255,7 +264,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   assignEvaluator(groupId: number, userId: number): void {
-    this.groupService.assignEvaluator(groupId, userId).subscribe({
+    this.groupService.assignEvaluator(groupId, userId).pipe(this.destroy$()).subscribe({
       next: () => {
         const ev = this.event();
         const evaluator = ev?.event_evaluators.find((u) => u.id === userId)
@@ -278,14 +287,15 @@ export class EventDetailComponent implements OnInit {
               ),
             };
           });
-          this.toast.success(`${evaluator.full_name} assigned`);
+          this.toast.success(this.transloco.translate('EVENTS.EVALUATOR_ASSIGNED', { name: evaluator.full_name }));
         }
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
   removeEvaluator(groupId: number, userId: number): void {
-    this.groupService.removeEvaluator(groupId, userId).subscribe({
+    this.groupService.removeEvaluator(groupId, userId).pipe(this.destroy$()).subscribe({
       next: () => {
         this.event.update((ev) => {
           if (!ev) return ev;
@@ -298,8 +308,9 @@ export class EventDetailComponent implements OnInit {
             ),
           };
         });
-        this.toast.success('Evaluator removed');
+        this.toast.success(this.transloco.translate('EVENTS.EVALUATOR_REMOVED'));
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
@@ -329,20 +340,21 @@ export class EventDetailComponent implements OnInit {
           );
           this.newActivityName = '';
           this.savingActivity.set(false);
-          this.toast.success(`Activity "${activity.name}" created`);
+          this.toast.success(this.transloco.translate('EVENTS.ACTIVITY_CREATED', { name: activity.name }));
         },
         error: () => this.savingActivity.set(false),
       });
   }
 
   deleteActivity(activityId: number): void {
-    this.scoringService.deleteActivity(activityId).subscribe({
+    this.scoringService.deleteActivity(activityId).pipe(this.destroy$()).subscribe({
       next: () => {
         this.event.update((e) =>
           e ? { ...e, activities: e.activities.filter((a) => a.id !== activityId) } : e,
         );
-        this.toast.success('Activity deleted');
+        this.toast.success(this.transloco.translate('EVENTS.ACTIVITY_DELETED'));
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 
@@ -366,6 +378,7 @@ export class EventDetailComponent implements OnInit {
         min_age: this.newCatMinAge,
         max_age: this.newCatMaxAge,
       })
+      .pipe(this.destroy$())
       .subscribe({
         next: (cat) => {
           this.ageCategories.update((cats) => [...cats, cat]);
@@ -373,16 +386,18 @@ export class EventDetailComponent implements OnInit {
           this.newCatMinAge = 0;
           this.newCatMaxAge = 17;
         },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
   }
 
   removeAgeCategory(categoryId: number): void {
     const ev = this.event();
     if (!ev) return;
-    this.eventService.deleteAgeCategory(ev.id, categoryId).subscribe({
+    this.eventService.deleteAgeCategory(ev.id, categoryId).pipe(this.destroy$()).subscribe({
       next: () => {
         this.ageCategories.update((cats) => cats.filter((c) => c.id !== categoryId));
       },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 }

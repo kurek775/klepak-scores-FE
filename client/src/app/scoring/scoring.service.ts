@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { TranslocoService } from '@jsverse/transloco';
 
 import { environment } from '../../environments/environment';
 import { Activity, ScoreRecord } from '../core/models/activity.model';
@@ -11,6 +12,7 @@ export class ScoringService {
   constructor(
     private http: HttpClient,
     private toast: ToastService,
+    private transloco: TranslocoService,
   ) { }
 
   createActivity(body: {
@@ -43,7 +45,7 @@ export class ScoringService {
     activity_id: number;
   }): Observable<ScoreRecord> {
     return this.http.post<ScoreRecord>(`${environment.apiUrl}/records`, body).pipe(
-      tap(() => this.toast.success('Record saved')),
+      tap(() => this.toast.success(this.transloco.translate('SCORING.RECORD_SAVED'))),
     );
   }
 
@@ -52,7 +54,7 @@ export class ScoringService {
     records: { participant_id: number; value_raw: string | number }[];
   }): Observable<ScoreRecord[]> {
     return this.http.post<ScoreRecord[]>(`${environment.apiUrl}/records/bulk`, body).pipe(
-      tap((records) => this.toast.success(`${records.length} records saved`)),
+      tap((records) => this.toast.success(this.transloco.translate('SCORING.RECORDS_SAVED', { count: records.length }))),
     );
   }
 

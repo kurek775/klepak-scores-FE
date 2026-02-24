@@ -33,7 +33,8 @@
     "CONFIRM_PASSWORD": "Confirm Password",
     "PASSWORD_MISMATCH": "Passwords do not match.",
     "RESET_BTN": "Reset Password",
-    "RESET_SUCCESS": "Your password has been reset successfully. You can now sign in with your new password."
+    "RESET_SUCCESS": "Your password has been reset successfully. You can now sign in with your new password.",
+    "MISSING_RESET_TOKEN": "Missing reset token."
   },
   "DASHBOARD": {
     "PENDING_TITLE": "Account Pending Approval",
@@ -98,7 +99,28 @@
     "SOURCE_EVENT": "Source Event",
     "SELECT_EVENT": "-- Select event --",
     "CONFIRM_MOVE": "Move Selected",
-    "CREATE": "Create Event"
+    "CREATE": "Create Event",
+    "DELETE_ACTIVITY": "Delete activity",
+    "REMOVE_FROM_POOL": "Remove from pool",
+    "REMOVE_EVALUATOR": "Remove evaluator",
+    "REMOVE_AGE_CATEGORY": "Remove category",
+    "CONFIRM_DELETE_EVENT": "Delete event \"{{name}}\"? This will also delete all groups and participants.",
+    "CONFIRM_REMOVE_POOL_EVALUATOR": "This evaluator is assigned to a group. Removing from pool will also remove group assignment. Continue?",
+    "ADDED_TO_POOL": "{{name}} added to pool",
+    "REMOVED_FROM_POOL": "Removed from pool",
+    "EVALUATORS_MOVED": "Evaluators moved",
+    "EVALUATOR_ASSIGNED": "{{name}} assigned",
+    "EVALUATOR_REMOVED": "Evaluator removed",
+    "ACTIVITY_CREATED": "Activity \"{{name}}\" created",
+    "ACTIVITY_DELETED": "Activity deleted",
+    "AGE_CATEGORY_ADDED": "Age category added",
+    "AGE_CATEGORY_REMOVED": "Age category removed",
+    "EVENT_DELETED": "Event deleted",
+    "EVENT_IMPORTED": "Event imported: {{groups}} groups, {{participants}} participants",
+    "EVENT_CREATED": "Event created: {{groups}} groups, {{participants}} participants",
+    "STATUS_ACTIVE": "Active",
+    "STATUS_ARCHIVED": "Archived",
+    "STATUS_DRAFT": "Draft"
   },
   "IMPORT": {
     "TITLE": "Import Event",
@@ -163,7 +185,9 @@
     "OFFLINE_PENDING": "{{count}} records pending sync",
     "SYNC_NOW": "Sync now",
     "OFFLINE_SAVE_OK": "Saved offline",
-    "SYNC_OK": "Synced {{count}} records"
+    "SYNC_OK": "Synced {{count}} records",
+    "RECORD_SAVED": "Record saved",
+    "RECORDS_SAVED": "{{count}} records saved"
   },
   "LEADERBOARD": {
     "TITLE": "Leaderboard",
@@ -215,7 +239,10 @@
     "DUPLICATE_ITEM": "Duplicate",
     "MOVE_UP": "Move up",
     "MOVE_DOWN": "Move down",
-    "DRAG_HINT": "Drag items on the preview to reposition them"
+    "DRAG_HINT": "Drag items on the preview to reposition them",
+    "TEMPLATE_SAVED": "Diploma template saved",
+    "TEMPLATE_UPDATED": "Diploma template updated",
+    "TEMPLATE_DELETED": "Diploma template deleted"
   },
   "ADMIN": {
     "MANAGE_USERS": "Manage Users",
@@ -228,7 +255,10 @@
     "ACTIVE": "Active",
     "PENDING": "Pending",
     "DEACTIVATE": "Deactivate",
-    "APPROVE": "Approve"
+    "APPROVE": "Approve",
+    "ROLE_ADMIN": "Admin",
+    "ROLE_EVALUATOR": "Evaluator",
+    "ROLE_SUPER_ADMIN": "Super Admin"
   },
   "SETUP_ACCOUNT": {
     "TITLE": "Set Up Your Account",

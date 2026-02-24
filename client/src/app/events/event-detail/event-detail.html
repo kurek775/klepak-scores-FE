@@ -13,7 +13,7 @@
               ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
               : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
         ">
-      {{ ev.status }}
+      {{ ('EVENTS.STATUS_' + ev.status) | transloco }}
     </span>
     <div class="ml-auto flex items-center gap-2">
       <a
@@ -62,7 +62,7 @@
         >
           {{ evaluator.full_name }}
           <button (click)="removeFromPool(evaluator.id); $event.stopPropagation()"
-            class="ml-0.5 text-teal-600 hover:text-red-600 font-bold" title="Remove from pool">&times;</button>
+            class="ml-0.5 text-teal-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_FROM_POOL' | transloco">&times;</button>
         </span>
       }
       @if (ev.event_evaluators.length === 0) {
@@ -138,7 +138,7 @@
           {{ evaluator.full_name }}
           @if (authService.isAdmin()) {
           <button (click)="removeEvaluator(group.id, evaluator.id); $event.stopPropagation()"
-            class="ml-0.5 text-blue-600 hover:text-red-600 font-bold" title="Remove evaluator">&times;</button>
+            class="ml-0.5 text-blue-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_EVALUATOR' | transloco">&times;</button>
           }
         </span>
         }
@@ -191,7 +191,7 @@
         @for (cat of ageCategories(); track cat.id) {
         <span class="inline-flex items-center gap-1.5 text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 rounded-full px-3 py-1.5">
           {{ cat.name }} ({{ cat.min_age }}–{{ cat.max_age }})
-          <button (click)="removeAgeCategory(cat.id)" class="ml-0.5 text-orange-600 hover:text-red-600 font-bold" title="Remove">&times;</button>
+          <button (click)="removeAgeCategory(cat.id)" class="ml-0.5 text-orange-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_AGE_CATEGORY' | transloco">&times;</button>
         </span>
         }
       </div>
@@ -201,7 +201,7 @@
       <div class="flex items-end gap-3 flex-wrap">
         <div>
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.AGE_BRACKET_NAME' | transloco }}</label>
-          <input type="text" [(ngModel)]="newCatName" placeholder="e.g. U18"
+          <input type="text" [(ngModel)]="newCatName" [placeholder]="'EVENTS.AGE_BRACKET_NAME' | transloco"
             class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none w-28" />
         </div>
         <div>
@@ -260,14 +260,15 @@
     <div class="flex flex-wrap gap-2">
       @for (activity of ev.activities; track activity.id) {
       @if (authService.isAdmin()) {
-      <span class="inline-flex items-center gap-1.5 text-sm bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-full px-3 py-1.5">
+      <span class="inline-flex items-center gap-1 text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-md px-2 py-1 border border-purple-200 dark:border-purple-700">
         {{ activity.name }}
-        <button (click)="deleteActivity(activity.id)" class="ml-0.5 text-purple-600 hover:text-red-600 font-bold"
-          title="Delete activity">&times;</button>
+        <button (click)="deleteActivity(activity.id)"
+          class="ml-0.5 text-purple-500 hover:text-red-600"
+          [title]="'EVENTS.DELETE_ACTIVITY' | transloco">&times;</button>
       </span>
       } @else {
       <a [routerLink]="['/events', ev.id, 'score', activity.id]"
-        class="inline-flex items-center gap-1.5 text-sm bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-full px-3 py-1.5 hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors cursor-pointer">
+        class="inline-flex items-center text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded-md px-2 py-1 border border-purple-200 dark:border-purple-700 hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors cursor-pointer">
         {{ activity.name }}
       </a>
       }

@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../auth/auth.service';
+import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -20,7 +21,12 @@ export class UserList implements OnInit {
 
   private destroy$ = untilDestroyed();
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private toast: ToastService,
+    private transloco: TranslocoService,
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -43,20 +49,24 @@ export class UserList implements OnInit {
       .patch<User>(`${environment.apiUrl}/admin/users/${user.id}`, {
         is_active: !user.is_active,
       })
+      .pipe(this.destroy$())
       .subscribe({
         next: (updated) => {
           this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
         },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
   }
 
   changeRole(user: User, role: UserRole): void {
     this.http
       .patch<User>(`${environment.apiUrl}/admin/users/${user.id}`, { role })
+      .pipe(this.destroy$())
       .subscribe({
         next: (updated) => {
           this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
         },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
   }
 

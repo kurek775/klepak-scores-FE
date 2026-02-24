@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 
 import { AuthService } from '../auth.service';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -23,6 +23,7 @@ export class Login implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +49,7 @@ export class Login implements OnInit {
         next: () => this.router.navigateByUrl('/dashboard'),
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.detail ?? 'Login failed');
+          this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.INVALID_CREDENTIALS'));
         },
       });
   }

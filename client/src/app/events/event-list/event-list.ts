@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { EventSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
@@ -21,6 +21,7 @@ export class EventList implements OnInit {
   constructor(
     private eventService: EventService,
     public authService: AuthService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +40,12 @@ export class EventList implements OnInit {
   }
 
   deleteEvent(event: EventSummary): void {
-    if (!confirm(`Delete event "${event.name}"? This will also delete all groups and participants.`)) {
+    if (!confirm(this.transloco.translate('EVENTS.CONFIRM_DELETE_EVENT', { name: event.name }))) {
       return;
     }
     this.eventService.deleteEvent(event.id).pipe(this.destroy$()).subscribe({
       next: () => this.events.update((list) => list.filter((e) => e.id !== event.id)),
+      error: () => this.loading.set(false),
     });
   }
 }

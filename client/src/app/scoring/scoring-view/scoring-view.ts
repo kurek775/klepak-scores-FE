@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { forkJoin, switchMap, map } from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
@@ -48,6 +48,7 @@ export class ScoringView implements OnInit {
     private eventService: EventService,
     private offlineSync: OfflineSyncService,
     private toast: ToastService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -221,7 +222,7 @@ export class ScoringView implements OnInit {
           }
           this.saving.set(false);
           await this.refreshPendingCount(act.id);
-          this.toast.success('Saved offline');
+          this.toast.success(this.transloco.translate('SCORING.OFFLINE_SAVE_OK'));
         },
       });
   }

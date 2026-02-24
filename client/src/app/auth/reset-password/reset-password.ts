@@ -2,10 +2,11 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { passwordValidators } from '../../core/validators/password.validator';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-reset-password',
@@ -19,10 +20,13 @@ export class ResetPassword implements OnInit {
   success = signal(false);
   error = signal('');
 
+  private destroy$ = untilDestroyed();
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private http: HttpClient,
+    private transloco: TranslocoService,
   ) {
     this.form = this.fb.group({
       new_password: ['', passwordValidators],
@@ -33,7 +37,7 @@ export class ResetPassword implements OnInit {
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
     if (!this.token) {
-      this.error.set('Missing reset token.');
+      this.error.set(this.transloco.translate('AUTH.MISSING_RESET_TOKEN'));
     }
   }
 
@@ -51,6 +55,7 @@ export class ResetPassword implements OnInit {
         token: this.token,
         new_password: this.form.value.new_password,
       })
+      .pipe(this.destroy$())
       .subscribe({
         next: () => {
           this.loading.set(false);
@@ -58,7 +63,7 @@ export class ResetPassword implements OnInit {
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.detail ?? 'Reset failed');
+          this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
         },
       });
   }

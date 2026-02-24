@@ -1,10 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GroupInput, ImportSummary, ParticipantInput } from '../../core/models/event.model';
 import { EventService } from '../event.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-event-create',
@@ -12,6 +13,8 @@ import { EventService } from '../event.service';
   imports: [FormsModule, RouterLink, TranslocoPipe],
 })
 export class EventCreate {
+  private destroy$ = untilDestroyed();
+
   eventName = '';
   groups = signal<GroupInput[]>([{ name: '', identifier: '', participants: [] }]);
   error = signal('');
@@ -22,6 +25,7 @@ export class EventCreate {
   constructor(
     private eventService: EventService,
     private router: Router,
+    private transloco: TranslocoService,
   ) {}
 
   addGroup(): void {
@@ -110,7 +114,7 @@ export class EventCreate {
       })),
     };
 
-    this.eventService.createEventManual(body).subscribe({
+    this.eventService.createEventManual(body).pipe(this.destroy$()).subscribe({
       next: (result) => {
         this.summary.set(result);
         this.step.set(2);
@@ -118,7 +122,7 @@ export class EventCreate {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.error?.detail ?? 'Creation failed');
+        this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
       },
     });
   }

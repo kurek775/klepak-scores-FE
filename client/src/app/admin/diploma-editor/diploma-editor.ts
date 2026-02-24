@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { DiplomaFont, DiplomaItem, DiplomaTemplate, DynamicKey, FontWeight } from '../../core/models/diploma.model';
 import { DiplomaService } from '../../events/diploma.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-diploma-editor',
@@ -12,6 +13,8 @@ import { DiplomaService } from '../../events/diploma.service';
   imports: [FormsModule, RouterLink, TranslocoPipe],
 })
 export class DiplomaEditor implements OnInit, OnDestroy {
+  private destroy$ = untilDestroyed();
+
   templates           = signal<DiplomaTemplate[]>([]);
   selectedTemplateId  = signal<number | null>(null);
 
@@ -98,7 +101,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.loading.set(true);
-    this.diplomaService.getTemplates(this.eventId).subscribe({
+    this.diplomaService.getTemplates(this.eventId).pipe(this.destroy$()).subscribe({
       next: (templates) => {
         this.templates.set(templates);
         if (templates.length > 0) {
@@ -140,11 +143,12 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       default_font: null,
       bg_image_url: null,
     };
-    this.diplomaService.createTemplate(this.eventId, body).subscribe({
+    this.diplomaService.createTemplate(this.eventId, body).pipe(this.destroy$()).subscribe({
       next: (t) => {
         this.templates.update(arr => [...arr, t]);
         this._loadTemplate(t);
       },
+      error: () => this.loading.set(false),
     });
   }
 
@@ -475,7 +479,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       fonts: this.fonts(),
       default_font: this.defaultFont() || null,
     };
-    this.diplomaService.updateTemplate(this.eventId, templateId, body).subscribe({
+    this.diplomaService.updateTemplate(this.eventId, templateId, body).pipe(this.destroy$()).subscribe({
       next: (t) => {
         this.templates.update(arr => arr.map(x => x.id === t.id ? t : x));
         this.templateName.set(t.name);
@@ -488,7 +492,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   deleteTemplate(): void {
     const templateId = this.selectedTemplateId();
     if (templateId === null) return;
-    this.diplomaService.deleteTemplate(this.eventId, templateId).subscribe({
+    this.diplomaService.deleteTemplate(this.eventId, templateId).pipe(this.destroy$()).subscribe({
       next: () => {
         const remaining = this.templates().filter(t => t.id !== templateId);
         this.templates.set(remaining);
@@ -504,6 +508,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
           this.orientation.set('LANDSCAPE');
         }
       },
+      error: () => this.saving.set(false),
     });
   }
 }

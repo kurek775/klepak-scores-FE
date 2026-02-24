@@ -3,7 +3,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../auth.service';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { PASSWORD_PATTERN } from '../../core/validators/password.validator';
 import { untilDestroyed } from '../../core/utils/destroy';
 
@@ -23,6 +23,7 @@ export class Register implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +50,7 @@ export class Register implements OnInit {
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.detail ?? 'Registration failed');
+          this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
         },
       });
   }

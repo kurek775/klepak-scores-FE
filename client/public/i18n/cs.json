@@ -33,7 +33,8 @@
     "CONFIRM_PASSWORD": "Potvrdit heslo",
     "PASSWORD_MISMATCH": "Hesla se neshodují.",
     "RESET_BTN": "Obnovit heslo",
-    "RESET_SUCCESS": "Vaše heslo bylo úspěšně obnoveno. Nyní se můžete přihlásit s novým heslem."
+    "RESET_SUCCESS": "Vaše heslo bylo úspěšně obnoveno. Nyní se můžete přihlásit s novým heslem.",
+    "MISSING_RESET_TOKEN": "Chybí token pro obnovení hesla."
   },
   "DASHBOARD": {
     "PENDING_TITLE": "Účet čeká na schválení",
@@ -98,7 +99,28 @@
     "SOURCE_EVENT": "Zdrojová událost",
     "SELECT_EVENT": "-- Vyberte událost --",
     "CONFIRM_MOVE": "Přesunout vybrané",
-    "CREATE": "Vytvořit událost"
+    "CREATE": "Vytvořit událost",
+    "DELETE_ACTIVITY": "Smazat aktivitu",
+    "REMOVE_FROM_POOL": "Odebrat z fondu",
+    "REMOVE_EVALUATOR": "Odebrat hodnotitele",
+    "REMOVE_AGE_CATEGORY": "Odebrat kategorii",
+    "CONFIRM_DELETE_EVENT": "Smazat událost \"{{name}}\"? Tím se smažou i všechny skupiny a účastníci.",
+    "CONFIRM_REMOVE_POOL_EVALUATOR": "Tento hodnotitel je přiřazen ke skupině. Odebráním z fondu se odebere i přiřazení ke skupině. Pokračovat?",
+    "ADDED_TO_POOL": "{{name}} přidán/a do fondu",
+    "REMOVED_FROM_POOL": "Odebráno z fondu",
+    "EVALUATORS_MOVED": "Hodnotitelé přesunuti",
+    "EVALUATOR_ASSIGNED": "{{name}} přiřazen/a",
+    "EVALUATOR_REMOVED": "Hodnotitel odebrán",
+    "ACTIVITY_CREATED": "Aktivita \"{{name}}\" vytvořena",
+    "ACTIVITY_DELETED": "Aktivita smazána",
+    "AGE_CATEGORY_ADDED": "Věková kategorie přidána",
+    "AGE_CATEGORY_REMOVED": "Věková kategorie odebrána",
+    "EVENT_DELETED": "Událost smazána",
+    "EVENT_IMPORTED": "Událost importována: {{groups}} skupin, {{participants}} účastníků",
+    "EVENT_CREATED": "Událost vytvořena: {{groups}} skupin, {{participants}} účastníků",
+    "STATUS_ACTIVE": "Aktivní",
+    "STATUS_ARCHIVED": "Archivováno",
+    "STATUS_DRAFT": "Koncept"
   },
   "IMPORT": {
     "TITLE": "Importovat událost",
@@ -163,7 +185,9 @@
     "OFFLINE_PENDING": "{{count}} záznamů čeká na synchronizaci",
     "SYNC_NOW": "Synchronizovat",
     "OFFLINE_SAVE_OK": "Uloženo offline",
-    "SYNC_OK": "Synchronizováno {{count}} záznamů"
+    "SYNC_OK": "Synchronizováno {{count}} záznamů",
+    "RECORD_SAVED": "Záznam uložen",
+    "RECORDS_SAVED": "{{count}} záznamů uloženo"
   },
   "LEADERBOARD": {
     "TITLE": "Výsledková listina",
@@ -215,7 +239,10 @@
     "DUPLICATE_ITEM": "Duplikovat",
     "MOVE_UP": "Posunout nahoru",
     "MOVE_DOWN": "Posunout dolů",
-    "DRAG_HINT": "Přetáhněte prvky na náhledu pro změnu pozice"
+    "DRAG_HINT": "Přetáhněte prvky na náhledu pro změnu pozice",
+    "TEMPLATE_SAVED": "Šablona diplomu uložena",
+    "TEMPLATE_UPDATED": "Šablona diplomu aktualizována",
+    "TEMPLATE_DELETED": "Šablona diplomu smazána"
   },
   "ADMIN": {
     "MANAGE_USERS": "Správa uživatelů",
@@ -228,7 +255,10 @@
     "ACTIVE": "Aktivní",
     "PENDING": "Čekající",
     "DEACTIVATE": "Deaktivovat",
-    "APPROVE": "Schválit"
+    "APPROVE": "Schválit",
+    "ROLE_ADMIN": "Správce",
+    "ROLE_EVALUATOR": "Hodnotitel",
+    "ROLE_SUPER_ADMIN": "Super správce"
   },
   "SETUP_ACCOUNT": {
     "TITLE": "Nastavení účtu",

@@ -64,7 +64,7 @@
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ inv.email }}</td>
               <td class="px-6 py-4">
                 <span class="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                  {{ inv.role }}
+                  {{ ('ADMIN.ROLE_' + inv.role) | transloco }}
                 </span>
               </td>
               <td class="px-6 py-4">

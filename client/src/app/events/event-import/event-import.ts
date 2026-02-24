@@ -2,10 +2,11 @@ import { Component, signal } from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { CsvPreviewResponse, ImportSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
+import { untilDestroyed } from '../../core/utils/destroy';
 
 const SYSTEM_FIELDS = [
   { value: '', label: 'IMPORT.UNMAPPED' },
@@ -23,6 +24,8 @@ const SYSTEM_FIELDS = [
   imports: [FormsModule, RouterLink, TranslocoPipe, SlicePipe],
 })
 export class EventImport {
+  private destroy$ = untilDestroyed();
+
   eventName = '';
   selectedFile: File | null = null;
   error = signal('');
@@ -38,6 +41,7 @@ export class EventImport {
   constructor(
     private eventService: EventService,
     private router: Router,
+    private transloco: TranslocoService,
   ) {}
 
   onFileSelected(event: Event): void {
@@ -50,7 +54,7 @@ export class EventImport {
     this.error.set('');
     this.loading.set(true);
 
-    this.eventService.previewCsv(this.selectedFile).subscribe({
+    this.eventService.previewCsv(this.selectedFile).pipe(this.destroy$()).subscribe({
       next: (result) => {
         this.preview.set(result);
         // Auto-map: if a CSV header matches a system field name (case-insensitive), pre-select it
@@ -69,7 +73,7 @@ export class EventImport {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.error?.detail ?? 'Preview failed');
+        this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
       },
     });
   }
@@ -113,6 +117,7 @@ export class EventImport {
 
     this.eventService
       .importEvent(this.selectedFile, this.eventName.trim(), hasMapping ? mapping : undefined)
+      .pipe(this.destroy$())
       .subscribe({
         next: (result) => {
           this.summary.set(result);
@@ -121,7 +126,7 @@ export class EventImport {
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.detail ?? 'Import failed');
+          this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
         },
       });
   }

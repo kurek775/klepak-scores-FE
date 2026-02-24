@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from '../auth.service';
 import { PASSWORD_PATTERN } from '../../core/validators/password.validator';
@@ -30,6 +30,7 @@ export class SetupAccount implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private transloco: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +44,7 @@ export class SetupAccount implements OnInit {
     if (!this.token) {
       this.validating.set(false);
       this.tokenInvalid.set(true);
-      this.error.set('Missing invitation token.');
+      this.error.set(this.transloco.translate('SETUP_ACCOUNT.INVALID_TOKEN'));
       return;
     }
 
@@ -56,7 +57,7 @@ export class SetupAccount implements OnInit {
       error: (err) => {
         this.validating.set(false);
         this.tokenInvalid.set(true);
-        this.error.set(err.error?.detail ?? 'Invalid or expired invitation token.');
+        this.error.set(err.error?.detail ?? this.transloco.translate('SETUP_ACCOUNT.EXPIRED_TOKEN'));
       },
     });
   }
@@ -84,7 +85,7 @@ export class SetupAccount implements OnInit {
         next: () => this.router.navigateByUrl('/dashboard'),
         error: (err) => {
           this.loading.set(false);
-          this.error.set(err.error?.detail ?? 'Account setup failed.');
+          this.error.set(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED'));
         },
       });
   }
