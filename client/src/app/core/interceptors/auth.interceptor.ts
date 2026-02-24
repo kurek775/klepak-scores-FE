@@ -47,7 +47,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => err);
       }
 
-      if (err.status === 401) {
+      if (err.status === 401 && token) {
         toastService.error(transloco.translate('ERRORS.SESSION_EXPIRED'));
         authService.logout();
       } else if (err.status >= 400) {

@@ -1,4 +1,4 @@
-<div class="max-w-5xl mx-auto p-8 page-enter">
+<div class="max-w-5xl mx-auto p-4 sm:p-8 page-enter">
   <a routerLink="/dashboard" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
@@ -15,7 +15,7 @@
         ">
       {{ ('EVENTS.STATUS_' + ev.status) | transloco }}
     </span>
-    <div class="ml-auto flex items-center gap-2">
+    <div class="ml-auto flex items-center gap-2 flex-wrap">
       <a
         [routerLink]="['/events', ev.id, 'leaderboard']"
         class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors border border-purple-200 dark:border-purple-800"
@@ -71,10 +71,10 @@
     </div>
 
     <!-- Add to pool -->
-    <div class="flex items-center gap-2">
+    <div class="flex flex-col sm:flex-row gap-2">
       <select
         [(ngModel)]="addToPoolUserId"
-        class="px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+        class="w-full sm:flex-1 px-2 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
       >
         <option [ngValue]="null">{{ 'EVENTS.SELECT_EVALUATOR' | transloco }}</option>
         @for (user of getEvaluatorsNotInPool(); track user.id) {
@@ -230,7 +230,7 @@
 
     @if (authService.isAdmin()) {
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 px-5 py-4 mb-4">
-      <div class="flex items-end gap-3">
+      <div class="flex items-end gap-3 flex-wrap">
         <div class="flex-1">
           <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.ACTIVITY_NAME' | transloco }}</label>
           <input type="text" [(ngModel)]="newActivityName" [placeholder]="'EVENTS.ACTIVITY_NAME' | transloco"

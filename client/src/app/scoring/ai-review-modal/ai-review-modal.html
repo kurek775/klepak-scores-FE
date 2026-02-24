@@ -8,15 +8,15 @@
     </div>
 
     <!-- Content -->
-    <div class="flex flex-1 min-h-0 overflow-hidden">
+    <div class="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
 
       <!-- Image preview -->
-      <div class="w-1/2 p-4 border-r border-gray-200 dark:border-gray-700 overflow-auto bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center">
+      <div class="w-full md:w-1/2 max-h-48 md:max-h-none p-4 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 overflow-auto bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center">
         <img [src]="imageUrl()" alt="Score sheet" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">
       </div>
 
       <!-- Results table -->
-      <div class="w-1/2 p-4 overflow-auto">
+      <div class="w-full md:w-1/2 p-4 overflow-auto">
         <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Parsed Scores</h3>
 
         @if (editableResults().length === 0) {

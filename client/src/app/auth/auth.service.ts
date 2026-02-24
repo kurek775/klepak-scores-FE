@@ -1,9 +1,10 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { SKIP_ERROR_TOAST } from '../core/http-context';
 import {
   AcceptInvitationRequest,
   LoginRequest,
@@ -38,7 +39,10 @@ export class AuthService {
   }
 
   login(body: LoginRequest): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${environment.apiUrl}/auth/login`, body).pipe(
+    return this.http.post<TokenResponse>(
+      `${environment.apiUrl}/auth/login`, body,
+      { context: new HttpContext().set(SKIP_ERROR_TOAST, true) },
+    ).pipe(
       tap((res) => {
         localStorage.setItem(TOKEN_KEY, res.access_token);
       }),
