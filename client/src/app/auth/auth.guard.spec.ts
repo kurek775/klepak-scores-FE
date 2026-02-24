@@ -41,8 +41,12 @@ describe('authGuard', () => {
     vi.restoreAllMocks();
   });
 
-  it('returns true when token is present', () => {
-    vi.spyOn(authService, 'token', 'get').mockReturnValue('valid-token');
+  it('returns true when token is present and not expired', () => {
+    // Build a fake JWT with an exp claim 1 hour in the future
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const payload = btoa(JSON.stringify({ sub: 'user@test.com', exp: Math.floor(Date.now() / 1000) + 3600 }));
+    const fakeJwt = `${header}.${payload}.fake-signature`;
+    vi.spyOn(authService, 'token', 'get').mockReturnValue(fakeJwt);
     const result = TestBed.runInInjectionContext(() => authGuard({} as any, {} as any));
     expect(result).toBe(true);
   });
