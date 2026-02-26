@@ -3,16 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { GroupInput, ImportSummary, ParticipantInput } from '../../core/models/event.model';
+import { HasUnsavedChanges } from '../../core/guards/unsaved-changes.guard';
 import { EventService } from '../event.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-event-create',
   templateUrl: './event-create.html',
-  imports: [FormsModule, RouterLink, TranslocoPipe],
+  imports: [FormsModule, RouterLink, TranslocoPipe, ArrowLeftIconComponent],
 })
-export class EventCreate {
+export class EventCreate implements HasUnsavedChanges {
   private destroy$ = untilDestroyed();
 
   eventName = '';
@@ -27,6 +29,11 @@ export class EventCreate {
     private router: Router,
     private transloco: TranslocoService,
   ) {}
+
+  hasUnsavedChanges(): boolean {
+    if (this.summary()) return false;
+    return this.eventName.trim().length > 0 || this.groups().some(g => g.name.trim().length > 0 || g.participants.length > 0);
+  }
 
   addGroup(): void {
     this.groups.update((g) => [...g, { name: '', identifier: '', participants: [] }]);
@@ -130,7 +137,7 @@ export class EventCreate {
   viewEvent(): void {
     const s = this.summary();
     if (s) {
-      this.router.navigate(['/events', s.event_id]);
+      this.router.navigate(['/events', s.event_id, 'setup']);
     }
   }
 }

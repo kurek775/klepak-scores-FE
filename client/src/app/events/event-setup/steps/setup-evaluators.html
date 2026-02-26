@@ -1,0 +1,93 @@
+<div>
+  <!-- Unassigned Pool (drop zone) -->
+  <div class="mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.UNASSIGNED_POOL' | transloco }}</h2>
+    <div
+      cdkDropList
+      [cdkDropListData]="{ listId: 'pool' }"
+      [cdkDropListConnectedTo]="groupDropListIds"
+      (cdkDropListDropped)="onDrop($event)"
+      class="dnd-drop-zone bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border-2 border-dashed border-gray-300 dark:border-white/10 px-5 py-4 min-h-[64px]"
+    >
+      @if (event().event_evaluators.length === 0) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_EVALUATORS_IN_POOL' | transloco }}</p>
+        <a routerLink="/admin/evaluators" class="inline-block mt-2 text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-medium">
+          {{ 'EVENTS.ADD_TO_EVENT' | transloco }} &rarr;
+        </a>
+      } @else {
+        <div class="flex flex-wrap items-center gap-2">
+          @for (evaluator of getUnassignedPoolEvaluators(); track evaluator.id) {
+            <span
+              cdkDrag
+              [cdkDragData]="evaluator"
+              class="dnd-chip inline-flex items-center text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-3 py-1.5 cursor-grab active:cursor-grabbing select-none"
+            >
+              <svg class="w-3 h-3 mr-1.5 opacity-40" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-8a2 2 0 10.001-4.001A2 2 0 0013 6zm0 2a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z" /></svg>
+              {{ evaluator.full_name }}
+            </span>
+          }
+          @if (getUnassignedPoolEvaluators().length === 0) {
+            <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.ALL_ASSIGNED' | transloco }}</span>
+          }
+        </div>
+        <a routerLink="/admin/evaluators" class="inline-block mt-3 text-xs text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400">
+          {{ 'EVENTS.MANAGE_EVALUATORS' | transloco }} &rarr;
+        </a>
+      }
+    </div>
+  </div>
+
+  <!-- Groups Section -->
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.GROUPS' | transloco }}</h2>
+
+  @if (event().groups.length === 0) {
+    <p class="text-gray-500 dark:text-gray-400">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
+  } @else {
+    <div class="space-y-3 animate-stagger-list">
+      @for (group of event().groups; track group.id) {
+        <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-hidden">
+          <!-- Group header -->
+          <div class="flex items-center gap-3 px-5 py-3">
+            @if (group.identifier) {
+              <span class="w-3 h-3 rounded-full inline-block" [style.background-color]="group.identifier"></span>
+            }
+            <span class="font-medium text-gray-900 dark:text-white">{{ group.name }}</span>
+            <span class="text-xs text-gray-400 dark:text-gray-500">({{ group.participants.length }} {{ 'DASHBOARD.PARTICIPANTS_PLURAL' | transloco }})</span>
+          </div>
+
+          <!-- Evaluator drop zone -->
+          <div
+            cdkDropList
+            [cdkDropListData]="{ listId: 'group-' + group.id }"
+            [id]="'group-' + group.id"
+            [cdkDropListConnectedTo]="['pool'].concat(groupDropListIds)"
+            (cdkDropListDropped)="onDrop($event)"
+            class="dnd-drop-zone px-5 py-3 border-t border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.03] min-h-[56px]"
+          >
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mr-1">{{ 'EVENTS.EVALUATORS' | transloco }}</span>
+              @for (evaluator of group.evaluators; track evaluator.id) {
+                <span
+                  cdkDrag
+                  [cdkDragData]="evaluator"
+                  class="dnd-chip inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-3 py-1.5 cursor-grab active:cursor-grabbing select-none"
+                >
+                  <svg class="w-3 h-3 mr-0.5 opacity-40" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-8a2 2 0 10.001-4.001A2 2 0 0013 6zm0 2a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z" /></svg>
+                  {{ evaluator.full_name }}
+                  <button
+                    (click)="removeFromGroup(group.id, evaluator.id); $event.stopPropagation()"
+                    class="ml-0.5 text-emerald-500 hover:text-red-500 font-bold"
+                    [title]="'EVENTS.REMOVE_EVALUATOR' | transloco"
+                  >&times;</button>
+                </span>
+              }
+              @if (group.evaluators.length === 0) {
+                <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.DRAG_HERE' | transloco }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

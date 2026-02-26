@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { environment } from '../../environments/environment';
-import { CsvPreviewResponse, EventDetail, EventSummary, EvaluatorInfo, ImportSummary, ManualEventCreate, MoveEvaluatorsRequest } from '../core/models/event.model';
+import { CsvPreviewResponse, EvaluatorInfo, EventDetail, EventSummary, GroupDetail, ImportSummary, ManualEventCreate, Participant } from '../core/models/event.model';
 import { AgeCategory, AgeCategoryCreate } from '../core/models/age-category.model';
 import { LeaderboardResponse } from '../core/models/leaderboard.model';
 import { ToastService } from '../shared/toast.service';
@@ -49,6 +49,44 @@ export class EventService {
     return this.http.post<CsvPreviewResponse>(`${environment.apiUrl}/events/preview-csv`, formData);
   }
 
+  updateEvent(id: number, body: { name?: string; status?: string }): Observable<EventSummary> {
+    return this.http.patch<EventSummary>(`${environment.apiUrl}/events/${id}`, body).pipe(
+      tap(() => this.toast.success(this.transloco.translate('EVENTS.EVENT_UPDATED'))),
+    );
+  }
+
+  createGroup(eventId: number, body: { name: string; identifier?: string }): Observable<GroupDetail> {
+    return this.http.post<GroupDetail>(`${environment.apiUrl}/events/${eventId}/groups`, body);
+  }
+
+  updateGroup(groupId: number, body: { name?: string; identifier?: string }): Observable<unknown> {
+    return this.http.patch(`${environment.apiUrl}/groups/${groupId}`, body);
+  }
+
+  deleteGroup(groupId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/groups/${groupId}`);
+  }
+
+  addParticipant(groupId: number, body: { display_name: string; external_id?: string; gender?: string; age?: number }): Observable<Participant> {
+    return this.http.post<Participant>(`${environment.apiUrl}/groups/${groupId}/participants`, body);
+  }
+
+  updateParticipant(participantId: number, body: { display_name?: string; external_id?: string; gender?: string; age?: number }): Observable<Participant> {
+    return this.http.patch<Participant>(`${environment.apiUrl}/participants/${participantId}`, body);
+  }
+
+  deleteParticipant(participantId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/participants/${participantId}`);
+  }
+
+  moveParticipant(participantId: number, groupId: number): Observable<Participant> {
+    return this.http.post<Participant>(`${environment.apiUrl}/participants/${participantId}/move`, { group_id: groupId });
+  }
+
+  updateActivity(activityId: number, body: { name?: string; description?: string }): Observable<unknown> {
+    return this.http.patch(`${environment.apiUrl}/activities/${activityId}`, body);
+  }
+
   deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/events/${id}`).pipe(
       tap(() => this.toast.success(this.transloco.translate('EVENTS.EVENT_DELETED'))),
@@ -90,20 +128,16 @@ export class EventService {
     );
   }
 
-  // Event evaluator pool
   listEventEvaluators(eventId: number): Observable<EvaluatorInfo[]> {
     return this.http.get<EvaluatorInfo[]>(`${environment.apiUrl}/events/${eventId}/evaluators`);
   }
 
-  assignEventEvaluator(eventId: number, userId: number): Observable<unknown> {
-    return this.http.post(`${environment.apiUrl}/events/${eventId}/evaluators`, { user_id: userId });
+  assignEventEvaluator(eventId: number, userId: number): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${environment.apiUrl}/events/${eventId}/evaluators`, { user_id: userId });
   }
 
   removeEventEvaluator(eventId: number, userId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/events/${eventId}/evaluators/${userId}`);
   }
 
-  moveEvaluators(eventId: number, body: MoveEvaluatorsRequest): Observable<unknown> {
-    return this.http.post(`${environment.apiUrl}/events/${eventId}/evaluators/move`, body);
-  }
 }

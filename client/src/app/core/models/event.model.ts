@@ -73,11 +73,6 @@ export interface ImportSummary {
   participants_created: number;
 }
 
-export interface MoveEvaluatorsRequest {
-  source_event_id: number;
-  user_ids: number[];
-}
-
 export interface CsvPreviewResponse {
   headers: string[];
   sample_rows: string[][];

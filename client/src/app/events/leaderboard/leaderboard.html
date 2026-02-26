@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto p-4 sm:p-8 page-enter">
-  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'EVENTS.BACK' | transloco }}</a>
+  <a [routerLink]="['/events', eventId]" class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><app-arrow-left-icon /> {{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
     <p class="text-gray-500 dark:text-gray-400 mt-6">{{ 'EVENTS.LOADING_LEADERBOARD' | transloco }}</p>
@@ -63,6 +63,7 @@
                           <tr>
                             <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-12">{{ 'LEADERBOARD.RANK' | transloco }}</th>
                             <th class="text-left px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'LEADERBOARD.NAME' | transloco }}</th>
+                            <th class="text-left px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'LEADERBOARD.GROUP' | transloco }}</th>
                             <th class="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-16">{{ 'LEADERBOARD.AGE' | transloco }}</th>
                             <th class="text-right px-5 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-24">{{ 'LEADERBOARD.SCORE' | transloco }}</th>
                           </tr>
@@ -72,6 +73,7 @@
                             <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.06]">
                               <td class="px-5 py-2 text-sm text-center dark:text-gray-300">{{ rankMedal(p.rank) }}</td>
                               <td class="px-5 py-2 text-sm text-gray-900 dark:text-white">{{ p.display_name }}</td>
+                              <td class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">{{ p.group_name ?? '—' }}</td>
                               <td class="px-3 py-2 text-sm text-center text-gray-500 dark:text-gray-400">
                                 {{ p.age !== null ? p.age : '—' }}
                               </td>

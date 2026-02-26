@@ -2,6 +2,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 import { environment } from '../../environments/environment';
 import { SKIP_ERROR_TOAST } from '../core/http-context';
@@ -19,6 +20,7 @@ const TOKEN_KEY = 'access_token';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private userSignal = signal<User | null>(null);
+  private sessionRestoredSignal = signal(false);
 
   readonly user = this.userSignal.asReadonly();
   readonly isAuthenticated = computed(() => this.userSignal() !== null);
@@ -28,6 +30,8 @@ export class AuthService {
   });
   readonly isSuperAdmin = computed(() => this.userSignal()?.role === UserRole.SUPER_ADMIN);
   readonly id = computed(() => this.userSignal()?.id);
+  readonly isSessionRestored = this.sessionRestoredSignal.asReadonly();
+  readonly isSessionRestored$ = toObservable(this.isSessionRestored);
 
   constructor(
     private http: HttpClient,
@@ -60,10 +64,19 @@ export class AuthService {
   }
 
   tryRestoreSession(): void {
-    if (!this.token) return;
+    if (!this.token) {
+      this.sessionRestoredSignal.set(true);
+      return;
+    }
     this.http.get<User>(`${environment.apiUrl}/auth/me`).subscribe({
-      next: (user) => this.userSignal.set(user),
-      error: () => this.logout(),
+      next: (user) => {
+        this.userSignal.set(user);
+        this.sessionRestoredSignal.set(true);
+      },
+      error: () => {
+        this.logout();
+        this.sessionRestoredSignal.set(true);
+      },
     });
   }
 

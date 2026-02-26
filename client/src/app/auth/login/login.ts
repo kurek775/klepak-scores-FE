@@ -16,6 +16,7 @@ export class Login implements OnInit {
   form!: FormGroup;
   error = signal('');
   loading = signal(false);
+  showPassword = signal(false);
 
   private destroy$ = untilDestroyed();
 

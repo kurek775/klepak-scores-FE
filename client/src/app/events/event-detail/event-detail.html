@@ -1,5 +1,5 @@
 <div class="max-w-5xl mx-auto p-4 sm:p-8 page-enter">
-  <a routerLink="/dashboard" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'EVENTS.BACK' | transloco }}</a>
+  <a routerLink="/dashboard" class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><app-arrow-left-icon /> {{ 'EVENTS.BACK' | transloco }}</a>
 
   @if (loading()) {
   <p class="text-gray-500 dark:text-gray-400 mt-6">{{ 'EVENTS.LOADING' | transloco }}</p>
@@ -16,16 +16,32 @@
       {{ ('EVENTS.STATUS_' + ev.status) | transloco }}
     </span>
     <div class="ml-auto flex items-center gap-2 flex-wrap">
+      @if (authService.isAdmin()) {
+        @if (ev.status === EventStatus.ACTIVE) {
+          <button (click)="updateEventStatus(EventStatus.ARCHIVED)"
+            class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors border border-red-200 dark:border-red-800">
+            {{ 'EVENTS.ARCHIVE' | transloco }}
+          </button>
+        }
+        @if (ev.status === EventStatus.ARCHIVED) {
+          <button (click)="updateEventStatus(EventStatus.DRAFT)"
+            class="px-3 py-1.5 text-xs font-medium text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800">
+            {{ 'EVENTS.REVERT_DRAFT' | transloco }}
+          </button>
+        }
+      }
       <a
         [routerLink]="['/events', ev.id, 'leaderboard']"
         class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-800"
       >
         {{ 'EVENTS.LEADERBOARD' | transloco }}
+        <span class="inline-flex items-center"><app-arrow-right-icon /></span>
       </a>
       @if (authService.isAdmin()) {
         <button
           (click)="exportCsv(ev.id)"
-          class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors border border-green-200 dark:border-green-800"
+          [disabled]="exportingCsv()"
+          class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-blue-200 dark:border-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ 'EVENTS.EXPORT_CSV' | transloco }}
         </button>
@@ -39,117 +55,33 @@
     </div>
   </div>
 
-  <!-- Event Evaluator Pool (admin only) -->
-  @if (authService.isAdmin()) {
-  <div class="mb-4 bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
-    <div class="flex items-center gap-2 mb-2">
-      <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ 'EVENTS.EVENT_EVALUATORS' | transloco }}</span>
-      <button
-        (click)="openMoveModal()"
-        class="ml-auto text-xs px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800"
-      >
-        {{ 'EVENTS.MOVE_FROM_EVENT' | transloco }}
-      </button>
-    </div>
-
-    <!-- Pool chips -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      @for (evaluator of ev.event_evaluators; track evaluator.id) {
-        <span
-          draggable="true"
-          (dragstart)="onDragStart($event, evaluator.id)"
-          class="inline-flex items-center gap-1 text-xs bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 rounded-full px-2.5 py-1 cursor-grab active:cursor-grabbing"
-        >
-          {{ evaluator.full_name }}
-          <button (click)="removeFromPool(evaluator.id); $event.stopPropagation()"
-            class="ml-0.5 text-teal-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_FROM_POOL' | transloco">&times;</button>
-        </span>
-      }
-      @if (ev.event_evaluators.length === 0) {
-        <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_POOL_EVALUATORS' | transloco }}</span>
-      }
-    </div>
-
-    <!-- Add to pool -->
-    <div class="flex flex-col sm:flex-row gap-2">
-      <select
-        [(ngModel)]="addToPoolUserId"
-        class="w-full sm:flex-1 px-2 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-      >
-        <option [ngValue]="null">{{ 'EVENTS.SELECT_EVALUATOR' | transloco }}</option>
-        @for (user of getEvaluatorsNotInPool(); track user.id) {
-          <option [ngValue]="user.id">{{ user.full_name }} ({{ user.email }})</option>
-        }
-      </select>
-      <button
-        (click)="addToPool()"
-        [disabled]="!addToPoolUserId"
-        class="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-xs font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {{ 'EVENTS.ADD_TO_POOL' | transloco }}
-      </button>
-    </div>
-  </div>
-
-  <!-- Unassigned evaluators from pool (drag source) -->
-  @let unassigned = getUnassignedEvaluators();
-  @if (unassigned.length > 0) {
-  <div class="mb-4 bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-3">
-    <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mr-2">{{ 'EVENTS.AVAILABLE_EVALUATORS' | transloco }}</span>
-    <div class="inline-flex flex-wrap gap-2 mt-1">
-      @for (user of unassigned; track user.id) {
-      <span draggable="true" (dragstart)="onDragStart($event, user.id)"
-        class="inline-flex items-center text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full px-2.5 py-1 cursor-grab active:cursor-grabbing"
-        [style.opacity]="1" (drag)="$event.target && ($any($event.target).style.opacity = '0.5')"
-        (dragend)="$event.target && ($any($event.target).style.opacity = '1')">
-        {{ user.full_name }}
-      </span>
-      }
-    </div>
-  </div>
-  }
-  }
-
   @if (ev.groups.length === 0) {
   <p class="text-gray-500 dark:text-gray-400">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
   } @else {
   <div class="space-y-3 animate-stagger-list">
     @for (group of ev.groups; track group.id) {
     <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] overflow-hidden">
-      <button (click)="toggleGroup(group.id)"
-        class="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-white/[0.06]">
-        <span class="text-xs transition-transform" [class.rotate-90]="isExpanded(group.id)">
-          &#9654;
-        </span>
-        @if (group.identifier) {
-        <span class="w-3 h-3 rounded-full inline-block" [style.background-color]="group.identifier"></span>
-        }
-        <span class="font-medium text-gray-900 dark:text-white">{{ group.name }}</span>
-
-      </button>
-      <div class="px-5 py-2 border-t border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.03] flex flex-wrap items-center gap-2 transition-colors"
-        [class.border-2]="false" (dragover)="authService.isAdmin() && onDragOver($event)"
-        (dragenter)="$event.preventDefault(); $any($event.currentTarget).classList.add('!border-blue-400', '!bg-blue-50')"
-        (dragleave)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50')"
-        (drop)="$any($event.currentTarget).classList.remove('!border-blue-400', '!bg-blue-50'); onDrop($event, group.id)">
+      <div class="flex items-center">
+        <button (click)="toggleGroup(group.id)"
+          class="flex-1 flex items-center gap-3 px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-white/[0.06]">
+          <span class="text-xs transition-transform" [class.rotate-90]="isExpanded(group.id)">
+            &#9654;
+          </span>
+          @if (group.identifier) {
+          <span class="w-3 h-3 rounded-full inline-block" [style.background-color]="group.identifier"></span>
+          }
+          <span class="font-medium text-gray-900 dark:text-white">{{ group.name }}</span>
+        </button>
+      </div>
+      <div class="px-5 py-2 border-t border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.03] flex flex-wrap items-center gap-2">
         <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mr-1">{{ 'EVENTS.EVALUATORS' | transloco }}</span>
         @for (evaluator of group.evaluators; track evaluator.id) {
-        <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-2.5 py-1">
-          {{ evaluator.full_name }}
-          @if (authService.isAdmin()) {
-          <button (click)="removeEvaluator(group.id, evaluator.id); $event.stopPropagation()"
-            class="ml-0.5 text-emerald-500 hover:text-red-500 font-bold" [title]="'EVENTS.REMOVE_EVALUATOR' | transloco">&times;</button>
-          }
-        </span>
+          <span class="inline-flex items-center text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-2.5 py-1">
+            {{ evaluator.full_name }}
+          </span>
         }
         @if (group.evaluators.length === 0) {
-        <span class="text-xs text-gray-400 dark:text-gray-500 italic">
-          @if (authService.isAdmin()) {
-          {{ 'EVENTS.DROP_EVALUATOR' | transloco }}
-          } @else {
-          {{ 'EVENTS.NONE_ASSIGNED' | transloco }}
-          }
-        </span>
+          <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NONE_ASSIGNED' | transloco }}</span>
         }
       </div>
 
@@ -168,7 +100,6 @@
             @for (p of group.participants; track p.id) {
             <tr>
               <td class="px-5 py-2 text-sm text-gray-900 dark:text-white">{{ p.display_name }}</td>
-
             </tr>
             }
           </tbody>
@@ -181,159 +112,58 @@
   </div>
   }
 
-  <!-- Age Brackets Section (admin only) -->
-  @if (authService.isAdmin()) {
+  <!-- Age Brackets (read-only) -->
+  @if (ageCategories().length > 0) {
   <div class="mt-8">
     <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.AGE_BRACKETS' | transloco }}</h2>
-    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4">
-      @if (ageCategories().length > 0) {
-      <div class="flex flex-wrap gap-2 mb-4">
-        @for (cat of ageCategories(); track cat.id) {
-        <span class="inline-flex items-center gap-1.5 text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 rounded-full px-3 py-1.5">
-          {{ cat.name }} ({{ cat.min_age }}–{{ cat.max_age }})
-          <button (click)="removeAgeCategory(cat.id)" class="ml-0.5 text-orange-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_AGE_CATEGORY' | transloco">&times;</button>
-        </span>
-        }
-      </div>
-      } @else {
-      <p class="text-sm text-gray-400 dark:text-gray-500 italic mb-4">{{ 'EVENTS.NO_AGE_BRACKETS' | transloco }}</p>
+    <div class="flex flex-wrap gap-2">
+      @for (cat of ageCategories(); track cat.id) {
+      <span class="inline-flex items-center text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 rounded-full px-3 py-1.5">
+        {{ cat.name }} ({{ cat.min_age }}&ndash;{{ cat.max_age }})
+      </span>
       }
-      <div class="flex items-end gap-3 flex-wrap">
-        <div>
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.AGE_BRACKET_NAME' | transloco }}</label>
-          <input type="text" [(ngModel)]="newCatName" [placeholder]="'EVENTS.AGE_BRACKET_NAME' | transloco"
-            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-28" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.MIN_AGE' | transloco }}</label>
-          <input type="number" [(ngModel)]="newCatMinAge" min="0"
-            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-20" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.MAX_AGE' | transloco }}</label>
-          <input type="number" [(ngModel)]="newCatMaxAge" min="0"
-            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-20" />
-        </div>
-        <button (click)="addAgeCategory()" [disabled]="!newCatName.trim()"
-          class="px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-          {{ 'EVENTS.ADD' | transloco }}
-        </button>
-      </div>
     </div>
   </div>
   }
 
-  <!-- Activities Section -->
+  <!-- Activities Section (read-only) -->
   @if (ev.activities) {
   <div class="mt-8">
     <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.ACTIVITIES' | transloco }}</h2>
 
-    @if (authService.isAdmin()) {
-    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] px-5 py-4 mb-4">
-      <div class="flex items-end gap-3 flex-wrap">
-        <div class="flex-1">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.ACTIVITY_NAME' | transloco }}</label>
-          <input type="text" [(ngModel)]="newActivityName" [placeholder]="'EVENTS.ACTIVITY_NAME' | transloco"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-            (keydown.enter)="createActivity()" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.TYPE' | transloco }}</label>
-          <select [(ngModel)]="newActivityType"
-            class="px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-            @for (t of evaluationTypes; track t.value) {
-            <option [value]="t.value">{{ t.key | transloco }}</option>
-            }
-          </select>
-        </div>
-        <button (click)="createActivity()" [disabled]="!newActivityName.trim()"
-          class="px-4 py-2 bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-          {{ 'EVENTS.ADD' | transloco }}
-        </button>
-      </div>
-    </div>
-    }
-
     @if (ev.activities.length === 0) {
     <p class="text-gray-500 dark:text-gray-400 text-sm">{{ 'EVENTS.NO_ACTIVITIES' | transloco }}</p>
     } @else {
-    <div class="flex flex-wrap gap-2">
+    <div class="space-y-2">
       @for (activity of ev.activities; track activity.id) {
-      @if (authService.isAdmin()) {
-      <span class="inline-flex items-center gap-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 rounded-md px-2 py-1 border border-emerald-200 dark:border-emerald-700">
-        {{ activity.name }}
-        <button (click)="deleteActivity(activity.id)"
-          class="ml-0.5 text-emerald-500 hover:text-red-600"
-          [title]="'EVENTS.DELETE_ACTIVITY' | transloco">&times;</button>
-      </span>
-      } @else {
-      <a [routerLink]="['/events', ev.id, 'score', activity.id]"
-        class="inline-flex items-center text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 rounded-md px-2 py-1 border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer">
-        {{ activity.name }}
-      </a>
-      }
+      <div class="flex items-center justify-between bg-white dark:bg-white/[0.03] rounded-xl border border-gray-200 dark:border-white/[0.06] px-4 py-3 shadow-sm">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="shrink-0 w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15a2.25 2.25 0 0 1 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ activity.name }}</p>
+            <span class="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 mt-0.5">
+              {{ getEvalTypeKey(activity.evaluation_type) | transloco }}
+            </span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 ml-3">
+          @if (!authService.isAdmin()) {
+          <a [routerLink]="['/events', ev.id, 'score', activity.id]"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-md transition-shadow">
+            {{ 'EVENTS.SCORE' | transloco }}
+          </a>
+          }
+        </div>
+      </div>
       }
     </div>
     }
   </div>
   }
 
-  <!-- Move Evaluators Modal -->
-  @if (showMoveModal()) {
-  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 modal-backdrop" (click)="closeMoveModal()">
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-white/[0.06] max-w-lg w-full mx-4 p-6 modal-content" (click)="$event.stopPropagation()">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ 'EVENTS.MOVE_FROM_EVENT' | transloco }}</h2>
-
-      <div class="mb-4">
-        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'EVENTS.SOURCE_EVENT' | transloco }}</label>
-        <select
-          [(ngModel)]="sourceEventId"
-          (ngModelChange)="onSourceEventChange()"
-          class="w-full px-3 py-2 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm"
-        >
-          <option [ngValue]="null">{{ 'EVENTS.SELECT_EVENT' | transloco }}</option>
-          @for (evt of allEvents(); track evt.id) {
-            <option [ngValue]="evt.id">{{ evt.name }}</option>
-          }
-        </select>
-      </div>
-
-      @if (sourceEvaluators().length > 0) {
-        <div class="max-h-60 overflow-y-auto space-y-1 mb-4">
-          @for (evaluator of sourceEvaluators(); track evaluator.id) {
-            <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.06] cursor-pointer">
-              <input
-                type="checkbox"
-                [checked]="moveSelection().has(evaluator.id)"
-                (change)="toggleMoveSelection(evaluator.id)"
-                class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-              />
-              <span class="text-sm text-gray-900 dark:text-white">{{ evaluator.full_name }}</span>
-              <span class="text-xs text-gray-400 dark:text-gray-500">{{ evaluator.email }}</span>
-            </label>
-          }
-        </div>
-      } @else if (sourceEventId) {
-        <p class="text-sm text-gray-400 dark:text-gray-500 italic mb-4">{{ 'EVENTS.NO_POOL_EVALUATORS' | transloco }}</p>
-      }
-
-      <div class="flex justify-end gap-3">
-        <button
-          (click)="closeMoveModal()"
-          class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-white/[0.05] border border-gray-300 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.08]"
-        >
-          {{ 'COMMON.CANCEL' | transloco }}
-        </button>
-        <button
-          (click)="confirmMove()"
-          [disabled]="moveSelection().size === 0"
-          class="px-4 py-2 text-sm text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {{ 'EVENTS.CONFIRM_MOVE' | transloco }}
-        </button>
-      </div>
-    </div>
-  </div>
-  }
   }
 </div>

@@ -29,7 +29,7 @@
                   <select
                     [ngModel]="user.role"
                     (ngModelChange)="changeRole(user, $event)"
-                    class="text-sm border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-md px-2 py-1"
+                    class="text-sm text-gray-900 bg-white border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-md px-2 py-1"
                   >
                     @for (role of roles; track role) {
                       <option [value]="role">{{ ('ADMIN.ROLE_' + role) | transloco }}</option>

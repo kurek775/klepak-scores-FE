@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../auth.service';
@@ -17,6 +17,7 @@ export class Register implements OnInit {
   error = signal('');
   loading = signal(false);
   pendingApproval = signal(false);
+  showPassword = signal(false);
 
   private destroy$ = untilDestroyed();
 
@@ -31,7 +32,21 @@ export class Register implements OnInit {
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
-    });
+      confirmPassword: ['', Validators.required],
+    }, { validators: this.passwordMatchValidator });
+  }
+
+  get passwordMismatch(): boolean {
+    return this.form.value.password !== this.form.value.confirmPassword;
+  }
+
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirm = control.get('confirmPassword');
+    if (password && confirm && password.value !== confirm.value) {
+      return { passwordMismatch: true };
+    }
+    return null;
   }
 
   onSubmit(): void {

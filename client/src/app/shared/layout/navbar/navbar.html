@@ -42,6 +42,11 @@
 
     <div class="hidden md:flex flex-1 items-center justify-between ml-8">
       <div class="flex items-center gap-6">
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/dashboard" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            {{ 'NAV.DASHBOARD' | transloco }}
+          </a>
+        }
       </div>
 
       <div class="flex items-center gap-4">
@@ -115,8 +120,8 @@
     <div class="md:hidden mt-4 pb-2 border-t border-gray-100 dark:border-white/[0.06] pt-4 space-y-4 animate-fade-in-down">
 
       <div class="flex flex-col gap-4 px-2">
-        <a routerLink="/events" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          {{ 'NAV.EVENTS' | transloco }}
+        <a routerLink="/dashboard" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+          {{ 'NAV.DASHBOARD' | transloco }}
         </a>
         @if (authService.isAdmin()) {
           <a routerLink="/admin/invitations" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">

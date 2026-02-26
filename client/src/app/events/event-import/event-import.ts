@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { CsvPreviewResponse, ImportSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
 import { untilDestroyed } from '../../core/utils/destroy';
@@ -21,7 +22,7 @@ const SYSTEM_FIELDS = [
 @Component({
   selector: 'app-event-import',
   templateUrl: './event-import.html',
-  imports: [FormsModule, RouterLink, TranslocoPipe, SlicePipe],
+  imports: [FormsModule, RouterLink, TranslocoPipe, SlicePipe, ArrowLeftIconComponent],
 })
 export class EventImport {
   private destroy$ = untilDestroyed();
@@ -140,7 +141,7 @@ export class EventImport {
   viewEvent(): void {
     const s = this.summary();
     if (s) {
-      this.router.navigate(['/events', s.event_id]);
+      this.router.navigate(['/events', s.event_id, 'setup']);
     }
   }
 }

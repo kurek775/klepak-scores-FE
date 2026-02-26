@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { forkJoin, switchMap, map } from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
+import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { Activity, EvaluationType, ScoreRecord } from '../../core/models/activity.model';
 import { Participant } from '../../core/models/event.model';
 import { ScoringService } from '../scoring.service';
@@ -24,7 +25,7 @@ interface ScoreRow {
 @Component({
   selector: 'app-scoring-view',
   templateUrl: './scoring-view.html',
-  imports: [RouterLink, FormsModule, AiReviewModal, TranslocoPipe],
+  imports: [RouterLink, FormsModule, AiReviewModal, TranslocoPipe, ArrowLeftIconComponent],
 })
 export class ScoringView implements OnInit {
   activity = signal<Activity | null>(null);

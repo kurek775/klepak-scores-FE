@@ -3,14 +3,16 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { DiplomaFont, DiplomaItem, DiplomaTemplate, DynamicKey, FontWeight } from '../../core/models/diploma.model';
 import { DiplomaService } from '../../events/diploma.service';
+import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
   selector: 'app-diploma-editor',
   templateUrl: './diploma-editor.html',
-  imports: [FormsModule, RouterLink, TranslocoPipe],
+  imports: [FormsModule, RouterLink, TranslocoPipe, ArrowLeftIconComponent],
 })
 export class DiplomaEditor implements OnInit, OnDestroy {
   private destroy$ = untilDestroyed();
@@ -62,6 +64,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
     private route:    ActivatedRoute,
     private diplomaService: DiplomaService,
     private transloco: TranslocoService,
+    private toast: ToastService,
   ) {
     // Inject custom font @font-face rules
     effect(() => {
@@ -484,6 +487,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
         this.templates.update(arr => arr.map(x => x.id === t.id ? t : x));
         this.templateName.set(t.name);
         this.saving.set(false);
+        this.toast.success(this.transloco.translate('DIPLOMA.SAVED'));
       },
       error: () => this.saving.set(false),
     });

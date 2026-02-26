@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { jsPDF } from 'jspdf';
 
+import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { LeaderboardResponse } from '../../core/models/leaderboard.model';
 import { DiplomaTemplate } from '../../core/models/diploma.model';
 import { DiplomaService } from '../diploma.service';
@@ -12,7 +13,7 @@ import { untilDestroyed } from '../../core/utils/destroy';
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.html',
-  imports: [RouterLink, TranslocoPipe],
+  imports: [RouterLink, TranslocoPipe, ArrowLeftIconComponent],
 })
 export class Leaderboard implements OnInit {
   leaderboard        = signal<LeaderboardResponse | null>(null);

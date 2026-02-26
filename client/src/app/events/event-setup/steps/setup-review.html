@@ -1,0 +1,128 @@
+<div>
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">{{ 'SETUP.REVIEW_TITLE' | transloco }}</h2>
+
+  <!-- Blocking errors -->
+  @if (hasNoGroups()) {
+    <div class="flex items-center gap-2 px-4 py-3 mb-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
+      <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+      {{ 'SETUP.WARN_NO_GROUPS' | transloco }}
+    </div>
+  }
+  @if (hasNoActivities()) {
+    <div class="flex items-center gap-2 px-4 py-3 mb-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
+      <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+      {{ 'SETUP.WARN_NO_ACTIVITIES' | transloco }}
+    </div>
+  }
+
+  <!-- Warnings -->
+  @if (emptyPoolWarning()) {
+    <div class="flex items-center gap-2 px-4 py-3 mb-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 text-sm">
+      <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+      {{ 'SETUP.WARN_NO_EVALUATORS_POOL' | transloco }}
+    </div>
+  }
+  @if (groupsWithoutEvaluators().length > 0 && !emptyPoolWarning()) {
+    <div class="flex items-start gap-2 px-4 py-3 mb-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 text-sm">
+      <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+      <span>{{ 'SETUP.WARN_GROUPS_NO_EVALUATORS' | transloco }}: {{ groupsWithoutEvaluators().length }}</span>
+    </div>
+  }
+  @if (groupsWithoutParticipants().length > 0) {
+    <div class="flex items-start gap-2 px-4 py-3 mb-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 text-sm">
+      <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+      <span>{{ 'SETUP.WARN_GROUPS_NO_PARTICIPANTS' | transloco }}: {{ groupsWithoutParticipants().length }}</span>
+    </div>
+  }
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <!-- Groups Summary -->
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">{{ 'SETUP.GROUPS_SUMMARY' | transloco }}</h3>
+      @if (event().groups.length === 0) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
+      } @else {
+        <ul class="space-y-2">
+          @for (group of event().groups; track group.id) {
+            <li class="flex items-center justify-between text-sm">
+              <span class="text-gray-900 dark:text-white">{{ group.name }}</span>
+              <span class="text-gray-400 dark:text-gray-500">{{ group.participants.length }} {{ 'DASHBOARD.PARTICIPANTS_PLURAL' | transloco }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Activities Summary -->
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">{{ 'SETUP.ACTIVITIES_SUMMARY' | transloco }}</h3>
+      @if (event().activities.length === 0) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_ACTIVITIES' | transloco }}</p>
+      } @else {
+        <ul class="space-y-2">
+          @for (activity of event().activities; track activity.id) {
+            <li class="flex items-center justify-between text-sm">
+              <span class="text-gray-900 dark:text-white">{{ activity.name }}</span>
+              <span class="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                {{ getEvalTypeKey(activity.evaluation_type) | transloco }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Age Brackets Summary -->
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">{{ 'SETUP.AGE_BRACKETS_SUMMARY' | transloco }}</h3>
+      @if (ageCategories().length === 0) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_AGE_BRACKETS' | transloco }}</p>
+      } @else {
+        <div class="flex flex-wrap gap-2">
+          @for (cat of ageCategories(); track cat.id) {
+            <span class="inline-flex items-center text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 rounded-full px-3 py-1.5">
+              {{ cat.name }} ({{ cat.min_age }}&ndash;{{ cat.max_age }})
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Evaluators Summary -->
+    <div class="bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">{{ 'SETUP.EVALUATORS_SUMMARY' | transloco }}</h3>
+      @if (event().groups.length === 0) {
+        <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NO_GROUPS_IN_EVENT' | transloco }}</p>
+      } @else {
+        <ul class="space-y-2">
+          @for (group of event().groups; track group.id) {
+            <li class="text-sm">
+              <span class="text-gray-900 dark:text-white font-medium">{{ group.name }}</span>
+              <div class="flex flex-wrap gap-1 mt-1">
+                @for (evaluator of group.evaluators; track evaluator.id) {
+                  <span class="inline-flex items-center text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded-full px-2.5 py-1">
+                    {{ evaluator.full_name }}
+                  </span>
+                }
+                @if (group.evaluators.length === 0) {
+                  <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.NONE_ASSIGNED' | transloco }}</span>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  <!-- Activate Button -->
+  <div class="mt-8 flex justify-center">
+    <button
+      (click)="activate.emit()"
+      [disabled]="hasBlockingErrors()"
+      class="px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {{ 'SETUP.ACTIVATE_EVENT' | transloco }}
+    </button>
+  </div>
+</div>

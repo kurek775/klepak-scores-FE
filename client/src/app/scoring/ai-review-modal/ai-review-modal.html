@@ -3,8 +3,8 @@
 
     <!-- Header -->
     <div class="px-6 py-4 border-b border-gray-200 dark:border-white/[0.06] flex-shrink-0">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Review AI Results</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Check the parsed scores and edit if needed before applying.</p>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{{ 'AI_REVIEW.TITLE' | transloco }}</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ 'AI_REVIEW.SUBTITLE' | transloco }}</p>
     </div>
 
     <!-- Content -->
@@ -17,16 +17,16 @@
 
       <!-- Results table -->
       <div class="w-full md:w-1/2 p-4 overflow-auto">
-        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Parsed Scores</h3>
+        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ 'AI_REVIEW.PARSED_SCORES' | transloco }}</h3>
 
         @if (editableResults().length === 0) {
-          <p class="text-sm text-gray-400 dark:text-gray-500 italic">No scores were recognized. Try a clearer photo.</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500 italic">{{ 'AI_REVIEW.NO_SCORES' | transloco }}</p>
         } @else {
           <table class="w-full">
             <thead>
               <tr>
-                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase pb-2 pr-4">Participant</th>
-                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase pb-2">Score</th>
+                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase pb-2 pr-4">{{ 'AI_REVIEW.PARTICIPANT' | transloco }}</th>
+                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase pb-2">{{ 'AI_REVIEW.SCORE' | transloco }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-white/[0.06]">
@@ -55,13 +55,13 @@
         (click)="onDiscard()"
         class="px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-white/[0.05] rounded-lg hover:bg-gray-200 dark:hover:bg-white/[0.06] transition-colors"
       >
-        Discard
+        {{ 'AI_REVIEW.DISCARD' | transloco }}
       </button>
       <button
         (click)="onConfirm()"
         class="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-colors"
       >
-        Confirm & Apply
+        {{ 'AI_REVIEW.CONFIRM' | transloco }}
       </button>
     </div>
   </div>

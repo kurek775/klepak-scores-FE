@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { superAdminGuard } from './core/guards/super-admin.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./auth/login/login').then((m) => m.Login) },
@@ -28,11 +29,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  { path: 'events', redirectTo: '/dashboard', pathMatch: 'full' },
   {
     path: 'events/create',
     loadComponent: () =>
       import('./events/event-create/event-create').then((m) => m.EventCreate),
     canActivate: [authGuard, adminGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   {
     path: 'events/import',
@@ -53,6 +56,18 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'events/:id/setup',
+    loadComponent: () =>
+      import('./events/event-setup/event-setup').then((m) => m.EventSetup),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'events/:id/evaluators',
+    loadComponent: () =>
+      import('./events/event-evaluators/event-evaluators').then((m) => m.EventEvaluators),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
     path: 'events/:id',
     loadComponent: () =>
       import('./events/event-detail/event-detail').then((m) => m.EventDetailComponent),
@@ -62,6 +77,12 @@ export const routes: Routes = [
     path: 'admin/events/:id/diploma',
     loadComponent: () =>
       import('./admin/diploma-editor/diploma-editor').then((m) => m.DiplomaEditor),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'admin/evaluators',
+    loadComponent: () =>
+      import('./admin/evaluator-list/evaluator-list').then((m) => m.EvaluatorList),
     canActivate: [authGuard, adminGuard],
   },
   {
@@ -78,8 +99,23 @@ export const routes: Routes = [
   },
 
   {
+    path: 'docs/admin',
+    loadComponent: () =>
+      import('./pages/docs/admin-guide/admin-guide').then((m) => m.AdminGuide),
+  },
+  {
+    path: 'docs/evaluator',
+    loadComponent: () =>
+      import('./pages/docs/evaluator-guide/evaluator-guide').then((m) => m.EvaluatorGuide),
+  },
+
+  {
     path: '',
     loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing),
     pathMatch: 'full',
+  },
+  {
+    path: '**',
+    loadComponent: () => import('./pages/not-found/not-found').then((m) => m.NotFound),
   },
 ];

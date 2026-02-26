@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto p-4 sm:p-8 page-enter">
-  <a [routerLink]="['/events', eventId]" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">{{ 'SCORING.BACK' | transloco }}</a>
+  <a [routerLink]="['/events', eventId]" class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><app-arrow-left-icon /> {{ 'SCORING.BACK' | transloco }}</a>
 
   @if (loading()) {
     <p class="text-gray-500 dark:text-gray-400 mt-6">{{ 'SCORING.LOADING' | transloco }}</p>
@@ -51,7 +51,7 @@
             @for (row of rows(); track row.participant.id; let i = $index) {
               <tr
                 class="transition-colors duration-300"
-                [class.bg-green-50]="row.saved"
+                [class]="row.saved ? 'bg-green-50 dark:bg-green-900/30' : ''"
               >
                 <td class="px-5 py-3 text-sm text-gray-900 dark:text-white">{{ row.participant.display_name }}</td>
                 <td class="px-5 py-3">

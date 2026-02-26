@@ -56,7 +56,7 @@
                         : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
                   "
                 >
-                  {{ event.status }}
+                  {{ ('EVENTS.STATUS_' + event.status) | transloco }}
                 </span>
               </td>
               <td class="px-3 sm:px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ event.group_count }}</td>

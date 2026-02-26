@@ -22,6 +22,8 @@ export class SetupAccount implements OnInit {
   validating = signal(true);
   error = signal('');
   tokenInvalid = signal(false);
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   private destroy$ = untilDestroyed();
 

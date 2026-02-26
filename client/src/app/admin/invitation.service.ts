@@ -9,8 +9,10 @@ import { InvitationRead } from '../core/models/user.model';
 export class InvitationService {
   constructor(private http: HttpClient) {}
 
-  invite(email: string): Observable<InvitationRead> {
-    return this.http.post<InvitationRead>(`${environment.apiUrl}/admin/invitations`, { email });
+  invite(email: string, role?: string): Observable<InvitationRead> {
+    const body: { email: string; role?: string } = { email };
+    if (role) body.role = role;
+    return this.http.post<InvitationRead>(`${environment.apiUrl}/admin/invitations`, body);
   }
 
   list(): Observable<InvitationRead[]> {

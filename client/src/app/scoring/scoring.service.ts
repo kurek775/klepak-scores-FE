@@ -58,6 +58,10 @@ export class ScoringService {
     );
   }
 
+  deleteRecord(recordId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/records/${recordId}`);
+  }
+
   getActivityRecords(activityId: number): Observable<ScoreRecord[]> {
     return this.http.get<ScoreRecord[]>(
       `${environment.apiUrl}/activities/${activityId}/records`,

@@ -19,6 +19,8 @@ export class ResetPassword implements OnInit {
   loading = signal(false);
   success = signal(false);
   error = signal('');
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   private destroy$ = untilDestroyed();
 

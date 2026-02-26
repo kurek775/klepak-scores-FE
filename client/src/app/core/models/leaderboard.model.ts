@@ -5,6 +5,7 @@ export interface ParticipantRank {
   gender: string | null;
   age: number | null;
   value: string;
+  group_name: string | null;
 }
 
 export interface CategoryRanking {

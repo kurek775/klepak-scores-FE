@@ -1,5 +1,6 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 export interface AIResult {
   participant_id: number;
@@ -10,7 +11,7 @@ export interface AIResult {
 @Component({
   selector: 'app-ai-review-modal',
   templateUrl: './ai-review-modal.html',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslocoPipe],
 })
 export class AiReviewModal {
   imageUrl = input.required<string>();

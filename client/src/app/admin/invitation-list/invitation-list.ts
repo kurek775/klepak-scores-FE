@@ -6,7 +6,7 @@ import { DatePipe } from '@angular/common';
 import { InvitationService } from '../invitation.service';
 import { AuthService } from '../../auth/auth.service';
 import { ToastService } from '../../shared/toast.service';
-import { InvitationRead } from '../../core/models/user.model';
+import { InvitationRead, UserRole } from '../../core/models/user.model';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -18,6 +18,8 @@ export class InvitationList implements OnInit {
   invitations = signal<InvitationRead[]>([]);
   loading = signal(false);
   inviteEmail = '';
+  inviteRole = UserRole.EVALUATOR;
+  UserRole = UserRole;
   inviteLoading = signal(false);
   inviteError = signal('');
   inviteSuccess = signal('');
@@ -52,7 +54,7 @@ export class InvitationList implements OnInit {
     this.inviteSuccess.set('');
     this.inviteLoading.set(true);
 
-    this.invitationService.invite(this.inviteEmail.trim()).pipe(this.destroy$()).subscribe({
+    this.invitationService.invite(this.inviteEmail.trim(), this.inviteRole).pipe(this.destroy$()).subscribe({
       next: () => {
         this.inviteSuccess.set(this.inviteEmail.trim());
         this.inviteEmail = '';

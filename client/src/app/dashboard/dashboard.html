@@ -9,6 +9,8 @@
       </div>
     } @else {
 
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ 'DASHBOARD.GREETING' | transloco: { name: user.full_name } }}</h1>
+
     @if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
       <!-- Quick actions for admins -->
       <div class="grid gap-4 sm:grid-cols-2 mb-8">
@@ -18,6 +20,13 @@
         >
           <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'INVITATIONS.INVITE' | transloco }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.INVITE_DESC' | transloco }}</p>
+        </a>
+        <a
+          routerLink="/admin/evaluators"
+          class="block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition"
+        >
+          <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'NAV.EVALUATORS' | transloco }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'EVENTS.MANAGE_EVALUATORS' | transloco }}</p>
         </a>
         @if (user.role === 'SUPER_ADMIN') {
           <a
