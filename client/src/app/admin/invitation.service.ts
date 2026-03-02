@@ -19,6 +19,10 @@ export class InvitationService {
     return this.http.get<InvitationRead[]>(`${environment.apiUrl}/admin/invitations`);
   }
 
+  resend(id: number): Observable<InvitationRead> {
+    return this.http.post<InvitationRead>(`${environment.apiUrl}/admin/invitations/${id}/resend`, {});
+  }
+
   revoke(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/admin/invitations/${id}`);
   }

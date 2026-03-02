@@ -29,6 +29,7 @@
       <button
         (click)="toggleMobileMenu()"
         class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        aria-label="Toggle menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           @if (isMobileMenuOpen) {
@@ -54,6 +55,9 @@
         @if (authService.isAdmin()) {
           <a routerLink="/admin/invitations" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
             {{ 'NAV.INVITATIONS' | transloco }}
+          </a>
+          <a routerLink="/admin/evaluators" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            {{ 'NAV.EVALUATORS' | transloco }}
           </a>
         }
         @if (authService.isSuperAdmin()) {
@@ -126,6 +130,9 @@
         @if (authService.isAdmin()) {
           <a routerLink="/admin/invitations" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
             {{ 'NAV.INVITATIONS' | transloco }}
+          </a>
+          <a routerLink="/admin/evaluators" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            {{ 'NAV.EVALUATORS' | transloco }}
           </a>
         }
         @if (authService.isSuperAdmin()) {

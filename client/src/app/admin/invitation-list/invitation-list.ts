@@ -68,9 +68,22 @@ export class InvitationList implements OnInit {
     });
   }
 
+  resend(id: number): void {
+    this.invitationService.resend(id).pipe(this.destroy$()).subscribe({
+      next: (inv) => {
+        this.toast.success(this.transloco.translate('INVITATIONS.RESENT_SUCCESS') + ' ' + inv.email);
+        this.loadInvitations();
+      },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
+    });
+  }
+
   revoke(id: number): void {
     this.invitationService.revoke(id).pipe(this.destroy$()).subscribe({
-      next: () => this.loadInvitations(),
+      next: () => {
+        this.toast.success(this.transloco.translate('INVITATIONS.REVOKED_SUCCESS'));
+        this.loadInvitations();
+      },
       error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }

@@ -8,6 +8,7 @@ import { LeaderboardResponse } from '../../core/models/leaderboard.model';
 import { DiplomaTemplate } from '../../core/models/diploma.model';
 import { DiplomaService } from '../diploma.service';
 import { EventService } from '../event.service';
+import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -29,6 +30,7 @@ export class Leaderboard implements OnInit {
     private route:    ActivatedRoute,
     private eventService: EventService,
     private diplomaService: DiplomaService,
+    private toast: ToastService,
     private transloco: TranslocoService,
   ) {}
 
@@ -41,12 +43,15 @@ export class Leaderboard implements OnInit {
         this.expandedActivities.set(new Set(data.activities.map(a => a.activity_id)));
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+      },
     });
 
     this.diplomaService.getTemplates(this.eventId).pipe(this.destroy$()).subscribe({
       next: (templates) => this.diplomaTemplates.set(templates),
-      error: () => {},
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 

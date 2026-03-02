@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { EventSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
 import { AuthService } from '../../auth/auth.service';
+import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -21,6 +22,7 @@ export class EventList implements OnInit {
   constructor(
     private eventService: EventService,
     public authService: AuthService,
+    private toast: ToastService,
     private transloco: TranslocoService,
   ) {}
 
@@ -35,7 +37,10 @@ export class EventList implements OnInit {
         this.events.set(events);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+      },
     });
   }
 
@@ -44,8 +49,11 @@ export class EventList implements OnInit {
       return;
     }
     this.eventService.deleteEvent(event.id).pipe(this.destroy$()).subscribe({
-      next: () => this.events.update((list) => list.filter((e) => e.id !== event.id)),
-      error: () => this.loading.set(false),
+      next: () => {
+        this.events.update((list) => list.filter((e) => e.id !== event.id));
+        this.toast.success(this.transloco.translate('EVENTS.EVENT_DELETED'));
+      },
+      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
   }
 }

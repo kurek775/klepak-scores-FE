@@ -47,21 +47,21 @@ describe('ToastService', () => {
     expect(service.toasts()[0].message).toBe('B');
   });
 
-  it('toast is auto-removed after 4 seconds', () => {
+  it('toast is auto-removed after timeout (5s for success)', () => {
     service.success('Auto-remove me');
     expect(service.toasts().length).toBe(1);
-    vi.advanceTimersByTime(4000);
+    vi.advanceTimersByTime(5000);
     expect(service.toasts().length).toBe(0);
   });
 
   it('multiple toasts are auto-removed independently', () => {
-    service.success('First');
+    service.success('First'); // 5s timeout
     vi.advanceTimersByTime(2000);
-    service.error('Second');
-    vi.advanceTimersByTime(2000); // First should be gone, second still here
+    service.error('Second'); // 8s timeout
+    vi.advanceTimersByTime(3000); // 5s total for first — gone; 3s for second — still here
     expect(service.toasts().length).toBe(1);
     expect(service.toasts()[0].message).toBe('Second');
-    vi.advanceTimersByTime(2000); // Now second is also gone
+    vi.advanceTimersByTime(5000); // 8s total for second — gone
     expect(service.toasts().length).toBe(0);
   });
 });

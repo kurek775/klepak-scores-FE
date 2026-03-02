@@ -62,7 +62,10 @@ export class EventDetailComponent implements OnInit {
         this.expandedGroups.set(new Set(event.groups.map((g) => g.id)));
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+      },
     });
 
     this.eventService.getAgeCategories(id).pipe(this.destroy$()).subscribe({
@@ -94,7 +97,10 @@ export class EventDetailComponent implements OnInit {
       .pipe(this.destroy$())
       .subscribe({
         next: () => this.exportingCsv.set(false),
-        error: () => this.exportingCsv.set(false),
+        error: () => {
+          this.exportingCsv.set(false);
+          this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+        },
       });
   }
 

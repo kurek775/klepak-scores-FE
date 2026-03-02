@@ -59,6 +59,7 @@
                     <button
                       (click)="toggleBoolean(row)"
                       class="w-10 h-6 rounded-full relative transition-colors"
+                      [attr.aria-label]="'Toggle score for ' + row.participant.display_name"
                       [class]="row.value === '1' ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'"
                     >
                       <span
@@ -72,6 +73,8 @@
                       type="number"
                       [(ngModel)]="row.value"
                       (ngModelChange)="onValueChange(row)"
+                      min="0"
+                      max="99999"
                       class="w-24 px-3 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                       placeholder="0"
                     />

@@ -48,6 +48,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./scoring/scoring-view/scoring-view').then((m) => m.ScoringView),
     canActivate: [authGuard],
+    canDeactivate: [unsavedChangesGuard],
   },
   {
     path: 'events/:id/leaderboard',

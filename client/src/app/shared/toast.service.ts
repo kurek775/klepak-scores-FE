@@ -30,6 +30,6 @@ export class ToastService {
   private _add(message: string, type: Toast['type']): void {
     const id = ++this.nextId;
     this.toasts.update((all) => [...all, { id, message, type }]);
-    setTimeout(() => this.remove(id), 4000);
+    setTimeout(() => this.remove(id), type === 'error' ? 8000 : 5000);
   }
 }

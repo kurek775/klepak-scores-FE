@@ -84,15 +84,22 @@ export class EvaluatorList implements OnInit {
                   if (loaded === events.length) {
                     this.evaluators.set(rows);
                     this.loading.set(false);
+                    this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
                   }
                 },
               });
             }
           },
-          error: () => this.loading.set(false),
+          error: () => {
+            this.loading.set(false);
+            this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+          },
         });
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+      },
     });
   }
 

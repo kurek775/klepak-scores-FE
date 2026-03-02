@@ -96,7 +96,8 @@
           <span class="inline-flex items-center gap-1.5 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 rounded-full px-3 py-1">
             {{ font.name }}
             <button (click)="removeFont(font.name)"
-              class="text-indigo-400 hover:text-red-500 font-bold">&times;</button>
+              class="text-indigo-400 hover:text-red-500 font-bold"
+              [attr.aria-label]="'Remove font ' + font.name">&times;</button>
           </span>
           }
         </div>

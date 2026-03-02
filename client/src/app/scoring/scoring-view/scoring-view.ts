@@ -6,6 +6,7 @@ import { forkJoin, switchMap, map } from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
 import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
+import { HasUnsavedChanges } from '../../core/guards/unsaved-changes.guard';
 import { Activity, EvaluationType, ScoreRecord } from '../../core/models/activity.model';
 import { Participant } from '../../core/models/event.model';
 import { ScoringService } from '../scoring.service';
@@ -27,7 +28,7 @@ interface ScoreRow {
   templateUrl: './scoring-view.html',
   imports: [RouterLink, FormsModule, AiReviewModal, TranslocoPipe, ArrowLeftIconComponent],
 })
-export class ScoringView implements OnInit {
+export class ScoringView implements OnInit, HasUnsavedChanges {
   activity = signal<Activity | null>(null);
   rows = signal<ScoreRow[]>([]);
   loading = signal(false);
@@ -51,6 +52,10 @@ export class ScoringView implements OnInit {
     private toast: ToastService,
     private transloco: TranslocoService,
   ) {}
+
+  hasUnsavedChanges(): boolean {
+    return this.rows().some(r => r.value && !r.saved);
+  }
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
