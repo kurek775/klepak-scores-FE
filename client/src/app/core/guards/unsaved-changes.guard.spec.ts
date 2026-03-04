@@ -3,8 +3,11 @@ import { vi, beforeEach, afterEach } from 'vitest';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { unsavedChangesGuard, HasUnsavedChanges } from './unsaved-changes.guard';
+import { ConfirmDialogService } from '../../shared/confirm-dialog.service';
 
 describe('unsavedChangesGuard', () => {
+  let confirmDialogService: ConfirmDialogService;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -14,6 +17,7 @@ describe('unsavedChangesGuard', () => {
         }),
       ],
     });
+    confirmDialogService = TestBed.inject(ConfirmDialogService);
   });
 
   afterEach(() => {
@@ -26,18 +30,18 @@ describe('unsavedChangesGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('shows confirm dialog when component has unsaved changes', () => {
-    const confirmSpy = vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+  it('shows confirm dialog when component has unsaved changes', async () => {
+    const confirmSpy = vi.spyOn(confirmDialogService, 'confirm').mockResolvedValue(true);
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => true };
-    const result = TestBed.runInInjectionContext(() => unsavedChangesGuard(component, {} as any, {} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(() => unsavedChangesGuard(component, {} as any, {} as any, {} as any));
     expect(confirmSpy).toHaveBeenCalled();
     expect(result).toBe(true);
   });
 
-  it('blocks navigation when user cancels confirm dialog', () => {
-    vi.spyOn(globalThis, 'confirm').mockReturnValue(false);
+  it('blocks navigation when user cancels confirm dialog', async () => {
+    vi.spyOn(confirmDialogService, 'confirm').mockResolvedValue(false);
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => true };
-    const result = TestBed.runInInjectionContext(() => unsavedChangesGuard(component, {} as any, {} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(() => unsavedChangesGuard(component, {} as any, {} as any, {} as any));
     expect(result).toBe(false);
   });
 

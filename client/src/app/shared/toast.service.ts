@@ -27,9 +27,16 @@ export class ToastService {
     this.toasts.update((all) => all.filter((t) => t.id !== id));
   }
 
+  private static readonly MAX_TOASTS = 5;
+
   private _add(message: string, type: Toast['type']): void {
     const id = ++this.nextId;
-    this.toasts.update((all) => [...all, { id, message, type }]);
+    this.toasts.update((all) => {
+      const updated = [...all, { id, message, type }];
+      return updated.length > ToastService.MAX_TOASTS
+        ? updated.slice(updated.length - ToastService.MAX_TOASTS)
+        : updated;
+    });
     setTimeout(() => this.remove(id), type === 'error' ? 8000 : 5000);
   }
 }

@@ -4,6 +4,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { EventDetail, GroupDetail, Participant } from '../../../core/models/event.model';
 import { EventService } from '../../event.service';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog.service';
 import { ToastService } from '../../../shared/toast.service';
 import { untilDestroyed } from '../../../core/utils/destroy';
 
@@ -20,14 +21,15 @@ export class SetupGroups {
 
   expandedGroups = signal<Set<number>>(new Set());
   editingGroupId = signal<number | null>(null);
-  editingGroupName = '';
+  editingGroupName = signal('');
   addParticipantGroupId = signal<number | null>(null);
-  newParticipantName = '';
+  newParticipantName = signal('');
   showAddGroup = signal(false);
-  newGroupName = '';
+  newGroupName = signal('');
 
   constructor(
     private eventService: EventService,
+    private confirmDialog: ConfirmDialogService,
     private toast: ToastService,
     private transloco: TranslocoService,
   ) {}
@@ -47,11 +49,11 @@ export class SetupGroups {
   // -- Group CRUD --
   addGroup(): void {
     const ev = this.event();
-    if (!ev || !this.newGroupName.trim()) return;
-    this.eventService.createGroup(ev.id, { name: this.newGroupName.trim() }).pipe(this.destroy$()).subscribe({
+    if (!ev || !this.newGroupName().trim()) return;
+    this.eventService.createGroup(ev.id, { name: this.newGroupName().trim() }).pipe(this.destroy$()).subscribe({
       next: (group) => {
         this.emitUpdate({ ...ev, groups: [...ev.groups, group] });
-        this.newGroupName = '';
+        this.newGroupName.set('');
         this.showAddGroup.set(false);
         this.toast.success(this.transloco.translate('EVENTS.GROUP_ADDED'));
       },
@@ -61,18 +63,18 @@ export class SetupGroups {
 
   startEditGroup(group: GroupDetail): void {
     this.editingGroupId.set(group.id);
-    this.editingGroupName = group.name;
+    this.editingGroupName.set(group.name);
   }
 
   saveGroup(): void {
     const ev = this.event();
     const id = this.editingGroupId();
-    if (!ev || !id || !this.editingGroupName.trim()) return;
-    this.eventService.updateGroup(id, { name: this.editingGroupName.trim() }).pipe(this.destroy$()).subscribe({
+    if (!ev || !id || !this.editingGroupName().trim()) return;
+    this.eventService.updateGroup(id, { name: this.editingGroupName().trim() }).pipe(this.destroy$()).subscribe({
       next: () => {
         this.emitUpdate({
           ...ev,
-          groups: ev.groups.map(g => g.id === id ? { ...g, name: this.editingGroupName.trim() } : g),
+          groups: ev.groups.map(g => g.id === id ? { ...g, name: this.editingGroupName().trim() } : g),
         });
         this.editingGroupId.set(null);
         this.toast.success(this.transloco.translate('EVENTS.GROUP_UPDATED'));
@@ -85,9 +87,14 @@ export class SetupGroups {
     this.editingGroupId.set(null);
   }
 
-  deleteGroup(group: GroupDetail): void {
+  async deleteGroup(group: GroupDetail): Promise<void> {
     const ev = this.event();
-    if (!ev || !confirm(this.transloco.translate('EVENTS.CONFIRM_DELETE_GROUP', { name: group.name }))) return;
+    if (!ev) return;
+    const confirmed = await this.confirmDialog.confirm({
+      title: this.transloco.translate('COMMON.CONFIRM_TITLE'),
+      message: this.transloco.translate('EVENTS.CONFIRM_DELETE_GROUP', { name: group.name }),
+    });
+    if (!confirmed) return;
     this.eventService.deleteGroup(group.id).pipe(this.destroy$()).subscribe({
       next: () => {
         this.emitUpdate({ ...ev, groups: ev.groups.filter(g => g.id !== group.id) });
@@ -100,13 +107,13 @@ export class SetupGroups {
   // -- Participant CRUD --
   showAddParticipant(groupId: number): void {
     this.addParticipantGroupId.set(groupId);
-    this.newParticipantName = '';
+    this.newParticipantName.set('');
   }
 
   addParticipant(groupId: number): void {
     const ev = this.event();
-    if (!ev || !this.newParticipantName.trim()) return;
-    this.eventService.addParticipant(groupId, { display_name: this.newParticipantName.trim() }).pipe(this.destroy$()).subscribe({
+    if (!ev || !this.newParticipantName().trim()) return;
+    this.eventService.addParticipant(groupId, { display_name: this.newParticipantName().trim() }).pipe(this.destroy$()).subscribe({
       next: (participant) => {
         this.emitUpdate({
           ...ev,
@@ -114,7 +121,7 @@ export class SetupGroups {
             g.id === groupId ? { ...g, participants: [...g.participants, participant] } : g,
           ),
         });
-        this.newParticipantName = '';
+        this.newParticipantName.set('');
         this.addParticipantGroupId.set(null);
         this.toast.success(this.transloco.translate('EVENTS.PARTICIPANT_ADDED'));
       },
@@ -122,9 +129,14 @@ export class SetupGroups {
     });
   }
 
-  deleteParticipant(groupId: number, participant: Participant): void {
+  async deleteParticipant(groupId: number, participant: Participant): Promise<void> {
     const ev = this.event();
-    if (!ev || !confirm(this.transloco.translate('EVENTS.CONFIRM_DELETE_PARTICIPANT', { name: participant.display_name }))) return;
+    if (!ev) return;
+    const confirmed = await this.confirmDialog.confirm({
+      title: this.transloco.translate('COMMON.CONFIRM_TITLE'),
+      message: this.transloco.translate('EVENTS.CONFIRM_DELETE_PARTICIPANT', { name: participant.display_name }),
+    });
+    if (!confirmed) return;
     this.eventService.deleteParticipant(participant.id).pipe(this.destroy$()).subscribe({
       next: () => {
         this.emitUpdate({

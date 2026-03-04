@@ -16,9 +16,10 @@ import { untilDestroyed } from '../../core/utils/destroy';
 })
 export class EventCreate implements HasUnsavedChanges {
   private destroy$ = untilDestroyed();
+  private nextUid = 1;
 
   eventName = '';
-  groups = signal<GroupInput[]>([{ name: '', identifier: '', participants: [] }]);
+  groups = signal<GroupInput[]>([{ _uid: 0, name: '', identifier: '', participants: [] }]);
   error = signal('');
   loading = signal(false);
   summary = signal<ImportSummary | null>(null);
@@ -36,7 +37,7 @@ export class EventCreate implements HasUnsavedChanges {
   }
 
   addGroup(): void {
-    this.groups.update((g) => [...g, { name: '', identifier: '', participants: [] }]);
+    this.groups.update((g) => [...g, { _uid: this.nextUid++, name: '', identifier: '', participants: [] }]);
   }
 
   removeGroup(index: number): void {
@@ -47,7 +48,7 @@ export class EventCreate implements HasUnsavedChanges {
     this.groups.update((groups) =>
       groups.map((g, i) =>
         i === groupIndex
-          ? { ...g, participants: [...g.participants, { display_name: '', gender: '', age: null }] }
+          ? { ...g, participants: [...g.participants, { _uid: this.nextUid++, display_name: '', gender: '', age: null }] }
           : g,
       ),
     );

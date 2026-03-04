@@ -587,6 +587,10 @@
     "YES": "Ano",
     "NO": "Ne",
     "SIGN_OUT": "Odhlásit se",
-    "UNSAVED_CHANGES_WARNING": "Máte neuložené změny. Opravdu chcete odejít?"
+    "UNSAVED_CHANGES_WARNING": "Máte neuložené změny. Opravdu chcete odejít?",
+    "CONFIRM": "Potvrdit",
+    "CONFIRM_TITLE": "Potvrzení akce",
+    "STAY_ON_PAGE": "Zůstat na stránce",
+    "LEAVE_PAGE": "Opustit stránku"
   }
 }

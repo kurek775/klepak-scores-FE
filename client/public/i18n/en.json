@@ -587,6 +587,10 @@
     "YES": "Yes",
     "NO": "No",
     "SIGN_OUT": "Sign Out",
-    "UNSAVED_CHANGES_WARNING": "You have unsaved changes. Are you sure you want to leave?"
+    "UNSAVED_CHANGES_WARNING": "You have unsaved changes. Are you sure you want to leave?",
+    "CONFIRM": "Confirm",
+    "CONFIRM_TITLE": "Confirm Action",
+    "STAY_ON_PAGE": "Stay on Page",
+    "LEAVE_PAGE": "Leave Page"
   }
 }

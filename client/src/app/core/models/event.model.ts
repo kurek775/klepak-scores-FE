@@ -80,6 +80,7 @@ export interface CsvPreviewResponse {
 }
 
 export interface ParticipantInput {
+  _uid: number;
   display_name: string;
   external_id?: string;
   gender?: string;
@@ -87,6 +88,7 @@ export interface ParticipantInput {
 }
 
 export interface GroupInput {
+  _uid: number;
   name: string;
   identifier: string;
   participants: ParticipantInput[];

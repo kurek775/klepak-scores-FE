@@ -1,5 +1,5 @@
-<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop">
-  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col modal-content">
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop" (keydown.escape)="onDiscard()">
+  <div cdkTrapFocus [cdkTrapFocusAutoCapture]="true" class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col modal-content" role="dialog" [attr.aria-label]="'AI_REVIEW.TITLE' | transloco">
 
     <!-- Header -->
     <div class="px-6 py-4 border-b border-gray-200 dark:border-white/[0.06] flex-shrink-0">
@@ -11,7 +11,7 @@
     <div class="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
 
       <!-- Image preview -->
-      <div class="w-full md:w-1/2 max-h-48 md:max-h-none p-4 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/[0.06] overflow-auto bg-gray-50 dark:bg-white/[0.03] flex items-center justify-center">
+      <div class="w-full md:w-1/2 max-h-48 md:max-h-none p-4 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/[0.06] overflow-auto bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
         <img [src]="imageUrl()" alt="Score sheet" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">
       </div>
 

@@ -26,15 +26,15 @@ export class SetupActivities {
 
   savingActivity = signal(false);
   editingActivityId = signal<number | null>(null);
-  editingActivityName = '';
+  editingActivityName = signal('');
 
-  newActivityName = '';
-  newActivityType: EvaluationType = EvaluationType.NUMERIC_HIGH;
+  newActivityName = signal('');
+  newActivityType = signal<EvaluationType>(EvaluationType.NUMERIC_HIGH);
   evaluationTypes = EVALUATION_TYPES;
 
-  newCatName = '';
-  newCatMinAge = 0;
-  newCatMaxAge = 17;
+  newCatName = signal('');
+  newCatMinAge = signal(0);
+  newCatMaxAge = signal(17);
 
   constructor(
     private eventService: EventService,
@@ -48,19 +48,19 @@ export class SetupActivities {
   // -- Activity CRUD --
   createActivity(): void {
     const ev = this.event();
-    if (!ev || !this.newActivityName.trim()) return;
+    if (!ev || !this.newActivityName().trim()) return;
     this.savingActivity.set(true);
     this.scoringService
       .createActivity({
-        name: this.newActivityName.trim(),
-        evaluation_type: this.newActivityType,
+        name: this.newActivityName().trim(),
+        evaluation_type: this.newActivityType(),
         event_id: ev.id,
       })
       .pipe(this.destroy$())
       .subscribe({
         next: (activity) => {
           this.eventUpdated.emit({ ...ev, activities: [...ev.activities, activity] });
-          this.newActivityName = '';
+          this.newActivityName.set('');
           this.savingActivity.set(false);
           this.toast.success(this.transloco.translate('EVENTS.ACTIVITY_CREATED', { name: activity.name }));
         },
@@ -82,19 +82,19 @@ export class SetupActivities {
 
   startEditActivity(activity: Activity): void {
     this.editingActivityId.set(activity.id);
-    this.editingActivityName = activity.name;
+    this.editingActivityName.set(activity.name);
   }
 
   saveActivity(): void {
     const ev = this.event();
     const id = this.editingActivityId();
-    if (!ev || !id || !this.editingActivityName.trim()) return;
-    this.eventService.updateActivity(id, { name: this.editingActivityName.trim() }).pipe(this.destroy$()).subscribe({
+    if (!ev || !id || !this.editingActivityName().trim()) return;
+    this.eventService.updateActivity(id, { name: this.editingActivityName().trim() }).pipe(this.destroy$()).subscribe({
       next: () => {
         this.eventUpdated.emit({
           ...ev,
           activities: ev.activities.map(a =>
-            a.id === id ? { ...a, name: this.editingActivityName.trim() } : a,
+            a.id === id ? { ...a, name: this.editingActivityName().trim() } : a,
           ),
         });
         this.editingActivityId.set(null);
@@ -111,20 +111,20 @@ export class SetupActivities {
   // -- Age Bracket CRUD --
   addAgeCategory(): void {
     const ev = this.event();
-    if (!ev || !this.newCatName.trim()) return;
+    if (!ev || !this.newCatName().trim()) return;
     this.eventService
       .createAgeCategory(ev.id, {
-        name: this.newCatName.trim(),
-        min_age: this.newCatMinAge,
-        max_age: this.newCatMaxAge,
+        name: this.newCatName().trim(),
+        min_age: this.newCatMinAge(),
+        max_age: this.newCatMaxAge(),
       })
       .pipe(this.destroy$())
       .subscribe({
         next: (cat) => {
           this.ageCategoriesUpdated.emit([...this.ageCategories(), cat]);
-          this.newCatName = '';
-          this.newCatMinAge = 0;
-          this.newCatMaxAge = 17;
+          this.newCatName.set('');
+          this.newCatMinAge.set(0);
+          this.newCatMaxAge.set(17);
         },
         error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });

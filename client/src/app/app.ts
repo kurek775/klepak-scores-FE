@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from './auth/auth.service';
+import { ConfirmDialogComponent } from './shared/confirm-dialog.component';
 import { Navbar } from './shared/layout/navbar/navbar';
 import { ToastComponent } from './shared/toast.component';
 import { ThemeService } from './shared/theme.service';
@@ -12,7 +13,7 @@ import { setLanguage } from './core/utils/language';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
-  imports: [RouterOutlet, Navbar, ToastComponent],
+  imports: [RouterOutlet, Navbar, ToastComponent, ConfirmDialogComponent],
 })
 export class App implements OnInit {
   constructor(

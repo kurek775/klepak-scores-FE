@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { EventSummary } from '../../core/models/event.model';
 import { EventService } from '../event.service';
 import { AuthService } from '../../auth/auth.service';
+import { ConfirmDialogService } from '../../shared/confirm-dialog.service';
 import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
@@ -22,6 +23,7 @@ export class EventList implements OnInit {
   constructor(
     private eventService: EventService,
     public authService: AuthService,
+    private confirmDialog: ConfirmDialogService,
     private toast: ToastService,
     private transloco: TranslocoService,
   ) {}
@@ -44,10 +46,12 @@ export class EventList implements OnInit {
     });
   }
 
-  deleteEvent(event: EventSummary): void {
-    if (!confirm(this.transloco.translate('EVENTS.CONFIRM_DELETE_EVENT', { name: event.name }))) {
-      return;
-    }
+  async deleteEvent(event: EventSummary): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: this.transloco.translate('COMMON.CONFIRM_TITLE'),
+      message: this.transloco.translate('EVENTS.CONFIRM_DELETE_EVENT', { name: event.name }),
+    });
+    if (!confirmed) return;
     this.eventService.deleteEvent(event.id).pipe(this.destroy$()).subscribe({
       next: () => {
         this.events.update((list) => list.filter((e) => e.id !== event.id));

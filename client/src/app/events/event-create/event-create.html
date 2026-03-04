@@ -26,7 +26,7 @@
       </div>
 
       <!-- Groups -->
-      @for (group of groups(); track $index; let gi = $index) {
+      @for (group of groups(); track group._uid; let gi = $index) {
         <div class="animate-fade-in-up bg-white dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-white/[0.06] shadow-sm overflow-hidden">
           <!-- Group header -->
           <div class="px-5 py-4 bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/[0.06]">
@@ -77,7 +77,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (p of group.participants; track $index; let pi = $index) {
+                  @for (p of group.participants; track p._uid; let pi = $index) {
                     <tr class="animate-fade-in">
                       <td class="pr-2 pb-2">
                         <input
