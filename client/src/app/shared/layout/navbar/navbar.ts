@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoService, TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from '../../../auth/auth.service';
 import { ThemeService } from '../../theme.service';
@@ -9,7 +9,7 @@ import { setLanguage } from '../../../core/utils/language';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
-  imports: [RouterLink, TranslocoPipe],
+  imports: [RouterLink],
 })
 export class Navbar {
   constructor(
