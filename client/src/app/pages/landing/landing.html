@@ -1,44 +1,47 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<div class="min-h-screen mesh-gradient text-gray-900 dark:text-gray-100 selection:bg-brand-500/30 font-sans">
   <!-- Sticky Top Bar -->
-  <header class="sticky top-0 z-50 border-b border-gray-200/60 dark:border-white/[0.06] bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-xl">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-      <a routerLink="/" class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-        <img src="logo.svg" alt="Vör" class="h-8 w-8" />
+  <header class="sticky top-0 z-50 glass-panel border-b border-gray-200/60 dark:border-white/[0.06] backdrop-blur-2xl">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a routerLink="/" class="flex items-center gap-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white group">
+        <div class="relative">
+          <div class="absolute inset-0 bg-brand-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
+          <img src="logo.svg" alt="Vör" class="relative h-9 w-9" />
+        </div>
         Vör
       </a>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-4">
         <!-- Language switcher -->
-        <div class="flex items-center gap-1 rounded-full border border-gray-200 dark:border-white/10 px-2 py-1 text-xs font-medium">
+        <div class="hidden sm:flex items-center gap-1 rounded-full glass-panel px-1.5 py-1 text-xs font-semibold">
           <button
             (click)="setLang('cs')"
-            class="rounded-full px-2 py-0.5 transition-all"
+            class="rounded-full px-3 py-1 transition-all"
             [class]="activeLang === 'cs'
-              ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
+              ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/25'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/10'"
           >CS</button>
           <button
             (click)="setLang('en')"
-            class="rounded-full px-2 py-0.5 transition-all"
+            class="rounded-full px-3 py-1 transition-all"
             [class]="activeLang === 'en'
-              ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
+              ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/25'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/10'"
           >EN</button>
         </div>
 
         <!-- Theme toggle -->
         <button
           (click)="themeService.toggle()"
-          class="rounded-full border border-gray-200 dark:border-white/10 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          class="rounded-xl glass-panel p-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-105 active:scale-95"
           aria-label="Toggle theme"
         >
           @if (themeService.isDark()) {
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 110 10A5 5 0 0112 7z" />
             </svg>
           } @else {
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
@@ -47,7 +50,7 @@
 
         <!-- Sign In link -->
         <a routerLink="/login"
-           class="hidden sm:inline-flex rounded-lg bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200">
+           class="hidden sm:inline-flex rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-600/20 hover:shadow-brand-600/40 hover:-translate-y-0.5 transition-all duration-200">
           {{ 'LANDING.CTA_SIGN_IN' | transloco }}
         </a>
       </div>
@@ -55,32 +58,40 @@
   </header>
 
   <!-- Hero -->
-  <section class="relative overflow-hidden bg-gray-50 dark:bg-gray-900">
-    <!-- Animated blobs -->
-    <div class="absolute -top-24 -right-24 h-[500px] w-[500px] rounded-full bg-blue-200/40 dark:bg-blue-600/20 blur-[120px] animate-[float_8s_ease-in-out_infinite]"></div>
-    <div class="absolute -bottom-24 -left-24 h-[400px] w-[400px] rounded-full bg-emerald-200/40 dark:bg-emerald-600/20 blur-[120px] animate-[float_8s_ease-in-out_infinite_2s]"></div>
+  <section class="relative overflow-hidden pt-24 pb-32 sm:pt-32 sm:pb-40">
+    <!-- Abstract decorative elements -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl aspect-square opacity-20 dark:opacity-40 pointer-events-none">
+      <div class="absolute inset-0 bg-brand-400 blur-[160px] animate-float"></div>
+      <div class="absolute inset-0 bg-accent-400 blur-[160px] animate-float" style="animation-delay: -3s;"></div>
+    </div>
 
-    <div class="relative mx-auto max-w-5xl px-6 py-28 text-center sm:py-36">
-      <div class="animate-[fadeIn_0.6s_ease-out]">
-        <span class="inline-block rounded-full bg-gray-100 dark:bg-white/[0.06] border border-gray-200 dark:border-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-6">
+    <div class="relative mx-auto max-w-5xl px-6 text-center">
+      <div class="animate-fade-in-up">
+        <span class="inline-flex items-center gap-2 rounded-full glass-panel px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-400 mb-8">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+          </span>
           {{ 'LANDING.HERO_BADGE' | transloco }}
         </span>
-        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-          <span class="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight md:text-7xl lg:text-8xl mb-8">
+          <span class="bg-gradient-to-b from-gray-900 to-gray-700 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
             {{ 'LANDING.HERO_TITLE' | transloco }}
           </span>
         </h1>
-        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400 sm:text-xl">
+        <p class="mx-auto max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400 sm:text-2xl font-medium">
           {{ 'LANDING.HERO_SUBTITLE' | transloco }}
         </p>
-        <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <div class="mt-12 flex flex-wrap justify-center gap-5">
           <a routerLink="/register"
-             class="group inline-flex items-center rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-200">
+             class="group relative inline-flex items-center rounded-2xl bg-brand-600 px-10 py-4.5 text-lg font-bold text-white shadow-xl shadow-brand-600/25 hover:shadow-brand-600/40 hover:-translate-y-1 transition-all duration-300">
             {{ 'LANDING.CTA_REGISTER' | transloco }}
-            <span class="inline-flex items-center ml-2 transition-transform group-hover:translate-x-1"><app-arrow-right-icon /></span>
+            <svg class="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
           </a>
           <a routerLink="/login"
-             class="rounded-xl border-2 border-gray-300 dark:border-white/20 px-8 py-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 hover:border-emerald-400 dark:hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-200">
+             class="rounded-2xl glass-panel px-10 py-4.5 text-lg font-bold text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-white/10 hover:border-brand-500/50 transition-all duration-300">
             {{ 'LANDING.CTA_SIGN_IN' | transloco }}
           </a>
         </div>
@@ -89,201 +100,140 @@
   </section>
 
   <!-- Stats Bar -->
-  <section class="border-y border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-gray-900/50">
-    <div class="mx-auto grid max-w-4xl grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 py-8 text-center">
-      <div class="py-3 sm:py-0">
-        <div class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">CSV</div>
-        <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_IMPORT' | transloco }}</div>
-      </div>
-      <div class="py-3 sm:py-0">
-        <div class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">AI</div>
-        <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_AI' | transloco }}</div>
-      </div>
-      <div class="py-3 sm:py-0">
-        <div class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">PDF</div>
-        <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_DIPLOMAS' | transloco }}</div>
+  <section class="relative z-10 -mt-12 mb-24 px-6">
+    <div class="mx-auto max-w-4xl glass-panel rounded-3xl p-8 sm:p-12">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:divide-x divide-gray-200 dark:divide-white/10">
+        <div class="space-y-2">
+          <div class="text-4xl font-black text-brand-600 dark:text-brand-400 tracking-tighter">CSV</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_IMPORT' | transloco }}</div>
+        </div>
+        <div class="space-y-2">
+          <div class="text-4xl font-black text-brand-600 dark:text-brand-400 tracking-tighter">AI</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_AI' | transloco }}</div>
+        </div>
+        <div class="space-y-2">
+          <div class="text-4xl font-black text-brand-600 dark:text-brand-400 tracking-tighter">PDF</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">{{ 'LANDING.STAT_DIPLOMAS' | transloco }}</div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Features -->
-  <section class="bg-gray-50 dark:bg-gray-900 mx-auto max-w-6xl px-6 py-24">
-    <div class="text-center">
-      <h2 class="text-3xl font-bold sm:text-4xl">{{ 'LANDING.FEATURES_TITLE' | transloco }}</h2>
-      <p class="mx-auto mt-4 max-w-xl text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURES_SUBTITLE' | transloco }}</p>
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <div class="text-center mb-20">
+      <h2 class="text-4xl font-black sm:text-5xl tracking-tight">{{ 'LANDING.FEATURES_TITLE' | transloco }}</h2>
+      <p class="mx-auto mt-6 max-w-xl text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{{ 'LANDING.FEATURES_SUBTITLE' | transloco }}</p>
     </div>
-    <div class="mt-16 grid gap-8 sm:grid-cols-3 animate-stagger-list">
+    <div class="grid gap-8 sm:grid-cols-3">
       <!-- CSV Import -->
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-8 text-center transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1">
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-400 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <div class="group glass-card p-10 text-center">
+        <div class="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-500 text-white shadow-lg shadow-brand-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+          <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
           </svg>
         </div>
-        <h3 class="text-xl font-semibold">{{ 'LANDING.FEATURE_IMPORT_TITLE' | transloco }}</h3>
-        <p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_IMPORT_DESC' | transloco }}</p>
+        <h3 class="text-2xl font-bold mb-4 tracking-tight">{{ 'LANDING.FEATURE_IMPORT_TITLE' | transloco }}</h3>
+        <p class="text-base leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_IMPORT_DESC' | transloco }}</p>
       </div>
 
       <!-- AI Scoring -->
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-8 text-center transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1">
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>
+      <div class="group glass-card p-10 text-center sm:translate-y-8">
+        <div class="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-accent-500 text-white shadow-lg shadow-accent-500/20 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+          <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455-2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>
           </svg>
         </div>
-        <h3 class="text-xl font-semibold">{{ 'LANDING.FEATURE_AI_TITLE' | transloco }}</h3>
-        <p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_AI_DESC' | transloco }}</p>
+        <h3 class="text-2xl font-bold mb-4 tracking-tight">{{ 'LANDING.FEATURE_AI_TITLE' | transloco }}</h3>
+        <p class="text-base leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_AI_DESC' | transloco }}</p>
       </div>
 
       <!-- Leaderboards -->
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-8 text-center transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1">
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <div class="group glass-card p-10 text-center">
+        <div class="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-400 text-white shadow-lg shadow-brand-400/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+          <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/>
           </svg>
         </div>
-        <h3 class="text-xl font-semibold">{{ 'LANDING.FEATURE_LEADERBOARD_TITLE' | transloco }}</h3>
-        <p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_LEADERBOARD_DESC' | transloco }}</p>
+        <h3 class="text-2xl font-bold mb-4 tracking-tight">{{ 'LANDING.FEATURE_LEADERBOARD_TITLE' | transloco }}</h3>
+        <p class="text-base leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.FEATURE_LEADERBOARD_DESC' | transloco }}</p>
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section class="bg-gray-50 dark:bg-gray-900/30 py-24">
-    <div class="mx-auto max-w-5xl px-6">
-      <h2 class="text-center text-3xl font-bold sm:text-4xl">{{ 'LANDING.HOW_TITLE' | transloco }}</h2>
-      <div class="relative mt-16 grid gap-12 sm:grid-cols-3 sm:gap-8 animate-stagger-list">
+  <section class="py-32 relative overflow-hidden">
+    <div class="mx-auto max-w-5xl px-6 relative z-10">
+      <h2 class="text-center text-4xl font-black sm:text-5xl tracking-tight mb-20">{{ 'LANDING.HOW_TITLE' | transloco }}</h2>
+      <div class="relative grid gap-16 sm:grid-cols-3 sm:gap-8">
         <!-- Connector line (desktop) -->
-        <div class="absolute top-8 left-[16.67%] right-[16.67%] hidden h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 sm:block"></div>
+        <div class="absolute top-10 left-[16.67%] right-[16.67%] hidden h-0.5 bg-gradient-to-r from-brand-400 via-accent-400 to-brand-400 opacity-20 sm:block"></div>
 
-        <div class="relative text-center">
-          <div class="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 text-2xl font-bold text-white shadow-lg shadow-emerald-500/25">1</div>
-          <h3 class="mt-6 text-lg font-semibold">{{ 'LANDING.STEP1_TITLE' | transloco }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.STEP1_DESC' | transloco }}</p>
+        <div class="relative text-center group">
+          <div class="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brand-600 text-2xl font-black text-white shadow-xl shadow-brand-600/30 group-hover:scale-110 transition-transform duration-300">1</div>
+          <h3 class="mt-8 text-xl font-bold tracking-tight">{{ 'LANDING.STEP1_TITLE' | transloco }}</h3>
+          <p class="mt-3 text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{{ 'LANDING.STEP1_DESC' | transloco }}</p>
         </div>
-        <div class="relative text-center">
-          <div class="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 text-2xl font-bold text-white shadow-lg shadow-emerald-500/25">2</div>
-          <h3 class="mt-6 text-lg font-semibold">{{ 'LANDING.STEP2_TITLE' | transloco }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.STEP2_DESC' | transloco }}</p>
+        <div class="relative text-center group">
+          <div class="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-accent-600 text-2xl font-black text-white shadow-xl shadow-accent-600/30 group-hover:scale-110 transition-transform duration-300">2</div>
+          <h3 class="mt-8 text-xl font-bold tracking-tight">{{ 'LANDING.STEP2_TITLE' | transloco }}</h3>
+          <p class="mt-3 text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{{ 'LANDING.STEP2_DESC' | transloco }}</p>
         </div>
-        <div class="relative text-center">
-          <div class="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 text-2xl font-bold text-white shadow-lg shadow-emerald-500/25">3</div>
-          <h3 class="mt-6 text-lg font-semibold">{{ 'LANDING.STEP3_TITLE' | transloco }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.STEP3_DESC' | transloco }}</p>
+        <div class="relative text-center group">
+          <div class="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brand-500 text-2xl font-black text-white shadow-xl shadow-brand-500/30 group-hover:scale-110 transition-transform duration-300">3</div>
+          <h3 class="mt-8 text-xl font-bold tracking-tight">{{ 'LANDING.STEP3_TITLE' | transloco }}</h3>
+          <p class="mt-3 text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{{ 'LANDING.STEP3_DESC' | transloco }}</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- For Organizers -->
-  <section class="bg-gray-50 dark:bg-gray-900 mx-auto max-w-6xl px-6 py-24">
-    <h2 class="text-center text-3xl font-bold sm:text-4xl">{{ 'LANDING.ORGANIZERS_TITLE' | transloco }}</h2>
-    <div class="mt-16 grid gap-8 sm:grid-cols-3 animate-stagger-list">
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10">
-        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-400 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold">{{ 'LANDING.ORG_GROUPS_TITLE' | transloco }}</h3>
-        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.ORG_GROUPS_DESC' | transloco }}</p>
-      </div>
-
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10">
-        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold">{{ 'LANDING.ORG_EVALUATORS_TITLE' | transloco }}</h3>
-        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.ORG_EVALUATORS_DESC' | transloco }}</p>
-      </div>
-
-      <div class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10">
-        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-emerald-400 transition-transform duration-300 group-hover:scale-110">
-          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold">{{ 'LANDING.ORG_DIPLOMAS_TITLE' | transloco }}</h3>
-        <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.ORG_DIPLOMAS_DESC' | transloco }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Documentation Links -->
-  <section class="bg-gray-50 dark:bg-gray-900/30 py-24">
-    <div class="mx-auto max-w-5xl px-6">
-      <h2 class="text-center text-3xl font-bold sm:text-4xl">{{ 'LANDING.DOCS_TITLE' | transloco }}</h2>
-      <p class="mx-auto mt-4 max-w-xl text-center text-gray-600 dark:text-gray-400">{{ 'LANDING.DOCS_SUBTITLE' | transloco }}</p>
-      <div class="mt-12 grid gap-8 sm:grid-cols-2">
-        <!-- Admin Guide card -->
-        <a routerLink="/docs/admin"
-           class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-8 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1">
-          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-emerald-400 transition-transform duration-300 group-hover:scale-110">
-            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold">{{ 'LANDING.DOCS_ADMIN_TITLE' | transloco }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.DOCS_ADMIN_DESC' | transloco }}</p>
-          <span class="mt-4 inline-flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 group-hover:underline">
-            {{ 'LANDING.DOCS_READ_MORE' | transloco }}
-            <span class="inline-flex items-center ml-2 transition-transform group-hover:translate-x-1"><app-arrow-right-icon /></span>
-          </span>
-        </a>
-        <!-- Evaluator Guide card -->
-        <a routerLink="/docs/evaluator"
-           class="group rounded-2xl border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-gray-900/50 p-8 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1">
-          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 transition-transform duration-300 group-hover:scale-110">
-            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold">{{ 'LANDING.DOCS_EVAL_TITLE' | transloco }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ 'LANDING.DOCS_EVAL_DESC' | transloco }}</p>
-          <span class="mt-4 inline-flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 group-hover:underline">
-            {{ 'LANDING.DOCS_READ_MORE' | transloco }}
-            <span class="inline-flex items-center ml-2 transition-transform group-hover:translate-x-1"><app-arrow-right-icon /></span>
-          </span>
-        </a>
       </div>
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="bg-gradient-to-r from-blue-600 to-emerald-600 py-20">
-    <div class="mx-auto max-w-3xl px-6 text-center">
-      <h2 class="text-3xl font-bold text-white sm:text-4xl">{{ 'LANDING.CTA_BOTTOM_TITLE' | transloco }}</h2>
-      <p class="mt-4 text-lg text-emerald-100">{{ 'LANDING.CTA_BOTTOM_SUBTITLE' | transloco }}</p>
-      <a routerLink="/register"
-         class="group mt-8 inline-flex items-center rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-gray-900 shadow-lg hover:shadow-xl transition-all duration-200">
-        {{ 'LANDING.CTA_REGISTER' | transloco }}
-        <span class="inline-flex items-center ml-3 transition-transform group-hover:translate-x-1"><app-arrow-right-icon /></span>
-      </a>
+  <section class="mx-auto max-w-6xl px-6 mb-24">
+    <div class="relative overflow-hidden rounded-[3rem] bg-brand-600 p-12 sm:p-24 text-center">
+      <!-- Animated background patterns -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#fff_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+      </div>
+
+      <div class="relative z-10">
+        <h2 class="text-4xl font-black text-white sm:text-6xl tracking-tight mb-8">{{ 'LANDING.CTA_BOTTOM_TITLE' | transloco }}</h2>
+        <p class="mx-auto mt-4 max-w-xl text-xl text-brand-50 font-medium opacity-90 mb-12">{{ 'LANDING.CTA_BOTTOM_SUBTITLE' | transloco }}</p>
+        <a routerLink="/register"
+           class="group inline-flex items-center rounded-2xl bg-white px-10 py-4.5 text-lg font-bold text-brand-600 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300">
+          {{ 'LANDING.CTA_REGISTER' | transloco }}
+          <svg class="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-gray-200 dark:border-white/[0.06] bg-gray-50 dark:bg-gray-900 py-10">
-    <div class="mx-auto max-w-6xl px-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-      <div class="flex items-center gap-2 text-sm font-medium text-gray-500">
-        <img src="logo.svg" alt="" class="h-5 w-5" />
-        Vör
-      </div>
-      <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
-        <a routerLink="/docs/admin"
-           class="text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-          {{ 'DOCS.ADMIN_GUIDE_LINK' | transloco }}
-        </a>
-        <span class="text-gray-300 dark:text-gray-700">|</span>
-        <a routerLink="/docs/evaluator"
-           class="text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-          {{ 'DOCS.EVALUATOR_GUIDE_LINK' | transloco }}
-        </a>
-      </div>
-      <div class="text-sm text-gray-500">
-        &copy; {{ currentYear }} Vör
+  <footer class="border-t border-gray-200/60 dark:border-white/[0.06] bg-white/50 dark:bg-gray-950/50 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="flex flex-col items-center gap-10 sm:flex-row sm:justify-between">
+        <div class="flex flex-col items-center sm:items-start gap-4">
+          <div class="flex items-center gap-3 text-xl font-bold tracking-tight">
+            <img src="logo.svg" alt="" class="h-7 w-7" />
+            Vör
+          </div>
+          <p class="text-sm text-gray-500 max-w-xs text-center sm:text-left">
+            Moderní systém pro hodnocení sportovních a společenských akcí.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-8 text-sm font-bold uppercase tracking-widest">
+          <a routerLink="/docs/admin" class="text-gray-500 hover:text-brand-500 transition-colors">
+            {{ 'DOCS.ADMIN_GUIDE_LINK' | transloco }}
+          </a>
+          <a routerLink="/docs/evaluator" class="text-gray-500 hover:text-brand-500 transition-colors">
+            {{ 'DOCS.EVALUATOR_GUIDE_LINK' | transloco }}
+          </a>
+        </div>
+        <div class="text-sm font-medium text-gray-400">
+          &copy; {{ currentYear }} Vör
+        </div>
       </div>
     </div>
   </footer>

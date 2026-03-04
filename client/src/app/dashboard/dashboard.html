@@ -1,65 +1,79 @@
-<div class="max-w-4xl mx-auto p-4 sm:p-8 page-enter">
+<div class="max-w-5xl mx-auto p-6 sm:p-10 page-enter">
   @if (authService.user(); as user) {
     @if (!user.is_active) {
-      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 text-center">
-        <h1 class="text-2xl font-bold text-yellow-800 dark:text-yellow-300 mb-2">{{ 'DASHBOARD.PENDING_TITLE' | transloco }}</h1>
-        <p class="text-yellow-700 dark:text-yellow-400">
+      <div class="glass-panel rounded-3xl p-10 text-center border-brand-500/20 shadow-xl shadow-brand-500/10">
+        <div class="mx-auto w-20 h-20 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mb-6 animate-pulse-slow">
+          <svg class="w-10 h-10 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">{{ 'DASHBOARD.PENDING_TITLE' | transloco }}</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
           {{ 'DASHBOARD.PENDING_MSG' | transloco }}
         </p>
       </div>
     } @else {
 
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ 'DASHBOARD.GREETING' | transloco: { name: user.full_name } }}</h1>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+      <div>
+        <h1 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">
+          {{ 'DASHBOARD.GREETING' | transloco: { name: user.full_name } }}
+        </h1>
+        <p class="text-gray-500 dark:text-gray-400 font-medium text-lg italic opacity-80">
+          Vítejte zpět v kontrolním panelu Vör.
+        </p>
+      </div>
+    </div>
 
     @if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
       <!-- Quick actions for admins -->
-      <div class="grid gap-4 sm:grid-cols-2 mb-8 animate-stagger-list">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12 animate-stagger-list">
         <a
           routerLink="/admin/invitations"
-          class="card-hover block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-blue-500/30 transition"
+          class="glass-card block p-6 border-blue-500/20 hover:border-blue-500/50"
         >
-          <div class="flex items-start gap-4">
-            <div class="shrink-0 w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <div class="flex items-center gap-5">
+            <div class="shrink-0 w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shadow-inner-glow">
+              <svg class="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
               </svg>
             </div>
             <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'INVITATIONS.INVITE' | transloco }}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.INVITE_DESC' | transloco }}</p>
+              <h3 class="font-bold text-lg text-gray-900 dark:text-white tracking-tight">{{ 'INVITATIONS.INVITE' | transloco }}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{{ 'DASHBOARD.INVITE_DESC' | transloco }}</p>
             </div>
           </div>
         </a>
         <a
           routerLink="/admin/evaluators"
-          class="card-hover block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 transition"
+          class="glass-card block p-6 border-brand-500/20 hover:border-brand-500/50"
         >
-          <div class="flex items-start gap-4">
-            <div class="shrink-0 w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-              <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <div class="flex items-center gap-5">
+            <div class="shrink-0 w-14 h-14 rounded-2xl bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center shadow-inner-glow">
+              <svg class="w-7 h-7 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
               </svg>
             </div>
             <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'NAV.EVALUATORS' | transloco }}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'EVENTS.MANAGE_EVALUATORS' | transloco }}</p>
+              <h3 class="font-bold text-lg text-gray-900 dark:text-white tracking-tight">{{ 'NAV.EVALUATORS' | transloco }}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{{ 'EVENTS.MANAGE_EVALUATORS' | transloco }}</p>
             </div>
           </div>
         </a>
         @if (user.role === 'SUPER_ADMIN') {
           <a
             routerLink="/admin/users"
-            class="card-hover block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-red-500/30 transition"
+            class="glass-card block p-6 border-red-500/20 hover:border-red-500/50"
           >
-            <div class="flex items-start gap-4">
-              <div class="shrink-0 w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <div class="flex items-center gap-5">
+              <div class="shrink-0 w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center shadow-inner-glow">
+                <svg class="w-7 h-7 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                 </svg>
               </div>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white">{{ 'NAV.USERS' | transloco }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ 'DASHBOARD.MANAGE_USERS_DESC' | transloco }}</p>
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white tracking-tight">{{ 'NAV.USERS' | transloco }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{{ 'DASHBOARD.MANAGE_USERS_DESC' | transloco }}</p>
               </div>
             </div>
           </a>
@@ -69,33 +83,41 @@
       <app-event-list></app-event-list>
     }
       @if (user.role === 'EVALUATOR') {
+        <h2 class="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-8">{{ 'DASHBOARD.MY_GROUPS' | transloco }}</h2>
 
         @if (loadingGroups()) {
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="skeleton h-28 w-full"></div>
-            <div class="skeleton h-28 w-full"></div>
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div class="skeleton h-32 w-full rounded-2xl"></div>
+            <div class="skeleton h-32 w-full rounded-2xl"></div>
           </div>
         } @else if (myGroups().length === 0) {
-          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            <div class="mx-auto w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/[0.05] flex items-center justify-center mb-3">
-              <svg class="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <div class="glass-panel rounded-3xl p-12 text-center border-dashed">
+            <div class="mx-auto w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/[0.05] flex items-center justify-center mb-6">
+              <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
               </svg>
             </div>
-            <p>{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
+            <p class="text-lg font-bold text-gray-500 dark:text-gray-400">{{ 'DASHBOARD.NO_GROUPS' | transloco }}</p>
           </div>
         } @else {
-          <div class="grid gap-4 sm:grid-cols-2 animate-stagger-list">
+          <div class="grid gap-6 sm:grid-cols-2 animate-stagger-list">
             @for (group of myGroups(); track group.id) {
               <a
                 [routerLink]="['/events', group.event_id]"
-                class="card-hover block bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5 hover:border-emerald-500/30 transition"
+                class="glass-card block p-6 border-brand-500/10 hover:border-brand-500/40"
               >
-                <h3 class="font-semibold text-base text-gray-900 dark:text-white">{{ group.name }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ group.event_name }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  {{ group.participant_count }} {{ group.participant_count !== 1 ? ('DASHBOARD.PARTICIPANTS_PLURAL' | transloco) : ('DASHBOARD.PARTICIPANTS' | transloco) }}
-                </p>
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="font-black text-xl text-gray-900 dark:text-white tracking-tight">{{ group.name }}</h3>
+                  <span class="inline-flex items-center rounded-full bg-brand-100 dark:bg-brand-900/30 px-3 py-1 text-xs font-bold text-brand-700 dark:text-brand-300 shadow-inner-glow">
+                    {{ group.participant_count }} {{ group.participant_count !== 1 ? ('DASHBOARD.PARTICIPANTS_PLURAL' | transloco) : ('DASHBOARD.PARTICIPANTS' | transloco) }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 font-bold text-sm uppercase tracking-widest">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                  </svg>
+                  {{ group.event_name }}
+                </div>
               </a>
             }
           </div>

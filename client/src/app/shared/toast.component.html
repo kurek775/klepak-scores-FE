@@ -1,27 +1,46 @@
-<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+<div class="fixed bottom-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none">
   @for (toast of toastService.toasts(); track toast.id) {
     <div
-      class="flex items-center gap-3 min-w-0 sm:min-w-72 max-w-[calc(100vw-3rem)] sm:max-w-sm px-4 py-3 rounded-lg backdrop-blur-sm border border-white/10 shadow-lg text-sm font-medium animate-slide-in"
-      [class]="toast.type === 'success' ? 'bg-green-600 text-white' :
-               toast.type === 'error'   ? 'bg-red-600 text-white' :
-                                          'bg-blue-600 text-white'"
+      class="pointer-events-auto flex items-center gap-4 min-w-[280px] max-w-sm p-4 rounded-2xl glass-panel border shadow-2xl animate-fade-in-up"
+      [class]="toast.type === 'success' ? 'border-brand-500/30' :
+               toast.type === 'error'   ? 'border-red-500/30' :
+                                          'border-accent-500/30'"
     >
-      <span class="flex-1">{{ toast.message }}</span>
+      <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-inner-glow"
+           [class]="toast.type === 'success' ? 'bg-brand-500 text-white' :
+                    toast.type === 'error'   ? 'bg-red-500 text-white' :
+                                               'bg-accent-500 text-white'">
+        @if (toast.type === 'success') {
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        } @else if (toast.type === 'error') {
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        } @else {
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+        }
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-black text-gray-900 dark:text-white leading-tight mb-0.5 tracking-tight">
+          {{ toast.type === 'success' ? 'Úspěch' : toast.type === 'error' ? 'Chyba' : 'Informace' }}
+        </p>
+        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+          {{ toast.message }}
+        </p>
+      </div>
       <button
         (click)="toastService.remove(toast.id)"
-        class="text-white/70 hover:text-white leading-none text-lg"
+        class="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors p-1"
         aria-label="Close"
-      >&times;</button>
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
   }
 </div>
-
-<style>
-  @keyframes slide-in {
-    from { opacity: 0; transform: translateY(0.5rem); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .animate-slide-in {
-    animation: slide-in 0.2s ease-out;
-  }
-</style>

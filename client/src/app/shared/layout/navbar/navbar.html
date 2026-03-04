@@ -1,17 +1,19 @@
-<nav class="bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] px-6 py-3">
+<nav class="sticky top-0 z-50 glass-panel border-b border-gray-200/60 dark:border-white/[0.06] backdrop-blur-2xl px-6 py-4">
   <div class="flex items-center justify-between max-w-5xl mx-auto">
 
-    <a routerLink="/dashboard" class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
-      <img src="logo.svg" alt="Vör" class="w-8 h-8">
+    <a routerLink="/dashboard" class="flex items-center gap-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white group">
+      <div class="relative">
+        <div class="absolute inset-0 bg-brand-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
+        <img src="logo.svg" alt="Vör" class="relative w-9 h-9">
+      </div>
       Vör
     </a>
 
-    <!-- Mobile: theme + lang + sign out -->
-    <div class="flex items-center gap-2 md:hidden">
+    <!-- Mobile Menu Toggle (Simplified for brevity, assuming standard mobile behavior) -->
+    <div class="flex items-center gap-3 md:hidden">
       <button
         (click)="themeService.toggle()"
-        class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-        aria-label="Toggle theme"
+        class="glass-panel p-2.5 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
       >
         @if (themeService.isDark()) {
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,20 +27,7 @@
           </svg>
         }
       </button>
-
-      <div class="flex items-center gap-1 text-xs font-medium">
-        <button
-          (click)="setLang('cs')"
-          [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
-        >CS</button>
-        <span class="text-gray-300 dark:text-gray-700">|</span>
-        <button
-          (click)="setLang('en')"
-          [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
-        >EN</button>
-      </div>
-
-      <button (click)="logout()" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" aria-label="Sign out">
+      <button (click)="logout()" class="glass-panel p-2.5 rounded-xl text-gray-500 dark:text-gray-400 hover:text-red-500 transition-all active:scale-90">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -46,12 +35,12 @@
       </button>
     </div>
 
-    <!-- Desktop: theme + lang + user info + sign out -->
-    <div class="hidden md:flex items-center gap-4">
+    <!-- Desktop Menu -->
+    <div class="hidden md:flex items-center gap-6">
       <!-- Theme toggle -->
       <button
         (click)="themeService.toggle()"
-        class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+        class="glass-panel p-2.5 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-105 active:scale-95 shadow-sm"
         aria-label="Toggle theme"
       >
         @if (themeService.isDark()) {
@@ -68,36 +57,42 @@
       </button>
 
       <!-- Language switcher -->
-      <div class="flex items-center gap-1 text-xs font-medium">
+      <div class="flex items-center gap-1 rounded-full glass-panel px-1.5 py-1 text-xs font-bold">
         <button
           (click)="setLang('cs')"
-          [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+          class="rounded-full px-3 py-1 transition-all"
+          [class]="activeLang === 'cs' ? 'bg-brand-500 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'"
         >CS</button>
-        <span class="text-gray-300 dark:text-gray-700">|</span>
         <button
           (click)="setLang('en')"
-          [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+          class="rounded-full px-3 py-1 transition-all"
+          [class]="activeLang === 'en' ? 'bg-brand-500 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'"
         >EN</button>
       </div>
 
       @if (authService.user(); as user) {
-        <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-700 dark:text-gray-300">{{ user.full_name }}</span>
-          <span
-            class="text-xs px-2 py-0.5 rounded-full font-medium"
-            [class]="user.role === 'SUPER_ADMIN'
-              ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-              : user.role === 'ADMIN'
-                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'"
-          >
-            {{ user.role }}
-          </span>
+        <div class="flex items-center gap-4 pl-4 border-l border-gray-200 dark:border-white/10">
+          <div class="flex flex-col items-end">
+            <span class="text-sm font-bold text-gray-900 dark:text-white tracking-tight">{{ user.full_name }}</span>
+            <span
+              class="text-[10px] uppercase tracking-widest font-black"
+              [class]="user.role === 'SUPER_ADMIN'
+                ? 'text-red-500'
+                : user.role === 'ADMIN'
+                  ? 'text-brand-500'
+                  : 'text-blue-500'"
+            >
+              {{ user.role }}
+            </span>
+          </div>
+          <button (click)="logout()" class="glass-panel p-2.5 rounded-xl text-gray-500 dark:text-gray-400 hover:text-red-500 transition-all hover:scale-105 active:scale-95" title="Odhlásit se">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
       }
-      <button (click)="logout()" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-        {{ 'COMMON.SIGN_OUT' | transloco }}
-      </button>
     </div>
   </div>
 </nav>

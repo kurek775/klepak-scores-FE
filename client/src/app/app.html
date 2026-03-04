@@ -1,8 +1,10 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen mesh-gradient">
   @if (authService.isAuthenticated()) {
     <app-navbar />
   }
-  <router-outlet />
+  <main class="relative z-10">
+    <router-outlet />
+  </main>
   <app-toast />
   <app-confirm-dialog />
 </div>
