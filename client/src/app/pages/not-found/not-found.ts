@@ -4,7 +4,6 @@ import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-not-found',
-  standalone: true,
   imports: [RouterLink, TranslocoModule],
   template: `
     <div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">

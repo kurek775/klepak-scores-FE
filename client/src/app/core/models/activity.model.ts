@@ -16,9 +16,9 @@ export interface Activity {
 
 export interface ScoreRecord {
   id: number;
-  value_raw: string | number;
+  value_raw: string;
   participant_id: number;
   activity_id: number;
-  evaluator_id: number;
+  evaluator_id: number | null;
   created_at: string;
 }

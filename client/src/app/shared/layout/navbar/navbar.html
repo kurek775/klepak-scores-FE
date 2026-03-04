@@ -32,7 +32,7 @@
         aria-label="Toggle menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          @if (isMobileMenuOpen) {
+          @if (isMobileMenuOpen()) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           } @else {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -120,7 +120,7 @@
     </div>
   </div>
 
-  @if (isMobileMenuOpen) {
+  @if (isMobileMenuOpen()) {
     <div class="md:hidden mt-4 pb-2 border-t border-gray-100 dark:border-white/[0.06] pt-4 space-y-4 animate-fade-in-down">
 
       <div class="flex flex-col gap-4 px-2">

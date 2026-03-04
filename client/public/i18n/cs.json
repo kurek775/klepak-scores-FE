@@ -586,6 +586,7 @@
     "BACK": "Zpět",
     "YES": "Ano",
     "NO": "Ne",
-    "SIGN_OUT": "Odhlásit se"
+    "SIGN_OUT": "Odhlásit se",
+    "UNSAVED_CHANGES_WARNING": "Máte neuložené změny. Opravdu chcete odejít?"
   }
 }

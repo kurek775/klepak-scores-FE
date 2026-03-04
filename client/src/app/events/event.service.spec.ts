@@ -1,10 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TranslocoTestingModule } from '@jsverse/transloco';
-import { vi } from 'vitest';
 
 import { EventService } from './event.service';
-import { ToastService } from '../shared/toast.service';
 import { environment } from '../../environments/environment';
 import { EventStatus, EventSummary, ImportSummary } from '../core/models/event.model';
 
@@ -23,21 +20,13 @@ const mockEvents: EventSummary[] = [
 describe('EventService', () => {
   let service: EventService;
   let httpMock: HttpTestingController;
-  let toastService: ToastService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule,
-        TranslocoTestingModule.forRoot({
-          langs: { en: {} },
-          translocoConfig: { defaultLang: 'en', availableLangs: ['en'] },
-        }),
-      ],
+      imports: [HttpClientTestingModule],
     });
     service = TestBed.inject(EventService);
     httpMock = TestBed.inject(HttpTestingController);
-    toastService = TestBed.inject(ToastService);
   });
 
   afterEach(() => httpMock.verify());
@@ -63,17 +52,14 @@ describe('EventService', () => {
     req.flush({ id: 1, name: 'Test', groups: [], activities: [] });
   });
 
-  it('deleteEvent(id) calls DELETE /events/{id} and shows success toast', () => {
-    const toastSpy = vi.spyOn(toastService, 'success');
+  it('deleteEvent(id) calls DELETE /events/{id}', () => {
     service.deleteEvent(1).subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
-    expect(toastSpy).toHaveBeenCalledWith('EVENTS.EVENT_DELETED');
   });
 
-  it('importEvent() calls POST /events/import and shows success toast', () => {
-    const toastSpy = vi.spyOn(toastService, 'success');
+  it('importEvent() calls POST /events/import', () => {
     const mockFile = new File(['display_name,group_name\nA,G1'], 'p.csv');
     const summary: ImportSummary = {
       event_id: 2,
@@ -82,11 +68,12 @@ describe('EventService', () => {
       participants_created: 1,
     };
 
-    service.importEvent(mockFile, 'Imported').subscribe();
+    service.importEvent(mockFile, 'Imported').subscribe((res) => {
+      expect(res.event_id).toBe(2);
+    });
     const req = httpMock.expectOne(`${environment.apiUrl}/events/import`);
     expect(req.request.method).toBe('POST');
     req.flush(summary);
-    expect(toastSpy).toHaveBeenCalledWith('EVENTS.EVENT_IMPORTED');
   });
 
   it('getLeaderboard(id) calls GET /events/{id}/leaderboard', () => {
@@ -96,19 +83,19 @@ describe('EventService', () => {
     req.flush({ event_id: 5, event_name: 'Test', has_age_categories: false, activities: [] });
   });
 
-  it('createAgeCategory() calls POST and shows success toast', () => {
-    const toastSpy = vi.spyOn(toastService, 'success');
-    service.createAgeCategory(1, { name: 'Junior', min_age: 0, max_age: 17 }).subscribe();
+  it('createAgeCategory() calls POST /events/{id}/age-categories', () => {
+    service.createAgeCategory(1, { name: 'Junior', min_age: 0, max_age: 17 }).subscribe((res) => {
+      expect(res.name).toBe('Junior');
+    });
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1/age-categories`);
+    expect(req.request.method).toBe('POST');
     req.flush({ id: 10, name: 'Junior', min_age: 0, max_age: 17 });
-    expect(toastSpy).toHaveBeenCalledWith('EVENTS.AGE_CATEGORY_ADDED');
   });
 
-  it('deleteAgeCategory() calls DELETE and shows success toast', () => {
-    const toastSpy = vi.spyOn(toastService, 'success');
+  it('deleteAgeCategory() calls DELETE /events/{id}/age-categories/{catId}', () => {
     service.deleteAgeCategory(1, 10).subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/events/1/age-categories/10`);
+    expect(req.request.method).toBe('DELETE');
     req.flush(null);
-    expect(toastSpy).toHaveBeenCalledWith('EVENTS.AGE_CATEGORY_REMOVED');
   });
 });

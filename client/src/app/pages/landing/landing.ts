@@ -5,6 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
 import { ArrowRightIconComponent } from '../../shared/arrow-right-icon.component';
 import { ThemeService } from '../../shared/theme.service';
+import { setLanguage } from '../../core/utils/language';
 
 @Component({
   selector: 'app-landing',
@@ -30,7 +31,6 @@ export class Landing implements OnInit {
   }
 
   setLang(lang: string): void {
-    this.transloco.setActiveLang(lang);
-    localStorage.setItem('lang', lang);
+    setLanguage(this.transloco, lang);
   }
 }

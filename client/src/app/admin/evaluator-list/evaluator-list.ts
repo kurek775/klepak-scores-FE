@@ -1,13 +1,13 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CdkDrag, CdkDragDrop, CdkDragPreview, CdkDropList } from '@angular/cdk/drag-drop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { forkJoin } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../../core/models/user.model';
 import { EvaluatorInfo, EventSummary } from '../../core/models/event.model';
+import { AdminService } from '../admin.service';
 import { EventService } from '../../events/event.service';
 import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
@@ -26,12 +26,25 @@ export class EvaluatorList implements OnInit {
   evaluators = signal<EvaluatorRow[]>([]);
   events = signal<EventSummary[]>([]);
   loading = signal(false);
-  filterText = '';
+  filterText = signal('');
+
+  filteredEvaluators = computed(() => {
+    const term = this.filterText().toLowerCase().trim();
+    if (!term) return this.evaluators();
+    return this.evaluators().filter(e =>
+      e.user.full_name.toLowerCase().includes(term) ||
+      e.user.email.toLowerCase().includes(term),
+    );
+  });
+
+  evaluatorDropListIds = computed(() =>
+    this.filteredEvaluators().map(r => `evaluator-${r.user.id}`),
+  );
 
   private destroy$ = untilDestroyed();
 
   constructor(
-    private http: HttpClient,
+    private adminService: AdminService,
     private eventService: EventService,
     private toast: ToastService,
     private transloco: TranslocoService,
@@ -43,78 +56,56 @@ export class EvaluatorList implements OnInit {
   }
 
   private loadData(): void {
-    // Load users and events in parallel
-    this.http.get<User[]>(`${environment.apiUrl}/admin/users`).pipe(this.destroy$()).subscribe({
-      next: (users) => {
-        const evaluatorUsers = users.filter(u => u.role === UserRole.EVALUATOR && u.is_active);
-        // Now load events to determine assignments
-        this.eventService.listEvents().pipe(this.destroy$()).subscribe({
-          next: (events) => {
-            this.events.set(events);
-            // For each event, load its evaluator pool
-            const rows: EvaluatorRow[] = evaluatorUsers.map(u => ({
-              user: u,
-              assignedEventIds: new Set<number>(),
-            }));
+    forkJoin({
+      users: this.adminService.listUsers(),
+      events: this.eventService.listEvents(),
+    })
+      .pipe(this.destroy$())
+      .subscribe({
+        next: ({ users, events }) => {
+          const evaluatorUsers = users.filter(u => u.role === UserRole.EVALUATOR && u.is_active);
+          this.events.set(events);
 
-            if (events.length === 0) {
-              this.evaluators.set(rows);
-              this.loading.set(false);
-              return;
-            }
+          const rows: EvaluatorRow[] = evaluatorUsers.map(u => ({
+            user: u,
+            assignedEventIds: new Set<number>(),
+          }));
 
-            let loaded = 0;
-            for (const event of events) {
-              this.eventService.listEventEvaluators(event.id).pipe(this.destroy$()).subscribe({
-                next: (evals) => {
+          if (events.length === 0) {
+            this.evaluators.set(rows);
+            this.loading.set(false);
+            return;
+          }
+
+          const evaluatorRequests = events.map(ev => this.eventService.listEventEvaluators(ev.id));
+          forkJoin(evaluatorRequests)
+            .pipe(this.destroy$())
+            .subscribe({
+              next: (allEvals) => {
+                allEvals.forEach((evals, index) => {
+                  const eventId = events[index].id;
                   for (const ev of evals) {
                     const row = rows.find(r => r.user.id === ev.id);
                     if (row) {
-                      row.assignedEventIds.add(event.id);
+                      row.assignedEventIds.add(eventId);
                     }
                   }
-                  loaded++;
-                  if (loaded === events.length) {
-                    this.evaluators.set(rows);
-                    this.loading.set(false);
-                  }
-                },
-                error: () => {
-                  loaded++;
-                  if (loaded === events.length) {
-                    this.evaluators.set(rows);
-                    this.loading.set(false);
-                    this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
-                  }
-                },
-              });
-            }
-          },
-          error: () => {
-            this.loading.set(false);
-            this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
-          },
-        });
-      },
-      error: () => {
-        this.loading.set(false);
-        this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
-      },
-    });
-  }
-
-  get filteredEvaluators(): EvaluatorRow[] {
-    const term = this.filterText.toLowerCase().trim();
-    if (!term) return this.evaluators();
-    return this.evaluators().filter(e =>
-      e.user.full_name.toLowerCase().includes(term) ||
-      e.user.email.toLowerCase().includes(term),
-    );
-  }
-
-  /** IDs of all evaluator drop lists for cdkDropListConnectedTo */
-  get evaluatorDropListIds(): string[] {
-    return this.filteredEvaluators.map(r => `evaluator-${r.user.id}`);
+                });
+                this.evaluators.set(rows);
+                this.loading.set(false);
+              },
+              error: () => {
+                this.evaluators.set(rows);
+                this.loading.set(false);
+                this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+              },
+            });
+        },
+        error: () => {
+          this.loading.set(false);
+          this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED'));
+        },
+      });
   }
 
   /** Prevent items being dropped back into the events shelf */

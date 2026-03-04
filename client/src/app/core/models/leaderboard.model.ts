@@ -14,10 +14,12 @@ export interface CategoryRanking {
   participants: ParticipantRank[];
 }
 
+import { EvaluationType } from './activity.model';
+
 export interface ActivityLeaderboard {
   activity_id: number;
   activity_name: string;
-  evaluation_type: string;
+  evaluation_type: EvaluationType;
   categories: CategoryRanking[];
 }
 

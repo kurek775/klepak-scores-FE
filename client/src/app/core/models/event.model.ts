@@ -49,7 +49,7 @@ export interface EventSummary {
   id: number;
   name: string;
   status: EventStatus;
-  created_by_id: number;
+  created_by_id: number | null;
   created_at: string;
   group_count: number;
   participant_count: number;
@@ -59,7 +59,7 @@ export interface EventDetail {
   id: number;
   name: string;
   status: EventStatus;
-  created_by_id: number;
+  created_by_id: number | null;
   created_at: string;
   groups: GroupDetail[];
   activities: Activity[];

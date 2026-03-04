@@ -1,11 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../auth/auth.service';
+import { AdminService } from '../admin.service';
 import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
@@ -22,7 +21,7 @@ export class UserList implements OnInit {
   private destroy$ = untilDestroyed();
 
   constructor(
-    private http: HttpClient,
+    private adminService: AdminService,
     private authService: AuthService,
     private toast: ToastService,
     private transloco: TranslocoService,
@@ -34,7 +33,7 @@ export class UserList implements OnInit {
 
   loadUsers(): void {
     this.loading.set(true);
-    this.http.get<User[]>(`${environment.apiUrl}/admin/users`).pipe(this.destroy$()).subscribe({
+    this.adminService.listUsers().pipe(this.destroy$()).subscribe({
       next: (users) => {
         const myId = this.authService.user()?.id;
         this.users.set(users.filter((u) => u.id !== myId));
@@ -45,10 +44,8 @@ export class UserList implements OnInit {
   }
 
   toggleActive(user: User): void {
-    this.http
-      .patch<User>(`${environment.apiUrl}/admin/users/${user.id}`, {
-        is_active: !user.is_active,
-      })
+    this.adminService
+      .updateUser(user.id, { is_active: !user.is_active })
       .pipe(this.destroy$())
       .subscribe({
         next: (updated) => {
@@ -59,8 +56,8 @@ export class UserList implements OnInit {
   }
 
   changeRole(user: User, role: UserRole): void {
-    this.http
-      .patch<User>(`${environment.apiUrl}/admin/users/${user.id}`, { role })
+    this.adminService
+      .updateUser(user.id, { role })
       .pipe(this.destroy$())
       .subscribe({
         next: (updated) => {

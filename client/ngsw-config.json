@@ -32,11 +32,11 @@
   ],
   "dataGroups": [
     {
-      "name": "api-events",
-      "urls": ["/api/events/**"],
+      "name": "api-data",
+      "urls": ["/api/events/**", "/api/groups/**", "/api/activities/**", "/api/auth/me"],
       "cacheConfig": {
         "strategy": "freshness",
-        "maxSize": 100,
+        "maxSize": 200,
         "maxAge": "10m",
         "timeout": "5s"
       }

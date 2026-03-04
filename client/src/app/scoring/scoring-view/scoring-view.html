@@ -55,7 +55,7 @@
               >
                 <td class="px-5 py-3 text-sm text-gray-900 dark:text-white">{{ row.participant.display_name }}</td>
                 <td class="px-5 py-3">
-                  @if (isBoolean) {
+                  @if (isBoolean()) {
                     <button
                       (click)="toggleBoolean(row)"
                       class="w-10 h-6 rounded-full relative transition-colors"
@@ -68,7 +68,7 @@
                         [class.left-4]="row.value === '1'"
                       ></span>
                     </button>
-                  } @else if (isNumeric) {
+                  } @else if (isNumeric()) {
                     <input
                       type="number"
                       [(ngModel)]="row.value"

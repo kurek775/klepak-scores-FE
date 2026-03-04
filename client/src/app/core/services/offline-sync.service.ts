@@ -1,11 +1,39 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { offlineDb, PendingRecord } from './offline-scores.db';
 import { ScoringService } from '../../scoring/scoring.service';
 
 @Injectable({ providedIn: 'root' })
-export class OfflineSyncService {
+export class OfflineSyncService implements OnDestroy {
+  private onlineHandler: (() => void) | null = null;
+  private scoringServiceRef: ScoringService | null = null;
+  private lastActivityId: number | null = null;
+
+  /** Call once from a component to enable auto-sync when the browser comes back online. */
+  enableAutoSync(scoringService: ScoringService, activityId: number): void {
+    this.scoringServiceRef = scoringService;
+    this.lastActivityId = activityId;
+
+    if (!this.onlineHandler) {
+      this.onlineHandler = () => this.onOnline();
+      window.addEventListener('online', this.onlineHandler);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.onlineHandler) {
+      window.removeEventListener('online', this.onlineHandler);
+      this.onlineHandler = null;
+    }
+  }
+
+  private async onOnline(): Promise<void> {
+    if (this.scoringServiceRef && this.lastActivityId !== null) {
+      await this.syncAll(this.scoringServiceRef, this.lastActivityId);
+    }
+  }
+
   async saveRecord(record: PendingRecord): Promise<void> {
     await offlineDb.pendingRecords.add(record);
   }
@@ -37,7 +65,7 @@ export class OfflineSyncService {
 
     const entries = pending.map((r) => ({
       participant_id: r.participantId,
-      value_raw: r.valueRaw,
+      value_raw: String(r.valueRaw),
     }));
 
     await firstValueFrom(

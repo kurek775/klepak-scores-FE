@@ -1,10 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -22,7 +21,7 @@ export class ForgotPassword {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private authService: AuthService,
     private transloco: TranslocoService,
   ) {
     this.form = this.fb.group({
@@ -35,8 +34,8 @@ export class ForgotPassword {
     this.error.set('');
     this.loading.set(true);
 
-    this.http
-      .post(`${environment.apiUrl}/auth/forgot-password`, { email: this.form.value.email })
+    this.authService
+      .forgotPassword(this.form.value.email)
       .pipe(this.destroy$())
       .subscribe({
         next: () => {

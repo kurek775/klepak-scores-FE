@@ -586,6 +586,7 @@
     "BACK": "Back",
     "YES": "Yes",
     "NO": "No",
-    "SIGN_OUT": "Sign Out"
+    "SIGN_OUT": "Sign Out",
+    "UNSAVED_CHANGES_WARNING": "You have unsaved changes. Are you sure you want to leave?"
   }
 }

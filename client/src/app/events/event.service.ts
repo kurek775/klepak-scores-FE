@@ -1,21 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { TranslocoService } from '@jsverse/transloco';
 
 import { environment } from '../../environments/environment';
 import { CsvPreviewResponse, EvaluatorInfo, EventDetail, EventSummary, GroupDetail, ImportSummary, ManualEventCreate, Participant } from '../core/models/event.model';
 import { AgeCategory, AgeCategoryCreate } from '../core/models/age-category.model';
 import { LeaderboardResponse } from '../core/models/leaderboard.model';
-import { ToastService } from '../shared/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-  constructor(
-    private http: HttpClient,
-    private toast: ToastService,
-    private transloco: TranslocoService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   listEvents(): Observable<EventSummary[]> {
     return this.http.get<EventSummary[]>(`${environment.apiUrl}/events`);
@@ -32,15 +26,11 @@ export class EventService {
     if (columnMapping) {
       formData.append('column_mapping', JSON.stringify(columnMapping));
     }
-    return this.http.post<ImportSummary>(`${environment.apiUrl}/events/import`, formData).pipe(
-      tap((res) => this.toast.success(this.transloco.translate('EVENTS.EVENT_IMPORTED', { groups: res.groups_created, participants: res.participants_created }))),
-    );
+    return this.http.post<ImportSummary>(`${environment.apiUrl}/events/import`, formData);
   }
 
   createEventManual(body: ManualEventCreate): Observable<ImportSummary> {
-    return this.http.post<ImportSummary>(`${environment.apiUrl}/events/manual`, body).pipe(
-      tap((res) => this.toast.success(this.transloco.translate('EVENTS.EVENT_CREATED', { groups: res.groups_created, participants: res.participants_created }))),
-    );
+    return this.http.post<ImportSummary>(`${environment.apiUrl}/events/manual`, body);
   }
 
   previewCsv(file: File): Observable<CsvPreviewResponse> {
@@ -50,9 +40,7 @@ export class EventService {
   }
 
   updateEvent(id: number, body: { name?: string; status?: string }): Observable<EventSummary> {
-    return this.http.patch<EventSummary>(`${environment.apiUrl}/events/${id}`, body).pipe(
-      tap(() => this.toast.success(this.transloco.translate('EVENTS.EVENT_UPDATED'))),
-    );
+    return this.http.patch<EventSummary>(`${environment.apiUrl}/events/${id}`, body);
   }
 
   createGroup(eventId: number, body: { name: string; identifier?: string }): Observable<GroupDetail> {
@@ -88,9 +76,7 @@ export class EventService {
   }
 
   deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/events/${id}`).pipe(
-      tap(() => this.toast.success(this.transloco.translate('EVENTS.EVENT_DELETED'))),
-    );
+    return this.http.delete<void>(`${environment.apiUrl}/events/${id}`);
   }
 
   getLeaderboard(eventId: number): Observable<LeaderboardResponse> {
@@ -117,15 +103,11 @@ export class EventService {
   }
 
   createAgeCategory(eventId: number, body: AgeCategoryCreate): Observable<AgeCategory> {
-    return this.http.post<AgeCategory>(`${environment.apiUrl}/events/${eventId}/age-categories`, body).pipe(
-      tap(() => this.toast.success(this.transloco.translate('EVENTS.AGE_CATEGORY_ADDED'))),
-    );
+    return this.http.post<AgeCategory>(`${environment.apiUrl}/events/${eventId}/age-categories`, body);
   }
 
   deleteAgeCategory(eventId: number, categoryId: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/events/${eventId}/age-categories/${categoryId}`).pipe(
-      tap(() => this.toast.success(this.transloco.translate('EVENTS.AGE_CATEGORY_REMOVED'))),
-    );
+    return this.http.delete<void>(`${environment.apiUrl}/events/${eventId}/age-categories/${categoryId}`);
   }
 
   listEventEvaluators(eventId: number): Observable<EvaluatorInfo[]> {

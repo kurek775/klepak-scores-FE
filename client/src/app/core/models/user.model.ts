@@ -38,7 +38,7 @@ export interface AcceptInvitationRequest {
 export interface InvitationRead {
   id: number;
   email: string;
-  role: string;
+  role: UserRole;
   used: boolean;
   expires_at: string;
   created_at: string;

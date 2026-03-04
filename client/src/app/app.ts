@@ -6,6 +6,7 @@ import { AuthService } from './auth/auth.service';
 import { Navbar } from './shared/layout/navbar/navbar';
 import { ToastComponent } from './shared/toast.component';
 import { ThemeService } from './shared/theme.service';
+import { setLanguage } from './core/utils/language';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,6 @@ export class App implements OnInit {
   }
 
   setLang(lang: string): void {
-    this.transloco.setActiveLang(lang);
-    localStorage.setItem('lang', lang);
+    setLanguage(this.transloco, lang);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -25,18 +25,18 @@ export class SetupEvaluators {
     private transloco: TranslocoService,
   ) {}
 
-  getUnassignedPoolEvaluators(): EvaluatorInfo[] {
+  unassignedPoolEvaluators = computed(() => {
     const ev = this.event();
     if (!ev) return [];
     const assignedIds = new Set(ev.groups.flatMap(g => g.evaluators.map(e => e.id)));
     return ev.event_evaluators.filter(e => !assignedIds.has(e.id));
-  }
+  });
 
-  get groupDropListIds(): string[] {
+  groupDropListIds = computed(() => {
     const ev = this.event();
     if (!ev) return [];
     return ev.groups.map(g => `group-${g.id}`);
-  }
+  });
 
   onDrop(event: CdkDragDrop<{ listId: string }>): void {
     const evaluator: EvaluatorInfo = event.item.data;

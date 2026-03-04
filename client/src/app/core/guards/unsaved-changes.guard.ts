@@ -1,4 +1,6 @@
+import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 
 export interface HasUnsavedChanges {
   hasUnsavedChanges(): boolean;
@@ -6,7 +8,8 @@ export interface HasUnsavedChanges {
 
 export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (component) => {
   if (component.hasUnsavedChanges && component.hasUnsavedChanges()) {
-    return confirm('You have unsaved changes. Are you sure you want to leave?');
+    const transloco = inject(TranslocoService);
+    return confirm(transloco.translate('COMMON.UNSAVED_CHANGES_WARNING'));
   }
   return true;
 };

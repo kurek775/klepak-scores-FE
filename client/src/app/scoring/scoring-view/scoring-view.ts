@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -107,6 +107,7 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
           );
           this.loading.set(false);
           this.refreshPendingCount(activityId);
+          this.offlineSync.enableAutoSync(this.scoringService, activityId);
         },
         error: () => this.loading.set(false),
       });
@@ -183,14 +184,12 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
     this.previewImageUrl.set('');
   }
 
-  get isBoolean(): boolean {
-    return this.activity()?.evaluation_type === EvaluationType.BOOLEAN;
-  }
+  isBoolean = computed(() => this.activity()?.evaluation_type === EvaluationType.BOOLEAN);
 
-  get isNumeric(): boolean {
+  isNumeric = computed(() => {
     const t = this.activity()?.evaluation_type;
     return t === EvaluationType.NUMERIC_HIGH || t === EvaluationType.NUMERIC_LOW;
-  }
+  });
 
   saveAll(): void {
     const act = this.activity();
@@ -200,7 +199,7 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
       .filter((r) => r.value !== '')
       .map((r) => ({
         participant_id: r.participant.id,
-        value_raw: r.value,
+        value_raw: String(r.value),
       }));
 
     if (entries.length === 0) return;
@@ -210,11 +209,12 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
       .submitBulkRecords({ activity_id: act.id, records: entries })
       .pipe(this.destroy$())
       .subscribe({
-        next: () => {
+        next: (records) => {
           this.rows.update((rows) =>
             rows.map((r) => (r.value !== '' ? { ...r, saved: true } : r)),
           );
           this.saving.set(false);
+          this.toast.success(this.transloco.translate('SCORING.RECORDS_SAVED', { count: records.length }));
         },
         error: async () => {
           for (const e of entries) {
@@ -244,11 +244,15 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
   }
 
   toggleBoolean(row: ScoreRow): void {
-    row.value = row.value === '1' || row.value === 1 ? '0' : '1';
-    row.saved = false;
+    const newValue = row.value === '1' || row.value === 1 ? '0' : '1';
+    this.rows.update(rows =>
+      rows.map(r => r.participant.id === row.participant.id ? { ...r, value: newValue, saved: false } : r),
+    );
   }
 
   onValueChange(row: ScoreRow): void {
-    row.saved = false;
+    this.rows.update(rows =>
+      rows.map(r => r.participant.id === row.participant.id ? { ...r, saved: false } : r),
+    );
   }
 }

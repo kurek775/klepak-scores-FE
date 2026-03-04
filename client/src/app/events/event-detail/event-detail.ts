@@ -5,6 +5,8 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { EventDetail, EventStatus } from '../../core/models/event.model';
 import { AgeCategory } from '../../core/models/age-category.model';
 import { EvaluationType } from '../../core/models/activity.model';
+import { EVALUATION_TYPES, getEvalTypeKey } from '../../core/utils/evaluation-types';
+import { createExpandable } from '../../core/utils/expandable';
 import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { ArrowRightIconComponent } from '../../shared/arrow-right-icon.component';
 import { AuthService } from '../../auth/auth.service';
@@ -21,23 +23,15 @@ export class EventDetailComponent implements OnInit {
   event = signal<EventDetail | null>(null);
   loading = signal(false);
   exportingCsv = signal(false);
-  expandedGroups = signal<Set<number>>(new Set());
+  groups = createExpandable<number>();
   ageCategories = signal<AgeCategory[]>([]);
 
   private destroy$ = untilDestroyed();
 
   EventStatus = EventStatus;
 
-  evaluationTypes: { value: EvaluationType; key: string }[] = [
-    { value: EvaluationType.NUMERIC_HIGH, key: 'EVENTS.NUMERIC_HIGH' },
-    { value: EvaluationType.NUMERIC_LOW,  key: 'EVENTS.NUMERIC_LOW'  },
-    { value: EvaluationType.BOOLEAN,      key: 'EVENTS.BOOLEAN'      },
-    { value: EvaluationType.SCORE_SET,    key: 'EVENTS.SCORE_SET'    },
-  ];
-
-  getEvalTypeKey(type: EvaluationType): string {
-    return this.evaluationTypes.find(t => t.value === type)?.key ?? type;
-  }
+  evaluationTypes = EVALUATION_TYPES;
+  getEvalTypeKey = getEvalTypeKey;
 
   constructor(
     private eventService: EventService,
@@ -59,7 +53,7 @@ export class EventDetailComponent implements OnInit {
           return;
         }
         this.event.set(event);
-        this.expandedGroups.set(new Set(event.groups.map((g) => g.id)));
+        this.groups.expandAll(event.groups.map((g) => g.id));
         this.loading.set(false);
       },
       error: () => {
@@ -75,19 +69,11 @@ export class EventDetailComponent implements OnInit {
   }
 
   toggleGroup(groupId: number): void {
-    this.expandedGroups.update((set) => {
-      const next = new Set(set);
-      if (next.has(groupId)) {
-        next.delete(groupId);
-      } else {
-        next.add(groupId);
-      }
-      return next;
-    });
+    this.groups.toggle(groupId);
   }
 
   isExpanded(groupId: number): boolean {
-    return this.expandedGroups().has(groupId);
+    return this.groups.isExpanded(groupId);
   }
 
   exportCsv(eventId: number): void {

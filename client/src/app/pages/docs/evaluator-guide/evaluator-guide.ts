@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ThemeService } from '../../../shared/theme.service';
+import { setLanguage } from '../../../core/utils/language';
 
 @Component({
   selector: 'app-evaluator-guide',
@@ -30,7 +31,6 @@ export class EvaluatorGuide {
   }
 
   setLang(lang: string): void {
-    this.transloco.setActiveLang(lang);
-    localStorage.setItem('lang', lang);
+    setLanguage(this.transloco, lang);
   }
 }

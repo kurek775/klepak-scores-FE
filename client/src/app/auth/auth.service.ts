@@ -103,4 +103,15 @@ export class AuthService {
       }),
     );
   }
+
+  forgotPassword(email: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${environment.apiUrl}/auth/reset-password`, {
+      token,
+      new_password: newPassword,
+    });
+  }
 }

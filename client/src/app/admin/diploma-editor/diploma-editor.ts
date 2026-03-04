@@ -150,6 +150,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       next: (t) => {
         this.templates.update(arr => [...arr, t]);
         this._loadTemplate(t);
+        this.toast.success(this.transloco.translate('DIPLOMA.TEMPLATE_SAVED'));
       },
       error: () => this.loading.set(false),
     });
@@ -511,6 +512,7 @@ export class DiplomaEditor implements OnInit, OnDestroy {
           this.bgImageUrl.set('');
           this.orientation.set('LANDSCAPE');
         }
+        this.toast.success(this.transloco.translate('DIPLOMA.TEMPLATE_DELETED'));
       },
       error: () => this.saving.set(false),
     });

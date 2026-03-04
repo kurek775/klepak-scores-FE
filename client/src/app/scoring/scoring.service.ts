@@ -1,19 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { TranslocoService } from '@jsverse/transloco';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Activity, ScoreRecord } from '../core/models/activity.model';
-import { ToastService } from '../shared/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class ScoringService {
-  constructor(
-    private http: HttpClient,
-    private toast: ToastService,
-    private transloco: TranslocoService,
-  ) { }
+  constructor(private http: HttpClient) {}
 
   createActivity(body: {
     name: string;
@@ -40,22 +34,18 @@ export class ScoringService {
   }
 
   submitRecord(body: {
-    value_raw: string | number;
+    value_raw: string;
     participant_id: number;
     activity_id: number;
   }): Observable<ScoreRecord> {
-    return this.http.post<ScoreRecord>(`${environment.apiUrl}/records`, body).pipe(
-      tap(() => this.toast.success(this.transloco.translate('SCORING.RECORD_SAVED'))),
-    );
+    return this.http.post<ScoreRecord>(`${environment.apiUrl}/records`, body);
   }
 
   submitBulkRecords(body: {
     activity_id: number;
-    records: { participant_id: number; value_raw: string | number }[];
+    records: { participant_id: number; value_raw: string }[];
   }): Observable<ScoreRecord[]> {
-    return this.http.post<ScoreRecord[]>(`${environment.apiUrl}/records/bulk`, body).pipe(
-      tap((records) => this.toast.success(this.transloco.translate('SCORING.RECORDS_SAVED', { count: records.length }))),
-    );
+    return this.http.post<ScoreRecord[]>(`${environment.apiUrl}/records/bulk`, body);
   }
 
   deleteRecord(recordId: number): Observable<void> {

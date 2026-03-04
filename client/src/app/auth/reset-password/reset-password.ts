@@ -1,10 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth.service';
 import { passwordValidators } from '../../core/validators/password.validator';
 import { untilDestroyed } from '../../core/utils/destroy';
 
@@ -27,7 +26,7 @@ export class ResetPassword implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private http: HttpClient,
+    private authService: AuthService,
     private transloco: TranslocoService,
   ) {
     this.form = this.fb.group({
@@ -52,11 +51,8 @@ export class ResetPassword implements OnInit {
     this.error.set('');
     this.loading.set(true);
 
-    this.http
-      .post(`${environment.apiUrl}/auth/reset-password`, {
-        token: this.token,
-        new_password: this.form.value.new_password,
-      })
+    this.authService
+      .resetPassword(this.token, this.form.value.new_password)
       .pipe(this.destroy$())
       .subscribe({
         next: () => {

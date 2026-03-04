@@ -16,7 +16,7 @@
     <div
       cdkDropList
       [cdkDropListData]="{ listId: 'pool' }"
-      [cdkDropListConnectedTo]="groupDropListIds"
+      [cdkDropListConnectedTo]="groupDropListIds()"
       (cdkDropListDropped)="onDrop($event)"
       class="dnd-drop-zone bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border-2 border-dashed border-gray-300 dark:border-white/10 px-5 py-4 min-h-[64px]"
     >
@@ -27,7 +27,7 @@
         </a>
       } @else {
         <div class="flex flex-wrap items-center gap-2">
-          @for (evaluator of getUnassignedPoolEvaluators(); track evaluator.id) {
+          @for (evaluator of unassignedPoolEvaluators(); track evaluator.id) {
             <span
               cdkDrag
               [cdkDragData]="evaluator"
@@ -37,7 +37,7 @@
               {{ evaluator.full_name }}
             </span>
           }
-          @if (getUnassignedPoolEvaluators().length === 0) {
+          @if (unassignedPoolEvaluators().length === 0) {
             <span class="text-xs text-gray-400 dark:text-gray-500 italic">{{ 'EVENTS.ALL_ASSIGNED' | transloco }}</span>
           }
         </div>
@@ -71,7 +71,7 @@
             cdkDropList
             [cdkDropListData]="{ listId: 'group-' + group.id }"
             [id]="'group-' + group.id"
-            [cdkDropListConnectedTo]="['pool'].concat(groupDropListIds)"
+            [cdkDropListConnectedTo]="['pool'].concat(groupDropListIds())"
             (cdkDropListDropped)="onDrop($event)"
             class="dnd-drop-zone px-5 py-3 border-t border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.03] min-h-[56px]"
           >
