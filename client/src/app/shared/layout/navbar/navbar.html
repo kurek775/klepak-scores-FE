@@ -1,13 +1,13 @@
 <nav class="bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] px-6 py-3">
-  <div class="flex items-center justify-between max-w-7xl mx-auto">
+  <div class="flex items-center justify-between max-w-5xl mx-auto">
 
     <a routerLink="/dashboard" class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
       <img src="logo.svg" alt="Vör" class="w-8 h-8">
       Vör
     </a>
 
+    <!-- Mobile: theme + lang + sign out -->
     <div class="flex items-center gap-2 md:hidden">
-      <!-- Theme toggle (mobile) -->
       <button
         (click)="themeService.toggle()"
         class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
@@ -26,150 +26,78 @@
         }
       </button>
 
-      <button
-        (click)="toggleMobileMenu()"
-        class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus:outline-none"
-        aria-label="Toggle menu"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          @if (isMobileMenuOpen()) {
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          } @else {
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          }
+      <div class="flex items-center gap-1 text-xs font-medium">
+        <button
+          (click)="setLang('cs')"
+          [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+        >CS</button>
+        <span class="text-gray-300 dark:text-gray-700">|</span>
+        <button
+          (click)="setLang('en')"
+          [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+        >EN</button>
+      </div>
+
+      <button (click)="logout()" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" aria-label="Sign out">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
       </button>
     </div>
 
-    <div class="hidden md:flex flex-1 items-center justify-between ml-8">
-      <div class="flex items-center gap-6">
-        @if (authService.isAuthenticated()) {
-          <a routerLink="/dashboard" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.DASHBOARD' | transloco }}
-          </a>
+    <!-- Desktop: theme + lang + user info + sign out -->
+    <div class="hidden md:flex items-center gap-4">
+      <!-- Theme toggle -->
+      <button
+        (click)="themeService.toggle()"
+        class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+        aria-label="Toggle theme"
+      >
+        @if (themeService.isDark()) {
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 110 10A5 5 0 0112 7z" />
+          </svg>
+        } @else {
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
         }
-      </div>
+      </button>
 
-      <div class="flex items-center gap-4">
-        <!-- Admin nav links -->
-        @if (authService.isAdmin()) {
-          <a routerLink="/admin/invitations" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.INVITATIONS' | transloco }}
-          </a>
-          <a routerLink="/admin/evaluators" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.EVALUATORS' | transloco }}
-          </a>
-        }
-        @if (authService.isSuperAdmin()) {
-          <a routerLink="/admin/users" routerLinkActive="text-emerald-400" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.USERS' | transloco }}
-          </a>
-        }
-
-        <!-- Theme toggle (desktop) -->
+      <!-- Language switcher -->
+      <div class="flex items-center gap-1 text-xs font-medium">
         <button
-          (click)="themeService.toggle()"
-          class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-          aria-label="Toggle theme"
-        >
-          @if (themeService.isDark()) {
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 110 10A5 5 0 0112 7z" />
-            </svg>
-          } @else {
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          }
-        </button>
-
-        <!-- Language switcher -->
-        <div class="flex items-center gap-1 text-xs font-medium">
-          <button
-            (click)="setLang('cs')"
-            [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
-          >CS</button>
-          <span class="text-gray-300 dark:text-gray-700">|</span>
-          <button
-            (click)="setLang('en')"
-            [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
-          >EN</button>
-        </div>
-
-        @if (authService.user(); as user) {
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-700 dark:text-gray-300">{{ user.full_name }}</span>
-            <span
-              class="text-xs px-2 py-0.5 rounded-full font-medium"
-              [class]="user.role === 'SUPER_ADMIN'
-                ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-                : user.role === 'ADMIN'
-                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                  : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'"
-            >
-              {{ user.role }}
-            </span>
-          </div>
-        }
-        <button (click)="logout()" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-          {{ 'COMMON.SIGN_OUT' | transloco }}
-        </button>
+          (click)="setLang('cs')"
+          [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+        >CS</button>
+        <span class="text-gray-300 dark:text-gray-700">|</span>
+        <button
+          (click)="setLang('en')"
+          [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-gray-700'"
+        >EN</button>
       </div>
+
+      @if (authService.user(); as user) {
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-700 dark:text-gray-300">{{ user.full_name }}</span>
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium"
+            [class]="user.role === 'SUPER_ADMIN'
+              ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+              : user.role === 'ADMIN'
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'"
+          >
+            {{ user.role }}
+          </span>
+        </div>
+      }
+      <button (click)="logout()" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+        {{ 'COMMON.SIGN_OUT' | transloco }}
+      </button>
     </div>
   </div>
-
-  @if (isMobileMenuOpen()) {
-    <div class="md:hidden mt-4 pb-2 border-t border-gray-100 dark:border-white/[0.06] pt-4 space-y-4 animate-fade-in-down">
-
-      <div class="flex flex-col gap-4 px-2">
-        <a routerLink="/dashboard" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          {{ 'NAV.DASHBOARD' | transloco }}
-        </a>
-        @if (authService.isAdmin()) {
-          <a routerLink="/admin/invitations" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.INVITATIONS' | transloco }}
-          </a>
-          <a routerLink="/admin/evaluators" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.EVALUATORS' | transloco }}
-          </a>
-        }
-        @if (authService.isSuperAdmin()) {
-          <a routerLink="/admin/users" (click)="closeMobileMenu()" routerLinkActive="text-emerald-400" class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-            {{ 'NAV.USERS' | transloco }}
-          </a>
-        }
-      </div>
-
-      <div class="pt-4 border-t border-gray-100 dark:border-white/[0.06] px-2 flex flex-col gap-4">
-        @if (authService.user(); as user) {
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="text-base font-medium text-gray-800 dark:text-white truncate min-w-0">{{ user.full_name }}</span>
-            <span
-              class="text-xs px-2 py-0.5 rounded-full font-medium shrink-0"
-              [class]="user.role === 'SUPER_ADMIN'
-                ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-                : user.role === 'ADMIN'
-                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                  : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'"
-            >
-              {{ user.role }}
-            </span>
-          </div>
-        }
-
-        <!-- Mobile lang switcher -->
-        <div class="flex items-center gap-2 text-sm font-medium">
-          <button (click)="setLang('cs')" [class]="activeLang === 'cs' ? 'text-emerald-400 font-bold' : 'text-gray-400'">CS</button>
-          <span class="text-gray-300 dark:text-gray-700">|</span>
-          <button (click)="setLang('en')" [class]="activeLang === 'en' ? 'text-emerald-400 font-bold' : 'text-gray-400'">EN</button>
-        </div>
-
-        <button (click)="logout(); closeMobileMenu()" class="text-left text-base text-red-600 hover:text-red-800 font-medium">
-          {{ 'COMMON.SIGN_OUT' | transloco }}
-        </button>
-      </div>
-    </div>
-  }
 </nav>

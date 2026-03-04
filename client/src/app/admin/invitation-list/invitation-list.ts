@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 
@@ -12,7 +13,7 @@ import { untilDestroyed } from '../../core/utils/destroy';
 @Component({
   selector: 'app-invitation-list',
   templateUrl: './invitation-list.html',
-  imports: [FormsModule, TranslocoPipe, DatePipe],
+  imports: [FormsModule, RouterLink, TranslocoPipe, DatePipe],
 })
 export class InvitationList implements OnInit {
   invitations = signal<InvitationRead[]>([]);

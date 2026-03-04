@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { User, UserRole } from '../../core/models/user.model';
@@ -11,7 +12,7 @@ import { untilDestroyed } from '../../core/utils/destroy';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.html',
-  imports: [FormsModule, TranslocoPipe],
+  imports: [FormsModule, RouterLink, TranslocoPipe],
 })
 export class UserList implements OnInit {
   users = signal<User[]>([]);

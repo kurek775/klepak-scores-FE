@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoService, TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../../../auth/auth.service';
@@ -9,11 +9,9 @@ import { setLanguage } from '../../../core/utils/language';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
-  imports: [RouterLink, RouterLinkActive, TranslocoPipe],
+  imports: [RouterLink, TranslocoPipe],
 })
 export class Navbar {
-  isMobileMenuOpen = signal(false);
-
   constructor(
     public authService: AuthService,
     public themeService: ThemeService,
@@ -30,13 +28,5 @@ export class Navbar {
 
   get activeLang(): string {
     return this.transloco.getActiveLang();
-  }
-
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update(v => !v);
-  }
-
-  closeMobileMenu(): void {
-    this.isMobileMenuOpen.set(false);
   }
 }
