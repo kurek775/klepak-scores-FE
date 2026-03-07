@@ -115,8 +115,7 @@ export class EvaluatorList implements OnInit {
     return this.events().find(e => e.id === eventId)?.name ?? `Event #${eventId}`;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onDropEvent(event: CdkDragDrop<any>): void {
+  onDropEvent(event: CdkDragDrop<{ evaluatorRow: EvaluatorRow }>): void {
     const droppedEvent: EventSummary = event.item.data;
     const evaluatorRow = event.container.data?.evaluatorRow as EvaluatorRow | undefined;
     if (!evaluatorRow) return;

@@ -3,14 +3,13 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from '../../auth/auth.service';
-import { ArrowRightIconComponent } from '../../shared/arrow-right-icon.component';
 import { ThemeService } from '../../shared/theme.service';
 import { setLanguage } from '../../core/utils/language';
 
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.html',
-  imports: [RouterLink, TranslocoPipe, ArrowRightIconComponent],
+  imports: [RouterLink, TranslocoPipe],
 })
 export class Landing implements OnInit {
   currentYear = new Date().getFullYear();

@@ -2,13 +2,13 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { forkJoin, switchMap, map } from 'rxjs';
+import { EMPTY, forkJoin, switchMap, map } from 'rxjs';
 import imageCompression from 'browser-image-compression';
 
 import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { HasUnsavedChanges } from '../../core/guards/unsaved-changes.guard';
 import { Activity, EvaluationType, ScoreRecord } from '../../core/models/activity.model';
-import { Participant } from '../../core/models/event.model';
+import { GroupDetail, Participant } from '../../core/models/event.model';
 import { ScoringService } from '../scoring.service';
 import { GroupService } from '../../events/group.service';
 import { EventService } from '../../events/event.service';
@@ -74,14 +74,14 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
           const myGroup = groups.find((g) => g.event_id === this.eventId);
           if (!myGroup) {
             this.loading.set(false);
-            return [];
+            return EMPTY;
           }
           this.groupId = myGroup.id;
 
           const groupDetail = event.groups.find((g) => g.id === myGroup.id);
           if (!groupDetail) {
             this.loading.set(false);
-            return [];
+            return EMPTY;
           }
 
           return this.scoringService.getActivityRecords(activityId).pipe(
@@ -92,8 +92,7 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
       )
       .subscribe({
         next: (result) => {
-          if (!result) return;
-          const { groupDetail, records } = result as { groupDetail: any; records: ScoreRecord[] };
+          const { groupDetail, records } = result as { groupDetail: GroupDetail; records: ScoreRecord[] };
           const recordMap = new Map<number, ScoreRecord>();
           for (const r of records) {
             recordMap.set(r.participant_id, r);

@@ -15,13 +15,6 @@ export interface Participant {
   metadata: Record<string, string> | null;
 }
 
-export interface GroupSummary {
-  id: number;
-  name: string;
-  identifier: string;
-  participant_count: number;
-}
-
 export interface EvaluatorInfo {
   id: number;
   email: string;

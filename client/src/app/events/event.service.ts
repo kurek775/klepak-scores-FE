@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { CsvPreviewResponse, EvaluatorInfo, EventDetail, EventSummary, GroupDetail, ImportSummary, ManualEventCreate, Participant } from '../core/models/event.model';
+import { Activity } from '../core/models/activity.model';
 import { AgeCategory, AgeCategoryCreate } from '../core/models/age-category.model';
 import { LeaderboardResponse } from '../core/models/leaderboard.model';
 
@@ -47,8 +48,8 @@ export class EventService {
     return this.http.post<GroupDetail>(`${environment.apiUrl}/events/${eventId}/groups`, body);
   }
 
-  updateGroup(groupId: number, body: { name?: string; identifier?: string }): Observable<unknown> {
-    return this.http.patch(`${environment.apiUrl}/groups/${groupId}`, body);
+  updateGroup(groupId: number, body: { name?: string; identifier?: string }): Observable<GroupDetail> {
+    return this.http.patch<GroupDetail>(`${environment.apiUrl}/groups/${groupId}`, body);
   }
 
   deleteGroup(groupId: number): Observable<void> {
@@ -71,8 +72,8 @@ export class EventService {
     return this.http.post<Participant>(`${environment.apiUrl}/participants/${participantId}/move`, { group_id: groupId });
   }
 
-  updateActivity(activityId: number, body: { name?: string; description?: string }): Observable<unknown> {
-    return this.http.patch(`${environment.apiUrl}/activities/${activityId}`, body);
+  updateActivity(activityId: number, body: { name?: string; description?: string }): Observable<Activity> {
+    return this.http.patch<Activity>(`${environment.apiUrl}/activities/${activityId}`, body);
   }
 
   deleteEvent(id: number): Observable<void> {

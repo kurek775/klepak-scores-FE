@@ -1,3 +1,5 @@
+import { EvaluationType } from './activity.model';
+
 export interface ParticipantRank {
   rank: number;
   participant_id: number;
@@ -13,8 +15,6 @@ export interface CategoryRanking {
   age_category_name: string;
   participants: ParticipantRank[];
 }
-
-import { EvaluationType } from './activity.model';
 
 export interface ActivityLeaderboard {
   activity_id: number;
