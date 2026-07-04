@@ -6,10 +6,26 @@
       @if (ageCategories().length > 0) {
       <div class="flex flex-wrap gap-2 mb-4">
         @for (cat of ageCategories(); track cat.id) {
+        @if (editingCatId() === cat.id) {
+        <span class="inline-flex items-center gap-1.5 bg-orange-50 dark:bg-orange-900/20 rounded-full pl-2.5 pr-1.5 py-1">
+          <input type="text" [ngModel]="editingCatName()" (ngModelChange)="editingCatName.set($event)"
+            (keydown.enter)="saveCategory()" (keydown.escape)="cancelEditCategory()"
+            class="w-24 px-2 py-0.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <input type="number" [ngModel]="editingCatMinAge()" (ngModelChange)="editingCatMinAge.set($event)" min="0"
+            class="w-14 px-1.5 py-0.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <span class="text-orange-700 dark:text-orange-300">&ndash;</span>
+          <input type="number" [ngModel]="editingCatMaxAge()" (ngModelChange)="editingCatMaxAge.set($event)" min="0"
+            class="w-14 px-1.5 py-0.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+          <button (click)="saveCategory()" class="text-emerald-600 hover:text-emerald-800 font-bold px-1" aria-label="Save">&#10003;</button>
+          <button (click)="cancelEditCategory()" class="text-gray-400 hover:text-gray-600 font-bold px-1" aria-label="Cancel">&#10005;</button>
+        </span>
+        } @else {
         <span class="inline-flex items-center gap-1.5 text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 rounded-full px-3 py-1.5">
           {{ cat.name }} ({{ cat.min_age }}&ndash;{{ cat.max_age }})
-          <button (click)="removeAgeCategory(cat.id)" class="ml-0.5 text-orange-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_AGE_CATEGORY' | transloco" [attr.aria-label]="'Remove ' + cat.name">&times;</button>
+          <button (click)="startEditCategory(cat)" class="ml-0.5 text-orange-600 hover:text-blue-600 font-bold" [title]="'EVENTS.EDIT_AGE_CATEGORY' | transloco" [attr.aria-label]="'Edit ' + cat.name">&#9998;</button>
+          <button (click)="removeAgeCategory(cat.id)" class="text-orange-600 hover:text-red-600 font-bold" [title]="'EVENTS.REMOVE_AGE_CATEGORY' | transloco" [attr.aria-label]="'Remove ' + cat.name">&times;</button>
         </span>
+        }
         }
       </div>
       } @else {

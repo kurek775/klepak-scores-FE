@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { CsvPreviewResponse, EvaluatorInfo, EventDetail, EventSummary, GroupDetail, ImportSummary, ManualEventCreate, Participant } from '../core/models/event.model';
+import { BootstrapEvaluatorsResponse, CsvPreviewResponse, EvaluatorInfo, EventDetail, EventSummary, GroupDetail, ImportSummary, ManualEventCreate, Participant } from '../core/models/event.model';
 import { Activity } from '../core/models/activity.model';
-import { AgeCategory, AgeCategoryCreate } from '../core/models/age-category.model';
+import { AgeCategory, AgeCategoryCreate, AgeCategoryUpdate } from '../core/models/age-category.model';
 import { LeaderboardResponse } from '../core/models/leaderboard.model';
 
 @Injectable({ providedIn: 'root' })
@@ -107,6 +107,10 @@ export class EventService {
     return this.http.post<AgeCategory>(`${environment.apiUrl}/events/${eventId}/age-categories`, body);
   }
 
+  updateAgeCategory(eventId: number, categoryId: number, body: AgeCategoryUpdate): Observable<AgeCategory> {
+    return this.http.patch<AgeCategory>(`${environment.apiUrl}/events/${eventId}/age-categories/${categoryId}`, body);
+  }
+
   deleteAgeCategory(eventId: number, categoryId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/events/${eventId}/age-categories/${categoryId}`);
   }
@@ -121,6 +125,10 @@ export class EventService {
 
   removeEventEvaluator(eventId: number, userId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/events/${eventId}/evaluators/${userId}`);
+  }
+
+  bootstrapEvaluators(eventId: number): Observable<BootstrapEvaluatorsResponse> {
+    return this.http.post<BootstrapEvaluatorsResponse>(`${environment.apiUrl}/events/${eventId}/bootstrap-evaluators`, {});
   }
 
 }

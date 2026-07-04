@@ -11,3 +11,9 @@ export interface AgeCategoryCreate {
   min_age: number;
   max_age: number;
 }
+
+export interface AgeCategoryUpdate {
+  name?: string;
+  min_age?: number;
+  max_age?: number;
+}

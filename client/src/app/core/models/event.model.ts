@@ -91,3 +91,17 @@ export interface ManualEventCreate {
   name: string;
   groups: GroupInput[];
 }
+
+export interface BootstrapEvaluatorCredential {
+  group_id: number;
+  group_name: string;
+  full_name: string;
+  email: string;
+  password: string;
+}
+
+export interface BootstrapEvaluatorsResponse {
+  event_id: number;
+  created: BootstrapEvaluatorCredential[];
+  skipped_groups: string[];
+}

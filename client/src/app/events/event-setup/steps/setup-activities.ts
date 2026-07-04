@@ -36,6 +36,11 @@ export class SetupActivities {
   newCatMinAge = signal(0);
   newCatMaxAge = signal(17);
 
+  editingCatId = signal<number | null>(null);
+  editingCatName = signal('');
+  editingCatMinAge = signal(0);
+  editingCatMaxAge = signal(17);
+
   constructor(
     private eventService: EventService,
     private scoringService: ScoringService,
@@ -139,5 +144,37 @@ export class SetupActivities {
       },
       error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
     });
+  }
+
+  startEditCategory(cat: AgeCategory): void {
+    this.editingCatId.set(cat.id);
+    this.editingCatName.set(cat.name);
+    this.editingCatMinAge.set(cat.min_age);
+    this.editingCatMaxAge.set(cat.max_age);
+  }
+
+  saveCategory(): void {
+    const ev = this.event();
+    const id = this.editingCatId();
+    if (!ev || !id || !this.editingCatName().trim()) return;
+    this.eventService
+      .updateAgeCategory(ev.id, id, {
+        name: this.editingCatName().trim(),
+        min_age: this.editingCatMinAge(),
+        max_age: this.editingCatMaxAge(),
+      })
+      .pipe(this.destroy$())
+      .subscribe({
+        next: (updated) => {
+          this.ageCategoriesUpdated.emit(this.ageCategories().map(c => (c.id === id ? updated : c)));
+          this.editingCatId.set(null);
+          this.toast.success(this.transloco.translate('EVENTS.AGE_CATEGORY_UPDATED'));
+        },
+        error: (err) => this.toast.error(err.error?.detail ?? this.transloco.translate('ERRORS.REQUEST_FAILED')),
+      });
+  }
+
+  cancelEditCategory(): void {
+    this.editingCatId.set(null);
   }
 }

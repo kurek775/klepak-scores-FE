@@ -1,7 +1,17 @@
 <div>
   <!-- Unassigned Pool (drop zone) -->
   <div class="mb-8">
-    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ 'EVENTS.UNASSIGNED_POOL' | transloco }}</h2>
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ 'EVENTS.UNASSIGNED_POOL' | transloco }}</h2>
+      <button
+        (click)="autoCreateEvaluators()"
+        [disabled]="bootstrapping() || event().groups.length === 0"
+        [title]="'EVENTS.AUTO_CREATE_HINT' | transloco"
+        class="shrink-0 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {{ 'EVENTS.AUTO_CREATE_EVALUATORS' | transloco }}
+      </button>
+    </div>
     <div
       cdkDropList
       [cdkDropListData]="{ listId: 'pool' }"
@@ -90,5 +100,9 @@
         </div>
       }
     </div>
+  }
+
+  @if (bootstrapResult(); as res) {
+    <app-bootstrap-credentials [result]="res" (closed)="bootstrapResult.set(null)" />
   }
 </div>
