@@ -1,12 +1,12 @@
 <div class="fixed bottom-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none">
   @for (toast of toastService.toasts(); track toast.id) {
     <div
-      class="pointer-events-auto flex items-center gap-4 min-w-[280px] max-w-sm p-4 rounded-2xl glass-panel border shadow-2xl animate-fade-in-up"
-      [class]="toast.type === 'success' ? 'border-brand-500/30' :
-               toast.type === 'error'   ? 'border-red-500/30' :
-                                          'border-accent-500/30'"
+      class="pointer-events-auto flex items-center gap-4 min-w-[280px] max-w-sm p-4 rounded-3xl glass-panel border-2 shadow-2xl animate-fade-in-up"
+      [class]="toast.type === 'success' ? 'border-brand-400/40' :
+               toast.type === 'error'   ? 'border-red-400/40' :
+                                          'border-accent-400/40'"
     >
-      <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-inner-glow"
+      <div class="shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center shadow-inner-glow animate-pop"
            [class]="toast.type === 'success' ? 'bg-brand-500 text-white' :
                     toast.type === 'error'   ? 'bg-red-500 text-white' :
                                                'bg-accent-500 text-white'">

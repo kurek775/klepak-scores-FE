@@ -3,6 +3,28 @@
 @import "tailwindcss";
 
 @theme {
+  /* ── Cute rounded typefaces ─────────────────────────────── */
+  --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Baloo 2", "Nunito", ui-rounded, system-ui, sans-serif;
+
+  /* ── Candy accent (sweet pink) ──────────────────────────── */
+  --color-candy-50: #fdf2f8;
+  --color-candy-100: #fce7f3;
+  --color-candy-200: #fbcfe8;
+  --color-candy-300: #f9a8d4;
+  --color-candy-400: #f472b6;
+  --color-candy-500: #ec4899;
+  --color-candy-600: #db2777;
+  --color-candy-700: #be185d;
+  --color-candy-800: #9d174d;
+  --color-candy-900: #831843;
+  --color-candy-950: #500724;
+
+  /* ── Sunny sprinkles ────────────────────────────────────── */
+  --color-sun-300: #fcd34d;
+  --color-sun-400: #fbbf24;
+  --color-sun-500: #f59e0b;
+
   --color-brand-50: #f0fdfa;
   --color-brand-100: #ccfbf1;
   --color-brand-200: #99f6e4;
@@ -30,16 +52,56 @@
   --shadow-glow: 0 0 20px -5px var(--color-brand-500);
   --shadow-inner-glow: inset 0 0 12px -2px rgba(255, 255, 255, 0.2);
 
+  /* Soft candy-tinted "sticker" shadow for cute cards */
+  --shadow-cute: 0 12px 30px -10px rgba(236, 72, 153, 0.28), 0 6px 14px -8px rgba(20, 184, 166, 0.22);
+
   --animate-float: float 8s ease-in-out infinite;
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-wiggle: wiggle 0.6s ease-in-out;
+  --animate-bounce-soft: bounceSoft 2.6s ease-in-out infinite;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-heartbeat: heartbeat 1.8s ease-in-out infinite;
 
   @keyframes float {
     0%, 100% { transform: translateY(0) scale(1); }
     50% { transform: translateY(-20px) scale(1.05); }
   }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-7deg); }
+    50% { transform: rotate(6deg); }
+    75% { transform: rotate(-4deg); }
+  }
+  @keyframes bounceSoft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.18); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.12); }
+    60% { transform: scale(1); }
+  }
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Cute base: rounded display headings ──────────────────── */
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+}
 
 /* ── Glassmorphism ────────────────────────────────────────── */
 
@@ -61,7 +123,7 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  @apply rounded-2xl transition-all duration-300 hover:shadow-glow hover:-translate-y-1;
+  @apply rounded-3xl transition-all duration-300 ease-out hover:shadow-cute hover:-translate-y-1.5 hover:scale-[1.015];
 }
 
 :where(.dark, .dark *) .glass-card {
@@ -73,21 +135,21 @@
 /* ── Mesh Background ──────────────────────────────────────── */
 
 .mesh-gradient {
-  background-color: #f8fafc;
+  background-color: #fef6fb;
   background-image:
-    radial-gradient(at 0% 0%, hsla(160, 84%, 39%, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(199, 89%, 48%, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(160, 84%, 39%, 0.1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(199, 89%, 48%, 0.1) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(330, 81%, 60%, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(199, 89%, 48%, 0.11) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(160, 84%, 39%, 0.11) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(45, 93%, 58%, 0.10) 0px, transparent 50%);
 }
 
 :where(.dark, .dark *) .mesh-gradient {
   background-color: #0f172a;
   background-image:
-    radial-gradient(at 0% 0%, hsla(160, 84%, 39%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(330, 81%, 60%, 0.16) 0px, transparent 50%),
     radial-gradient(at 100% 0%, hsla(199, 89%, 48%, 0.15) 0px, transparent 50%),
     radial-gradient(at 100% 100%, hsla(160, 84%, 39%, 0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(199, 89%, 48%, 0.15) 0px, transparent 50%);
+    radial-gradient(at 0% 100%, hsla(45, 93%, 58%, 0.12) 0px, transparent 50%);
 }
 
 /* ── Dark-mode native controls ───────────────────────────── */
@@ -99,6 +161,24 @@
 .dark select option {
   background-color: #1f2937;
   color: #f9fafb;
+}
+
+/* ── Cute selects: compact chevron pulled in near the text ── */
+/* Removes the wide native arrow-button gap and uses a small   */
+/* rounded brand chevron sitting close to the value.           */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314b8a6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1.05em 1.05em;
+  padding-right: 2rem !important;
+}
+
+.dark select:not([multiple]):not([size]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235eead4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
 
 /* ── Keyframes ─────────────────────────────────────────────── */
@@ -156,6 +236,38 @@
   animation: fadeInUp 0.35s ease-out both;
 }
 
+/* ── Cute extras ───────────────────────────────────────────── */
+
+.animate-wiggle { animation: wiggle 0.6s ease-in-out; }
+.animate-bounce-soft { animation: bounceSoft 2.6s ease-in-out infinite; }
+.animate-pop { animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-heartbeat { animation: heartbeat 1.8s ease-in-out infinite; }
+
+/* Wiggle a friendly element (logo, icon, mascot) on hover */
+.hover-wiggle:hover { animation: wiggle 0.6s ease-in-out; }
+
+/* Bouncy, springy tap feedback for cute buttons/cards */
+.cute-press {
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cute-press:hover { transform: translateY(-2px) scale(1.03); }
+.cute-press:active { transform: scale(0.94); }
+
+/* Sweet candy→brand gradient text for playful headings */
+.text-gradient-candy {
+  background-image: linear-gradient(100deg, var(--color-candy-500), var(--color-brand-500) 55%, var(--color-accent-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Little SVG sparkle you can drop next to a title */
+.sparkle {
+  display: inline-block;
+  color: var(--color-sun-400);
+  animation: heartbeat 2.4s ease-in-out infinite;
+}
+
 /* ── Card hover effect ─────────────────────────────────────── */
 
 .card-hover {
@@ -179,10 +291,10 @@
 /* ── Skeleton loading ──────────────────────────────────────── */
 
 .skeleton {
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background: linear-gradient(90deg, #fce7f3 25%, #f0fdfa 50%, #fce7f3 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
 }
 
 :where(.dark, .dark *) .skeleton {
@@ -270,10 +382,17 @@
   .page-enter,
   .modal-backdrop,
   .modal-content,
+  .animate-wiggle,
+  .animate-bounce-soft,
+  .animate-pop,
+  .animate-heartbeat,
+  .hover-wiggle:hover,
+  .sparkle,
   .animate-stagger-list > * {
     animation: none !important;
   }
-  .card-hover {
+  .card-hover,
+  .cute-press {
     transition: none !important;
   }
   .skeleton {
