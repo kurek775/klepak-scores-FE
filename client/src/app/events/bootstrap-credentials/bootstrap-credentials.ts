@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { A11yModule } from '@angular/cdk/a11y';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { BootstrapEvaluatorsResponse } from '../../core/models/event.model';
@@ -7,7 +8,7 @@ import { ToastService } from '../../shared/toast.service';
 @Component({
   selector: 'app-bootstrap-credentials',
   standalone: true,
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, A11yModule],
   template: `
     <div
       class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
@@ -15,6 +16,8 @@ import { ToastService } from '../../shared/toast.service';
       (keydown.escape)="close()"
     >
       <div
+        cdkTrapFocus
+        [cdkTrapFocusAutoCapture]="true"
         class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full p-6 max-h-[85vh] flex flex-col"
         (click)="$event.stopPropagation()"
         role="dialog"
