@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { EventDetail } from '../../../core/models/event.model';
+import { EventDetail, EventStatus } from '../../../core/models/event.model';
 import { AgeCategory } from '../../../core/models/age-category.model';
 import { getEvalTypeKey } from '../../../core/utils/evaluation-types';
 import { CategoryBreakdownComponent } from '../../../shared/category-breakdown.component';
@@ -15,6 +15,8 @@ export class SetupReview {
   event = input.required<EventDetail>();
   ageCategories = input.required<AgeCategory[]>();
   activate = output<void>();
+
+  isDraft = computed(() => this.event().status === EventStatus.DRAFT);
 
   hasNoGroups = computed(() => this.event().groups.length === 0);
   hasNoActivities = computed(() => this.event().activities.length === 0);

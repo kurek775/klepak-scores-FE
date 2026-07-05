@@ -21,6 +21,14 @@
       {{ ('EVENTS.STATUS_' + ev.status) | transloco }}
     </span>
     <div class="ml-auto flex items-center gap-2 flex-wrap">
+      @if (authService.isAdmin() && ev.status === EventStatus.ACTIVE) {
+        <a
+          [routerLink]="['/events', ev.id, 'setup']"
+          class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors border border-indigo-200 dark:border-indigo-800"
+        >
+          {{ 'EVENTS.EDIT_EVENT' | transloco }}
+        </a>
+      }
       @if (authService.isAdmin()) {
         @if (ev.status === EventStatus.ACTIVE) {
           <button (click)="updateEventStatus(EventStatus.ARCHIVED)"

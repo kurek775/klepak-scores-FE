@@ -124,6 +124,7 @@
     "PARTICIPANT_ADDED": "Participant added",
     "PARTICIPANT_DELETED": "Participant deleted",
     "PARTICIPANT_UPDATED": "Participant updated",
+    "EDIT_EVENT": "Edit",
     "EDIT_ACTIVITY": "Edit activity",
     "ACTIVITY_UPDATED": "Activity updated",
     "EDIT_AGE_CATEGORY": "Edit category",
@@ -605,7 +606,9 @@
     "WARN_NO_EVALUATORS_POOL": "No evaluators assigned to this event pool yet.",
     "WARN_GROUPS_NO_EVALUATORS": "Groups without assigned evaluators",
     "WARN_GROUPS_NO_PARTICIPANTS": "Groups without participants",
-    "ACTIVATED_SUCCESS": "Event activated successfully!"
+    "ACTIVATED_SUCCESS": "Event activated successfully!",
+    "SAVE_AND_CLOSE": "Save & close",
+    "CHANGES_SAVED": "Changes saved"
   },
   "COMMON": {
     "LOADING": "Loading...",

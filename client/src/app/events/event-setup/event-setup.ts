@@ -48,7 +48,8 @@ export class EventSetup implements OnInit {
     this.loading.set(true);
     this.eventService.getEvent(id).pipe(this.destroy$()).subscribe({
       next: (event) => {
-        if (event.status !== EventStatus.DRAFT) {
+        // DRAFT = initial setup, ACTIVE = retroactive editing. Archived is locked.
+        if (event.status === EventStatus.ARCHIVED) {
           this.router.navigate(['/events', event.id], { replaceUrl: true });
           return;
         }
@@ -104,6 +105,15 @@ export class EventSetup implements OnInit {
   activateEvent(): void {
     const ev = this.event();
     if (!ev) return;
+
+    // Editing an already-active event: changes are saved live per step, so just
+    // return to the detail. Only a DRAFT needs the activation status change.
+    if (ev.status !== EventStatus.DRAFT) {
+      this.toast.success(this.transloco.translate('SETUP.CHANGES_SAVED'));
+      this.router.navigate(['/events', ev.id]);
+      return;
+    }
+
     this.eventService.updateEvent(ev.id, { status: EventStatus.ACTIVE }).pipe(this.destroy$()).subscribe({
       next: () => {
         this.toast.success(this.transloco.translate('SETUP.ACTIVATED_SUCCESS'));

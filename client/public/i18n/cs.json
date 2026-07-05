@@ -124,6 +124,7 @@
     "PARTICIPANT_ADDED": "Účastník přidán",
     "PARTICIPANT_DELETED": "Účastník smazán",
     "PARTICIPANT_UPDATED": "Účastník aktualizován",
+    "EDIT_EVENT": "Upravit",
     "EDIT_ACTIVITY": "Upravit aktivitu",
     "ACTIVITY_UPDATED": "Aktivita aktualizována",
     "EDIT_AGE_CATEGORY": "Upravit kategorii",
@@ -605,7 +606,9 @@
     "WARN_NO_EVALUATORS_POOL": "K této události zatím nejsou přiřazeni žádní hodnotitelé.",
     "WARN_GROUPS_NO_EVALUATORS": "Skupiny bez přiřazených hodnotitelů",
     "WARN_GROUPS_NO_PARTICIPANTS": "Skupiny bez účastníků",
-    "ACTIVATED_SUCCESS": "Událost úspěšně aktivována!"
+    "ACTIVATED_SUCCESS": "Událost úspěšně aktivována!",
+    "SAVE_AND_CLOSE": "Uložit a zavřít",
+    "CHANGES_SAVED": "Změny uloženy"
   },
   "COMMON": {
     "LOADING": "Načítání...",
