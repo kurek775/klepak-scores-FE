@@ -138,6 +138,13 @@
   </div>
   }
 
+  <!-- Category breakdown -->
+  @if (ageCategories().length > 0) {
+  <div class="mt-8">
+    <app-category-breakdown [groups]="ev.groups" [ageCategories]="ageCategories()" />
+  </div>
+  }
+
   <!-- Activities Section (read-only) -->
   @if (ev.activities) {
   <div class="mt-8">

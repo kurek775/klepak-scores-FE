@@ -9,6 +9,7 @@ import { EVALUATION_TYPES, getEvalTypeKey } from '../../core/utils/evaluation-ty
 import { createExpandable } from '../../core/utils/expandable';
 import { ArrowLeftIconComponent } from '../../shared/arrow-left-icon.component';
 import { ArrowRightIconComponent } from '../../shared/arrow-right-icon.component';
+import { CategoryBreakdownComponent } from '../../shared/category-breakdown.component';
 import { AuthService } from '../../auth/auth.service';
 import { EventService } from '../event.service';
 import { ToastService } from '../../shared/toast.service';
@@ -17,7 +18,7 @@ import { untilDestroyed } from '../../core/utils/destroy';
 @Component({
   selector: 'app-event-detail',
   templateUrl: './event-detail.html',
-  imports: [RouterLink, TranslocoPipe, ArrowLeftIconComponent, ArrowRightIconComponent],
+  imports: [RouterLink, TranslocoPipe, ArrowLeftIconComponent, ArrowRightIconComponent, CategoryBreakdownComponent],
 })
 export class EventDetailComponent implements OnInit {
   event = signal<EventDetail | null>(null);
