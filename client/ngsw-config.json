@@ -21,16 +21,26 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/i18n/**",
           "/*.png",
           "/*.svg",
           "/*.jpg",
-          "/*.ico"
+          "/*.ico",
+          "/fonts/**"
         ]
       }
     }
   ],
   "dataGroups": [
+    {
+      "name": "i18n",
+      "urls": ["/i18n/**"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 20,
+        "maxAge": "365d",
+        "timeout": "3s"
+      }
+    },
     {
       "name": "api-data",
       "urls": ["/api/events/**", "/api/groups/**", "/api/activities/**", "/api/auth/me"],
