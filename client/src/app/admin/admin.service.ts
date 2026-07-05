@@ -16,4 +16,8 @@ export class AdminService {
   updateUser(userId: number, body: { role?: UserRole; is_active?: boolean }): Observable<User> {
     return this.http.patch<User>(`${environment.apiUrl}/admin/users/${userId}`, body);
   }
+
+  deleteUser(userId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/admin/users/${userId}`);
+  }
 }

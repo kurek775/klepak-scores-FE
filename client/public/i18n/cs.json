@@ -299,6 +299,10 @@
     "PENDING": "Čekající",
     "DEACTIVATE": "Deaktivovat",
     "APPROVE": "Schválit",
+    "DELETE": "Smazat",
+    "DELETE_USER_TITLE": "Smazat uživatele",
+    "DELETE_USER_CONFIRM": "Opravdu chcete trvale smazat uživatele {{name}}? Tuto akci nelze vrátit zpět. Zadané výsledky zůstanou zachovány.",
+    "USER_DELETED": "Uživatel {{name}} byl smazán",
     "ROLE_ADMIN": "Správce",
     "ROLE_EVALUATOR": "Hodnotitel",
     "ROLE_SUPER_ADMIN": "Super správce"

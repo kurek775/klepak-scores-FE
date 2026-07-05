@@ -299,6 +299,10 @@
     "PENDING": "Pending",
     "DEACTIVATE": "Deactivate",
     "APPROVE": "Approve",
+    "DELETE": "Delete",
+    "DELETE_USER_TITLE": "Delete user",
+    "DELETE_USER_CONFIRM": "Permanently delete {{name}}? This cannot be undone. Any scores they entered are kept.",
+    "USER_DELETED": "User {{name}} deleted",
     "ROLE_ADMIN": "Admin",
     "ROLE_EVALUATOR": "Evaluator",
     "ROLE_SUPER_ADMIN": "Super Admin"

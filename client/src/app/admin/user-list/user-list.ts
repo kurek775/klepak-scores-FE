@@ -7,6 +7,7 @@ import { User, UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../auth/auth.service';
 import { AdminService } from '../admin.service';
 import { ToastService } from '../../shared/toast.service';
+import { ConfirmDialogService } from '../../shared/confirm-dialog.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 
 @Component({
@@ -26,6 +27,7 @@ export class UserList implements OnInit {
     private authService: AuthService,
     private toast: ToastService,
     private transloco: TranslocoService,
+    private confirmDialog: ConfirmDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +65,26 @@ export class UserList implements OnInit {
       .subscribe({
         next: (updated) => {
           this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+        },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
+      });
+  }
+
+  async deleteUser(user: User): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: this.transloco.translate('ADMIN.DELETE_USER_TITLE'),
+      message: this.transloco.translate('ADMIN.DELETE_USER_CONFIRM', { name: user.full_name }),
+      confirmText: this.transloco.translate('ADMIN.DELETE'),
+    });
+    if (!confirmed) return;
+
+    this.adminService
+      .deleteUser(user.id)
+      .pipe(this.destroy$())
+      .subscribe({
+        next: () => {
+          this.users.update((list) => list.filter((u) => u.id !== user.id));
+          this.toast.success(this.transloco.translate('ADMIN.USER_DELETED', { name: user.full_name }));
         },
         error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
       });
