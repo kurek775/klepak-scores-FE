@@ -4,11 +4,12 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { EventDetail } from '../../../core/models/event.model';
 import { AgeCategory } from '../../../core/models/age-category.model';
 import { getEvalTypeKey } from '../../../core/utils/evaluation-types';
+import { CategoryBreakdownComponent } from '../../../shared/category-breakdown.component';
 
 @Component({
   selector: 'app-setup-review',
   templateUrl: './setup-review.html',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, CategoryBreakdownComponent],
 })
 export class SetupReview {
   event = input.required<EventDetail>();

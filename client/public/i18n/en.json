@@ -206,6 +206,13 @@
     "PARTICIPANTS_CREATED": "Participants created",
     "VIEW_EVENT": "View Event"
   },
+  "CATEGORIES": {
+    "TITLE": "Category breakdown",
+    "UNASSIGNED": "Unassigned",
+    "NONE_DEFINED": "No age categories defined",
+    "MEMBERS": "members",
+    "AGE_RANGE": "age"
+  },
   "SCORING": {
     "BACK": "Back to Event",
     "LOADING": "Loading scoring view...",

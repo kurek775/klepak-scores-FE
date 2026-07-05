@@ -206,6 +206,13 @@
     "PARTICIPANTS_CREATED": "Vytvořeno účastníků",
     "VIEW_EVENT": "Zobrazit událost"
   },
+  "CATEGORIES": {
+    "TITLE": "Rozřazení do kategorií",
+    "UNASSIGNED": "Nezařazení",
+    "NONE_DEFINED": "Nejsou definované žádné věkové kategorie",
+    "MEMBERS": "členů",
+    "AGE_RANGE": "věk"
+  },
   "SCORING": {
     "BACK": "Zpět na událost",
     "LOADING": "Načítání...",

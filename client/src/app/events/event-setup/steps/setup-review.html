@@ -115,6 +115,11 @@
     </div>
   </div>
 
+  <!-- Category breakdown -->
+  <div class="mt-6 bg-white dark:bg-white/[0.03] rounded-xl shadow-sm border border-gray-200 dark:border-white/[0.06] p-5">
+    <app-category-breakdown [groups]="event().groups" [ageCategories]="ageCategories()" />
+  </div>
+
   <!-- Activate Button -->
   <div class="mt-8 flex justify-center">
     <button
