@@ -31,6 +31,21 @@
       </div>
     }
 
+    @if (groups().length > 1) {
+      <div class="mb-4">
+        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{{ 'SCORING.GROUP' | transloco }}</label>
+        <select
+          [ngModel]="selectedGroupId()"
+          (ngModelChange)="onGroupChange($event)"
+          class="w-full sm:w-64 px-3 py-2 text-gray-900 bg-white border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+        >
+          @for (g of groups(); track g.id) {
+            <option [ngValue]="g.id">{{ g.name }}</option>
+          }
+        </select>
+      </div>
+    }
+
     @if (rows().length === 0) {
       <p class="text-gray-500 dark:text-gray-400">{{ 'SCORING.NO_PARTICIPANTS' | transloco }}</p>
     } @else {

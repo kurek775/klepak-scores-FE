@@ -211,6 +211,7 @@
     "LOADING": "Načítání...",
     "TIME_PLACEHOLDER": "m:ss.cc",
     "INVALID_TIME": "{{count}} neplatných časů bylo přeskočeno (použijte formát m:ss.cc)",
+    "GROUP": "Skupina",
     "NO_PARTICIPANTS": "Ve vaší přiřazené skupině nejsou žádní účastníci.",
     "PARTICIPANT": "Účastník",
     "SCORE": "Skóre",

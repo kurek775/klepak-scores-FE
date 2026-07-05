@@ -211,6 +211,7 @@
     "LOADING": "Loading scoring view...",
     "TIME_PLACEHOLDER": "m:ss.cc",
     "INVALID_TIME": "{{count}} invalid time(s) skipped (use m:ss.cc format)",
+    "GROUP": "Group",
     "NO_PARTICIPANTS": "No participants found in your assigned group.",
     "PARTICIPANT": "Participant",
     "SCORE": "Score",

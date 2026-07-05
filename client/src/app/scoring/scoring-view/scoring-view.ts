@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { EMPTY, forkJoin, switchMap, map } from 'rxjs';
@@ -15,6 +15,7 @@ import { EventService } from '../../events/event.service';
 import { AIResult, AiReviewModal } from '../ai-review-modal/ai-review-modal';
 import { OfflineSyncService } from '../../core/services/offline-sync.service';
 import { ToastService } from '../../shared/toast.service';
+import { AuthService } from '../../auth/auth.service';
 import { untilDestroyed } from '../../core/utils/destroy';
 import { formatSeconds, formatTimeValue, parseTimeToSeconds } from '../../core/utils/time-format';
 
@@ -42,16 +43,24 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
   eventId = 0;
   groupId = 0;
 
+  /** Groups the current user may score: all event groups for admins, the
+   *  evaluator's single assigned group otherwise. */
+  groups = signal<GroupDetail[]>([]);
+  selectedGroupId = signal(0);
+
+  private recordMap = new Map<number, ScoreRecord>();
   private destroy$ = untilDestroyed();
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private scoringService: ScoringService,
     private groupService: GroupService,
     private eventService: EventService,
     private offlineSync: OfflineSyncService,
     private toast: ToastService,
     private transloco: TranslocoService,
+    private authService: AuthService,
   ) {}
 
   hasUnsavedChanges(): boolean {
@@ -72,48 +81,79 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
           const act = event.activities.find((a) => a.id === activityId);
           if (act) this.activity.set(act);
 
-          const myGroup = groups.find((g) => g.event_id === this.eventId);
-          if (!myGroup) {
-            this.loading.set(false);
-            return EMPTY;
+          // Admins may score every group; evaluators only their assigned one.
+          let selectable: GroupDetail[];
+          if (this.authService.isAdmin()) {
+            selectable = event.groups;
+          } else {
+            const myGroup = groups.find((g) => g.event_id === this.eventId);
+            const gd = myGroup ? event.groups.find((g) => g.id === myGroup.id) : undefined;
+            selectable = gd ? [gd] : [];
           }
-          this.groupId = myGroup.id;
 
-          const groupDetail = event.groups.find((g) => g.id === myGroup.id);
-          if (!groupDetail) {
+          if (selectable.length === 0) {
             this.loading.set(false);
             return EMPTY;
           }
+
+          this.groups.set(selectable);
+          this.selectedGroupId.set(selectable[0].id);
+          this.groupId = selectable[0].id;
 
           return this.scoringService.getActivityRecords(activityId).pipe(
-            map((records) => ({ groupDetail, records })),
+            map((records) => ({ records })),
           );
         }),
         this.destroy$(),
       )
       .subscribe({
         next: (result) => {
-          const { groupDetail, records } = result as { groupDetail: GroupDetail; records: ScoreRecord[] };
-          const recordMap = new Map<number, ScoreRecord>();
-          for (const r of records) {
-            recordMap.set(r.participant_id, r);
-          }
-          const isTime = this.activity()?.evaluation_type === EvaluationType.TIME_LOW;
-          this.rows.set(
-            groupDetail.participants.map((p: Participant) => {
-              const raw = recordMap.get(p.id)?.value_raw ?? '';
-              return {
-                participant: p,
-                value: isTime && raw !== '' ? formatTimeValue(raw) : raw,
-                saved: recordMap.has(p.id),
-              };
-            }),
-          );
+          const { records } = result as { records: ScoreRecord[] };
+          this.recordMap = new Map(records.map((r) => [r.participant_id, r]));
+          this.buildRows();
           this.loading.set(false);
           this.refreshPendingCount(activityId);
           this.offlineSync.enableAutoSync(this.scoringService, activityId);
         },
         error: () => this.loading.set(false),
+      });
+  }
+
+  /** Rebuild the score rows for the currently selected group. */
+  private buildRows(): void {
+    const group = this.groups().find((g) => g.id === this.selectedGroupId());
+    if (!group) {
+      this.rows.set([]);
+      return;
+    }
+    const isTime = this.isTime();
+    this.rows.set(
+      group.participants.map((p: Participant) => {
+        const raw = this.recordMap.get(p.id)?.value_raw ?? '';
+        return {
+          participant: p,
+          value: isTime && raw !== '' ? formatTimeValue(raw) : raw,
+          saved: this.recordMap.has(p.id),
+        };
+      }),
+    );
+  }
+
+  /** Admin group switch: reload records for the activity and rebuild rows. */
+  onGroupChange(groupId: number | string): void {
+    const gid = Number(groupId);
+    this.selectedGroupId.set(gid);
+    this.groupId = gid;
+    const act = this.activity();
+    if (!act) return;
+    this.scoringService
+      .getActivityRecords(act.id)
+      .pipe(this.destroy$())
+      .subscribe({
+        next: (records) => {
+          this.recordMap = new Map(records.map((r) => [r.participant_id, r]));
+          this.buildRows();
+        },
       });
   }
 
@@ -245,6 +285,11 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
           );
           this.saving.set(false);
           this.toast.success(this.transloco.translate('SCORING.RECORDS_SAVED', { count: records.length }));
+          // Evaluators head back to their team after confirming scores;
+          // admins stay to keep scoring other groups.
+          if (!this.authService.isAdmin()) {
+            this.router.navigate(['/events', this.eventId]);
+          }
         },
         error: async () => {
           for (const e of entries) {

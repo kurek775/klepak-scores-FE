@@ -163,12 +163,10 @@
           </div>
         </div>
         <div class="flex items-center gap-2 shrink-0 ml-3">
-          @if (!authService.isAdmin()) {
           <a [routerLink]="['/events', ev.id, 'score', activity.id]"
             class="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg hover:shadow-md transition-shadow">
             {{ 'EVENTS.SCORE' | transloco }}
           </a>
-          }
         </div>
       </div>
       }
