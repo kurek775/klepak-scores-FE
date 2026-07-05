@@ -54,6 +54,7 @@
   "EVENTS": {
     "NUMERIC_LOW": "Numeric (Lower is better)",
     "NUMERIC_HIGH": "Numeric (Higher is better)",
+    "TIME_LOW": "Time (Faster is better)",
     "BOOLEAN": "Pass / Fail",
     "SCORE_SET": "Scoring Set",
     "TITLE": "Events",
@@ -208,6 +209,8 @@
   "SCORING": {
     "BACK": "Back to Event",
     "LOADING": "Loading scoring view...",
+    "TIME_PLACEHOLDER": "m:ss.cc",
+    "INVALID_TIME": "{{count}} invalid time(s) skipped (use m:ss.cc format)",
     "NO_PARTICIPANTS": "No participants found in your assigned group.",
     "PARTICIPANT": "Participant",
     "SCORE": "Score",
@@ -477,6 +480,7 @@
     "ACTIVITIES_TIP": "Choose the scoring type carefully — it cannot be changed after the event is activated. If you need both a timed event and a distance event, create two separate activities with the appropriate types.",
     "ACTIVITIES_NUMERIC_HIGH": "Numeric High — Higher is better (e.g., distance, points)",
     "ACTIVITIES_NUMERIC_LOW": "Numeric Low — Lower is better (e.g., time, errors)",
+    "ACTIVITIES_TIME_LOW": "Time — Fastest wins (enter as m:ss.cc, e.g. 1:23.45)",
     "ACTIVITIES_BOOLEAN": "Boolean — Pass or fail",
     "ACTIVITIES_SCORE_SET": "Score Set — Predefined set of possible values",
 

@@ -16,6 +16,7 @@ import { AIResult, AiReviewModal } from '../ai-review-modal/ai-review-modal';
 import { OfflineSyncService } from '../../core/services/offline-sync.service';
 import { ToastService } from '../../shared/toast.service';
 import { untilDestroyed } from '../../core/utils/destroy';
+import { formatSeconds, formatTimeValue, parseTimeToSeconds } from '../../core/utils/time-format';
 
 interface ScoreRow {
   participant: Participant;
@@ -97,12 +98,16 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
           for (const r of records) {
             recordMap.set(r.participant_id, r);
           }
+          const isTime = this.activity()?.evaluation_type === EvaluationType.TIME_LOW;
           this.rows.set(
-            groupDetail.participants.map((p: Participant) => ({
-              participant: p,
-              value: recordMap.get(p.id)?.value_raw ?? '',
-              saved: recordMap.has(p.id),
-            })),
+            groupDetail.participants.map((p: Participant) => {
+              const raw = recordMap.get(p.id)?.value_raw ?? '';
+              return {
+                participant: p,
+                value: isTime && raw !== '' ? formatTimeValue(raw) : raw,
+                saved: recordMap.has(p.id),
+              };
+            }),
           );
           this.loading.set(false);
           this.refreshPendingCount(activityId);
@@ -145,8 +150,14 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
       .pipe(this.destroy$())
       .subscribe({
         next: (results) => {
+          const prepared = this.isTime()
+            ? results.map((r) => {
+                const secs = parseTimeToSeconds(r.value as string);
+                return { ...r, value: secs !== null ? formatSeconds(secs) : String(r.value) };
+              })
+            : results;
           this.previewImageUrl.set(previewUrl);
-          this.pendingAIResults.set(results);
+          this.pendingAIResults.set(prepared);
           this.showReviewModal.set(true);
           this.processingAI.set(false);
           input.value = '';
@@ -190,17 +201,37 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
     return t === EvaluationType.NUMERIC_HIGH || t === EvaluationType.NUMERIC_LOW;
   });
 
+  isTime = computed(() => this.activity()?.evaluation_type === EvaluationType.TIME_LOW);
+
   saveAll(): void {
     const act = this.activity();
     if (!act) return;
 
-    const entries = this.rows()
-      .filter((r) => r.value !== '')
-      .map((r) => ({
-        participant_id: r.participant.id,
-        value_raw: String(r.value),
-      }));
+    const isTime = this.isTime();
+    const entries: { participant_id: number; value_raw: string }[] = [];
+    const savedIds = new Set<number>();
+    let invalidTimes = 0;
 
+    for (const r of this.rows()) {
+      if (r.value === '' || r.value === null || r.value === undefined) continue;
+      let valueRaw: string;
+      if (isTime) {
+        const secs = parseTimeToSeconds(r.value as string);
+        if (secs === null) {
+          invalidTimes++;
+          continue;
+        }
+        valueRaw = String(secs);
+      } else {
+        valueRaw = String(r.value);
+      }
+      entries.push({ participant_id: r.participant.id, value_raw: valueRaw });
+      savedIds.add(r.participant.id);
+    }
+
+    if (invalidTimes > 0) {
+      this.toast.error(this.transloco.translate('SCORING.INVALID_TIME', { count: invalidTimes }));
+    }
     if (entries.length === 0) return;
 
     this.saving.set(true);
@@ -210,7 +241,7 @@ export class ScoringView implements OnInit, HasUnsavedChanges {
       .subscribe({
         next: (records) => {
           this.rows.update((rows) =>
-            rows.map((r) => (r.value !== '' ? { ...r, saved: true } : r)),
+            rows.map((r) => (savedIds.has(r.participant.id) ? { ...r, saved: true } : r)),
           );
           this.saving.set(false);
           this.toast.success(this.transloco.translate('SCORING.RECORDS_SAVED', { count: records.length }));

@@ -11,6 +11,7 @@ import { EventService } from '../event.service';
 import { ToastService } from '../../shared/toast.service';
 import { createExpandable } from '../../core/utils/expandable';
 import { untilDestroyed } from '../../core/utils/destroy';
+import { formatTimeValue } from '../../core/utils/time-format';
 
 @Component({
   selector: 'app-leaderboard',
@@ -72,7 +73,9 @@ export class Leaderboard implements OnInit {
   }
 
   formatValue(val: string, evalType: string): string {
-    return evalType === 'BOOLEAN' ? (val === '1' ? '✓' : '✗') : val;
+    if (evalType === 'BOOLEAN') return val === '1' ? '✓' : '✗';
+    if (evalType === 'TIME_LOW') return formatTimeValue(val);
+    return val;
   }
 
   rankMedal(rank: number): string {

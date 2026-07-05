@@ -1,6 +1,7 @@
 export enum EvaluationType {
   NUMERIC_HIGH = 'NUMERIC_HIGH',
   NUMERIC_LOW = 'NUMERIC_LOW',
+  TIME_LOW = 'TIME_LOW',
   BOOLEAN = 'BOOLEAN',
   SCORE_SET = 'SCORE_SET',
 }

@@ -3,6 +3,7 @@ import { EvaluationType } from '../models/activity.model';
 export const EVALUATION_TYPES: { value: EvaluationType; key: string }[] = [
   { value: EvaluationType.NUMERIC_HIGH, key: 'EVENTS.NUMERIC_HIGH' },
   { value: EvaluationType.NUMERIC_LOW,  key: 'EVENTS.NUMERIC_LOW'  },
+  { value: EvaluationType.TIME_LOW,     key: 'EVENTS.TIME_LOW'     },
   { value: EvaluationType.BOOLEAN,      key: 'EVENTS.BOOLEAN'      },
   { value: EvaluationType.SCORE_SET,    key: 'EVENTS.SCORE_SET'    },
 ];

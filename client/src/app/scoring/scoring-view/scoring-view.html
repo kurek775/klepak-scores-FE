@@ -83,6 +83,15 @@
                       class="w-24 px-3 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                       placeholder="0"
                     />
+                  } @else if (isTime()) {
+                    <input
+                      type="text"
+                      inputmode="decimal"
+                      [(ngModel)]="row.value"
+                      (ngModelChange)="onValueChange(row)"
+                      [placeholder]="'SCORING.TIME_PLACEHOLDER' | transloco"
+                      class="w-28 px-3 py-1.5 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded-lg text-sm tabular-nums focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                    />
                   } @else {
                     <input
                       type="text"

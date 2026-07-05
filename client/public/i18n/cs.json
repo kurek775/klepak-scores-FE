@@ -54,6 +54,7 @@
   "EVENTS": {
     "NUMERIC_LOW": "Číselné (nižší je lepší)",
     "NUMERIC_HIGH": "Číselné (vyšší je lepší)",
+    "TIME_LOW": "Čas (nižší je lepší)",
     "BOOLEAN": "Ano/Ne",
     "SCORE_SET": "Bodová sada",
     "TITLE": "Události",
@@ -208,6 +209,8 @@
   "SCORING": {
     "BACK": "Zpět na událost",
     "LOADING": "Načítání...",
+    "TIME_PLACEHOLDER": "m:ss.cc",
+    "INVALID_TIME": "{{count}} neplatných časů bylo přeskočeno (použijte formát m:ss.cc)",
     "NO_PARTICIPANTS": "Ve vaší přiřazené skupině nejsou žádní účastníci.",
     "PARTICIPANT": "Účastník",
     "SCORE": "Skóre",
@@ -477,6 +480,7 @@
     "ACTIVITIES_TIP": "Typ hodnocení vybírejte pečlivě — po aktivaci události jej nelze změnit. Pokud potřebujete časovou disciplínu i disciplínu na vzdálenost, vytvořte dvě samostatné aktivity s odpovídajícími typy.",
     "ACTIVITIES_NUMERIC_HIGH": "Číselné vysoké — vyšší je lepší (např. vzdálenost, body)",
     "ACTIVITIES_NUMERIC_LOW": "Číselné nízké — nižší je lepší (např. čas, chyby)",
+    "ACTIVITIES_TIME_LOW": "Čas — nejrychlejší vyhrává (zadávejte jako m:ss.cc, např. 1:23.45)",
     "ACTIVITIES_BOOLEAN": "Ano/Ne — splněno nebo nesplněno",
     "ACTIVITIES_SCORE_SET": "Bodová sada — předdefinovaná sada možných hodnot",
 
