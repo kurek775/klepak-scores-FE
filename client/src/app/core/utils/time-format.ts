@@ -3,17 +3,23 @@
  *
  * Scores are stored canonically as *total seconds* (a numeric string) in the
  * record's `value_raw`. These helpers convert between that canonical form and
- * the human `m:ss.cc` form used for input and display.
+ * the human form used for input and display.
+ *
+ * Accepted input (comma or dot decimals; whitespace tolerated):
+ *   "83"        → 83 s
+ *   "83.4"      → 83.4 s
+ *   "1:23"      → 1 min 23 s
+ *   "1:23.4"    → 1 min 23.4 s
+ *   "1:23:45"   → 1 min 23.45 s   (mm:ss:cc — the third group is the fraction)
+ *
+ * Note: race times here never span hours, so a 3-part `a:b:c` is read as
+ * mm:ss:fraction, NOT h:mm:ss.
  */
 
-/**
- * Parse a human time string into total seconds. Returns `null` for empty or
- * malformed input.
- *
- * Accepts `"83"`, `"83.4"`, `"1:23"`, `"1:23.4"`, `"1:02:03.5"` (comma or dot
- * decimals). Rejects out-of-range segments (e.g. `"45:74"`) so mistyped values
- * don't silently pass.
- */
+const IS_UINT = /^\d+$/;
+const IS_DECIMAL = /^\d*\.?\d+$/;
+
+/** Parse a human time string into total seconds. Returns `null` if invalid. */
 export function parseTimeToSeconds(input: string | number | null | undefined): number | null {
   if (input === null || input === undefined) return null;
   const text = String(input).trim().replace(',', '.');
@@ -22,24 +28,35 @@ export function parseTimeToSeconds(input: string | number | null | undefined): n
   const parts = text.split(':');
   if (parts.length > 3) return null;
 
-  let total = 0;
-  const n = parts.length;
-  for (let i = 0; i < n; i++) {
-    const part = parts[i].trim();
-    if (!/^\d*\.?\d+$/.test(part)) return null;
-    const num = Number(part);
-    if (Number.isNaN(num) || num < 0) return null;
-    const isLast = i === n - 1;
-    if (!isLast && !Number.isInteger(num)) return null; // only seconds may be fractional
-    if (n >= 2 && isLast && num >= 60) return null; // seconds < 60 when minutes present
-    if (n === 3 && i === 1 && num >= 60) return null; // minutes < 60 in h:mm:ss
-    total = total * 60 + num;
+  let minutes = 0;
+  let secondsStr: string;
+
+  if (parts.length === 1) {
+    secondsStr = parts[0].trim();
+  } else if (parts.length === 2) {
+    const m = parts[0].trim();
+    if (!IS_UINT.test(m)) return null;
+    minutes = Number(m);
+    secondsStr = parts[1].trim();
+  } else {
+    // mm:ss:cc — the third colon group is a decimal fraction of the second.
+    const m = parts[0].trim();
+    const s = parts[1].trim();
+    const frac = parts[2].trim();
+    if (!IS_UINT.test(m) || !IS_UINT.test(s) || !IS_UINT.test(frac)) return null;
+    minutes = Number(m);
+    secondsStr = `${s}.${frac}`;
   }
 
-  return Math.round(total * 100) / 100;
+  if (!IS_DECIMAL.test(secondsStr)) return null;
+  const seconds = Number(secondsStr);
+  if (Number.isNaN(seconds) || seconds < 0) return null;
+  if (parts.length >= 2 && seconds >= 60) return null; // seconds must be < 60 when minutes present
+
+  return Math.round((minutes * 60 + seconds) * 100) / 100;
 }
 
-/** Format total seconds as `m:ss` or `m:ss.cc` (with hours if >= 1h). */
+/** Format total seconds as `m:ss` or `m:ss.cc` (minutes may exceed 59). */
 export function formatSeconds(totalSeconds: number | string | null | undefined): string {
   if (totalSeconds === null || totalSeconds === undefined) return '';
   const ts = Number(totalSeconds);
@@ -53,12 +70,11 @@ export function formatSeconds(totalSeconds: number | string | null | undefined):
     centis = 0;
   }
 
-  const hours = Math.floor(whole / 3600);
-  const minutes = Math.floor((whole % 3600) / 60);
+  const minutes = Math.floor(whole / 60);
   const seconds = whole % 60;
   const pad = (val: number) => String(val).padStart(2, '0');
 
-  const base = hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
+  const base = `${minutes}:${pad(seconds)}`;
   return centis > 0 ? `${base}.${pad(centis)}` : base;
 }
 

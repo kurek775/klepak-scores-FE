@@ -481,7 +481,7 @@
     "ACTIVITIES_TIP": "Choose the scoring type carefully — it cannot be changed after the event is activated. If you need both a timed event and a distance event, create two separate activities with the appropriate types.",
     "ACTIVITIES_NUMERIC_HIGH": "Numeric High — Higher is better (e.g., distance, points)",
     "ACTIVITIES_NUMERIC_LOW": "Numeric Low — Lower is better (e.g., time, errors)",
-    "ACTIVITIES_TIME_LOW": "Time — Fastest wins (enter as m:ss.cc, e.g. 1:23.45)",
+    "ACTIVITIES_TIME_LOW": "Time — Fastest wins (enter as m:ss.cc or m:ss:cc, e.g. 1:23.45)",
     "ACTIVITIES_BOOLEAN": "Boolean — Pass or fail",
     "ACTIVITIES_SCORE_SET": "Score Set — Predefined set of possible values",
 

@@ -481,7 +481,7 @@
     "ACTIVITIES_TIP": "Typ hodnocení vybírejte pečlivě — po aktivaci události jej nelze změnit. Pokud potřebujete časovou disciplínu i disciplínu na vzdálenost, vytvořte dvě samostatné aktivity s odpovídajícími typy.",
     "ACTIVITIES_NUMERIC_HIGH": "Číselné vysoké — vyšší je lepší (např. vzdálenost, body)",
     "ACTIVITIES_NUMERIC_LOW": "Číselné nízké — nižší je lepší (např. čas, chyby)",
-    "ACTIVITIES_TIME_LOW": "Čas — nejrychlejší vyhrává (zadávejte jako m:ss.cc, např. 1:23.45)",
+    "ACTIVITIES_TIME_LOW": "Čas — nejrychlejší vyhrává (zadávejte jako m:ss.cc nebo m:ss:cc, např. 1:23.45)",
     "ACTIVITIES_BOOLEAN": "Ano/Ne — splněno nebo nesplněno",
     "ACTIVITIES_SCORE_SET": "Bodová sada — předdefinovaná sada možných hodnot",
 
