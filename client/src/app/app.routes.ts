@@ -110,9 +110,12 @@ export const routes: Routes = [
       import('./pages/docs/evaluator-guide/evaluator-guide').then((m) => m.EvaluatorGuide),
   },
 
+  // Landing page temporarily hidden — default to login (authenticated users
+  // are forwarded to the dashboard by authGuard). Restore the landing route
+  // by pointing '' back at ./pages/landing/landing.
   {
     path: '',
-    loadComponent: () => import('./pages/landing/landing').then((m) => m.Landing),
+    redirectTo: '/dashboard',
     pathMatch: 'full',
   },
   {
