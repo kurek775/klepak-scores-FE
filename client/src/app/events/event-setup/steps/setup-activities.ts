@@ -9,6 +9,7 @@ import { EVALUATION_TYPES, getEvalTypeKey } from '../../../core/utils/evaluation
 import { EventService } from '../../event.service';
 import { ScoringService } from '../../../scoring/scoring.service';
 import { ToastService } from '../../../shared/toast.service';
+import { ConfirmDialogService } from '../../../shared/confirm-dialog.service';
 import { untilDestroyed } from '../../../core/utils/destroy';
 
 @Component({
@@ -46,6 +47,7 @@ export class SetupActivities {
     private scoringService: ScoringService,
     private toast: ToastService,
     private transloco: TranslocoService,
+    private confirmDialog: ConfirmDialogService,
   ) {}
 
   getEvalTypeKey = getEvalTypeKey;
@@ -76,6 +78,23 @@ export class SetupActivities {
   deleteActivity(activityId: number): void {
     const ev = this.event();
     if (!ev) return;
+    // Warn with the number of scores that would be permanently deleted.
+    this.scoringService.getActivityRecords(activityId).pipe(this.destroy$()).subscribe({
+      next: (records) => this.confirmAndDeleteActivity(ev, activityId, records.length),
+      error: () => this.confirmAndDeleteActivity(ev, activityId, 0),
+    });
+  }
+
+  private async confirmAndDeleteActivity(ev: EventDetail, activityId: number, scoreCount: number): Promise<void> {
+    const message = scoreCount > 0
+      ? this.transloco.translate('EVENTS.CONFIRM_DELETE_ACTIVITY_SCORES', { count: scoreCount })
+      : this.transloco.translate('EVENTS.CONFIRM_DELETE_ACTIVITY');
+    const confirmed = await this.confirmDialog.confirm({
+      title: this.transloco.translate('COMMON.CONFIRM_TITLE'),
+      message,
+      confirmText: this.transloco.translate('EVENTS.DELETE_ACTIVITY'),
+    });
+    if (!confirmed) return;
     this.scoringService.deleteActivity(activityId).pipe(this.destroy$()).subscribe({
       next: () => {
         this.eventUpdated.emit({ ...ev, activities: ev.activities.filter(a => a.id !== activityId) });
