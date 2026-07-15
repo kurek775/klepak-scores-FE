@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, effect, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, effect, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -40,6 +40,11 @@ export class DiplomaEditor implements OnInit, OnDestroy {
   selectedItemIndex = signal<number | null>(null);
   collapsedItems    = signal<Set<number>>(new Set());
 
+  // Live preview sizing — the preview scales an A4 page to fit the screen, so
+  // font sizes (points, like the PDF) must scale by the same factor to be WYSIWYG.
+  previewContainerRef = viewChild<ElementRef<HTMLElement>>('previewContainer');
+  previewWidthPx = signal(0);
+
   // Snap guides — visible when dragging near center
   snapGuideX = signal(false);
   snapGuideY = signal(false);
@@ -79,6 +84,18 @@ export class DiplomaEditor implements OnInit, OnDestroy {
         .map(f => `@font-face { font-family: '${f.name}'; src: url('${f.data}'); }`)
         .join('\n');
       document.head.appendChild(style);
+    });
+
+    // Track the preview's rendered width so font sizes scale like the PDF.
+    effect((onCleanup) => {
+      const ref = this.previewContainerRef();
+      if (!ref) return;
+      const el = ref.nativeElement;
+      const update = () => this.previewWidthPx.set(el.clientWidth);
+      update();
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      onCleanup(() => ro.disconnect());
     });
 
     // Scroll sidebar to selected card when selection changes
@@ -462,6 +479,21 @@ export class DiplomaEditor implements OnInit, OnDestroy {
 
   previewFontFamily(item: DiplomaItem): string {
     return item.fontFamily && item.fontFamily !== 'default' ? item.fontFamily : 'inherit';
+  }
+
+  // A4 page width in points (jsPDF sizes fonts in points regardless of unit).
+  private pageWidthPt(): number {
+    const MM_TO_PT = 72 / 25.4;
+    const widthMm = this.orientation() === 'LANDSCAPE' ? 297 : 210;
+    return widthMm * MM_TO_PT;
+  }
+
+  // Preview font size in px, scaled so the on-screen page matches the PDF output.
+  previewFontSize(item: DiplomaItem): string {
+    const w = this.previewWidthPx();
+    if (!w) return item.fontSize + 'pt'; // pre-measure fallback
+    const px = item.fontSize * (w / this.pageWidthPt());
+    return px.toFixed(2) + 'px';
   }
 
   previewTransform(item: DiplomaItem): string {

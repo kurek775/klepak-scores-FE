@@ -350,7 +350,7 @@
         }
 
         @for (item of items(); track $index; let idx = $index) {
-        <div [style.left]="item.x + '%'" [style.top]="item.y + '%'" [style.fontSize]="item.fontSize + 'pt'"
+        <div [style.left]="item.x + '%'" [style.top]="item.y + '%'" [style.fontSize]="previewFontSize(item)"
           [style.fontWeight]="item.fontWeight === 'bold' ? 'bold' : 'normal'"
           [style.fontStyle]="item.fontWeight === 'italic' ? 'italic' : 'normal'" [style.color]="item.color"
           [style.fontFamily]="previewFontFamily(item)" [style.transform]="previewTransform(item)"
