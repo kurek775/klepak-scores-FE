@@ -24,6 +24,10 @@ export class SetupGroups {
   editingGroupName = signal('');
   addParticipantGroupId = signal<number | null>(null);
   newParticipantName = signal('');
+  newParticipantAge = signal<number | null>(null);
+  editingParticipantId = signal<number | null>(null);
+  editingParticipantName = signal('');
+  editingParticipantAge = signal<number | null>(null);
   showAddGroup = signal(false);
   newGroupName = signal('');
 
@@ -108,25 +112,69 @@ export class SetupGroups {
   showAddParticipant(groupId: number): void {
     this.addParticipantGroupId.set(groupId);
     this.newParticipantName.set('');
+    this.newParticipantAge.set(null);
   }
 
   addParticipant(groupId: number): void {
     const ev = this.event();
     if (!ev || !this.newParticipantName().trim()) return;
-    this.eventService.addParticipant(groupId, { display_name: this.newParticipantName().trim() }).pipe(this.destroy$()).subscribe({
-      next: (participant) => {
-        this.emitUpdate({
-          ...ev,
-          groups: ev.groups.map(g =>
-            g.id === groupId ? { ...g, participants: [...g.participants, participant] } : g,
-          ),
-        });
-        this.newParticipantName.set('');
-        this.addParticipantGroupId.set(null);
-        this.toast.success(this.transloco.translate('EVENTS.PARTICIPANT_ADDED'));
-      },
-      error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
-    });
+    this.eventService
+      .addParticipant(groupId, {
+        display_name: this.newParticipantName().trim(),
+        age: this.newParticipantAge() ?? undefined,
+      })
+      .pipe(this.destroy$())
+      .subscribe({
+        next: (participant) => {
+          this.emitUpdate({
+            ...ev,
+            groups: ev.groups.map(g =>
+              g.id === groupId ? { ...g, participants: [...g.participants, participant] } : g,
+            ),
+          });
+          this.newParticipantName.set('');
+          this.newParticipantAge.set(null);
+          this.addParticipantGroupId.set(null);
+          this.toast.success(this.transloco.translate('EVENTS.PARTICIPANT_ADDED'));
+        },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
+      });
+  }
+
+  startEditParticipant(p: Participant): void {
+    this.editingParticipantId.set(p.id);
+    this.editingParticipantName.set(p.display_name);
+    this.editingParticipantAge.set(p.age);
+  }
+
+  saveParticipant(groupId: number): void {
+    const ev = this.event();
+    const id = this.editingParticipantId();
+    if (!ev || !id || !this.editingParticipantName().trim()) return;
+    const name = this.editingParticipantName().trim();
+    const age = this.editingParticipantAge();
+    this.eventService
+      .updateParticipant(id, { display_name: name, age: age ?? undefined })
+      .pipe(this.destroy$())
+      .subscribe({
+        next: (updated) => {
+          this.emitUpdate({
+            ...ev,
+            groups: ev.groups.map(g =>
+              g.id === groupId
+                ? { ...g, participants: g.participants.map(p => (p.id === id ? updated : p)) }
+                : g,
+            ),
+          });
+          this.editingParticipantId.set(null);
+          this.toast.success(this.transloco.translate('EVENTS.PARTICIPANT_UPDATED'));
+        },
+        error: () => this.toast.error(this.transloco.translate('ERRORS.REQUEST_FAILED')),
+      });
+  }
+
+  cancelEditParticipant(): void {
+    this.editingParticipantId.set(null);
   }
 
   async deleteParticipant(groupId: number, participant: Participant): Promise<void> {
