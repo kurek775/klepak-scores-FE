@@ -354,7 +354,7 @@
           [style.fontWeight]="item.fontWeight === 'bold' ? 'bold' : 'normal'"
           [style.fontStyle]="item.fontWeight === 'italic' ? 'italic' : 'normal'" [style.color]="item.color"
           [style.fontFamily]="previewFontFamily(item)" [style.transform]="previewTransform(item)"
-          class="absolute whitespace-nowrap select-none cursor-grab active:cursor-grabbing transition-shadow"
+          class="absolute whitespace-nowrap select-none cursor-grab active:cursor-grabbing transition-shadow leading-none"
           [class]="selectedItemIndex() === idx
             ? 'ring-2 ring-emerald-500 ring-offset-1 bg-emerald-500/10 rounded'
             : 'hover:ring-1 hover:ring-emerald-300 hover:ring-offset-1 rounded'"

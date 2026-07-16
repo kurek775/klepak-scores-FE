@@ -101,9 +101,12 @@ export class DiplomaGeneratorService {
                 default: text = '';
               }
             }
+            // Anchor from the top (not the alphabetic baseline) so text lands
+            // where the editor preview shows it — the preview positions each
+            // item by its top-left corner.
             doc.text(text, xMm, yMm, {
               align:    item.centerH ? 'center' : 'left',
-              baseline: item.centerV ? 'middle'  : 'alphabetic',
+              baseline: item.centerV ? 'middle'  : 'top',
             });
           }
         }
