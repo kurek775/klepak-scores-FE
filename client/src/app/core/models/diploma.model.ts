@@ -16,9 +16,14 @@ export interface DiplomaItem {
   fontSize: number;
   fontWeight: FontWeight;
   color: string;
-  fontFamily?: string; 
-  centerH?: boolean;  
-  centerV?: boolean;  
+  fontFamily?: string;
+  centerH?: boolean;
+  centerV?: boolean;
+  // Only used when type === 'DYNAMIC' && key === 'category' — per-template
+  // override of the gender labels and the layout string ({gender}/{category}).
+  genderMale?: string;
+  genderFemale?: string;
+  categoryFormat?: string;
 }
 
 export interface DiplomaTemplate {

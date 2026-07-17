@@ -241,6 +241,28 @@
                   }
                 </select>
               </div>
+
+              <!-- Category label + format overrides (only for the category field) -->
+              @if (item.key === 'category') {
+              <div class="mt-1 space-y-2 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-900/10 p-2.5">
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-gray-500 dark:text-gray-400 w-16 shrink-0">Muži</label>
+                  <input type="text" [ngModel]="item.genderMale" (ngModelChange)="updateItem(idx, { genderMale: $event })"
+                    placeholder="Muži" class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-gray-500 dark:text-gray-400 w-16 shrink-0">Ženy</label>
+                  <input type="text" [ngModel]="item.genderFemale" (ngModelChange)="updateItem(idx, { genderFemale: $event })"
+                    placeholder="Ženy" class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-gray-500 dark:text-gray-400 w-16 shrink-0">Formát</label>
+                  <input type="text" [ngModel]="item.categoryFormat" (ngModelChange)="updateItem(idx, { categoryFormat: $event })"
+                    placeholder="&#123;gender&#125; · &#123;category&#125;" class="flex-1 px-2 py-1 border border-gray-300 dark:border-white/10 dark:bg-white/[0.05] dark:text-white rounded text-sm" />
+                </div>
+                <p class="text-xs text-gray-400 dark:text-gray-500">Tokeny <code>&#123;gender&#125;</code> a <code>&#123;category&#125;</code> — např. <code>&#123;category&#125; &#123;gender&#125;</code> → „U18 Chlapci“.</p>
+              </div>
+              }
               } @else {
               <div class="flex items-center gap-2">
                 <label class="text-xs text-gray-500 dark:text-gray-400 w-12 shrink-0">Text</label>

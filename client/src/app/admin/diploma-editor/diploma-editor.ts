@@ -467,10 +467,11 @@ export class DiplomaEditor implements OnInit, OnDestroy {
       case 'activity':
         return this.mockActivity();
       case 'category': {
-        const g = this.mockGender() === 'M'
-          ? this.transloco.translate('LEADERBOARD.MEN')
-          : this.transloco.translate('LEADERBOARD.WOMEN');
-        return `${g} · ${this.mockAgeCategory()}`;
+        const male = item.genderMale?.trim() || this.transloco.translate('LEADERBOARD.MEN');
+        const female = item.genderFemale?.trim() || this.transloco.translate('LEADERBOARD.WOMEN');
+        const g = this.mockGender() === 'M' ? male : female;
+        const fmt = item.categoryFormat?.trim() || '{gender} · {category}';
+        return fmt.split('{gender}').join(g).split('{category}').join(this.mockAgeCategory());
       }
       default:
         return `[${item.key}]`;

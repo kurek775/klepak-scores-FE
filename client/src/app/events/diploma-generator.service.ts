@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { jsPDF } from 'jspdf';
 
-import { DiplomaTemplate } from '../core/models/diploma.model';
+import { DiplomaItem, DiplomaTemplate } from '../core/models/diploma.model';
 import { LeaderboardResponse } from '../core/models/leaderboard.model';
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +56,16 @@ export class DiplomaGeneratorService {
 
     for (const activity of leaderboard.activities) {
       for (const cat of activity.categories) {
-        for (const participant of cat.participants) {
+        // Dense ranking within the category: equal scores share a place and a
+        // tie does NOT skip the next place (10,10,9,9,8,7 -> 1,1,2,2,3,4). Print
+        // a diploma for everyone whose dense place is 1, 2 or 3 (ties can make
+        // that more than three people). The backend uses competition ranking
+        // (1,1,3,…), so we derive the dense place from its distinct ranks here.
+        const uniqueRanks = [...new Set(cat.participants.map(p => p.rank))].sort((a, b) => a - b);
+        const placeOf = new Map(uniqueRanks.map((r, i) => [r, i + 1]));
+        const medalists = cat.participants.filter(p => (placeOf.get(p.rank) ?? Infinity) <= 3);
+        for (const participant of medalists) {
+          const place = placeOf.get(participant.rank) ?? 0;
           const tpl = templates[participantIndex % templates.length];
           participantIndex++;
 
@@ -93,20 +102,30 @@ export class DiplomaGeneratorService {
             } else {
               switch (item.key) {
                 case 'participant_name': text = participant.display_name; break;
-                case 'place':           text = `${participant.rank}.`; break;
+                case 'place':           text = `${place}.`; break;
                 case 'activity':        text = activity.activity_name; break;
                 case 'category':
-                  text = `${this.genderLabel(cat.gender)} · ${cat.age_category_name}`;
+                  text = this.formatCategory(item, cat.gender, cat.age_category_name);
                   break;
                 default: text = '';
               }
             }
-            // Anchor from the top (not the alphabetic baseline) so text lands
-            // where the editor preview shows it — the preview positions each
-            // item by its top-left corner.
-            doc.text(text, xMm, yMm, {
+            // Match the editor preview's box model exactly. The preview renders
+            // each item in a line-height:1 box whose em-box is vertically
+            // centered at (boxTop + 0.5em); horizontal centering pins the text's
+            // advance-width midpoint. jsPDF's 'top' baseline instead anchors the
+            // font's ascent top (above the em-box), which pushes text too high —
+            // so we anchor by the em-box middle ('middle'), which jsPDF and CSS
+            // agree on, and offset by half an em for top-anchored items:
+            //   centerV=false → preview box top at y%  → em-box middle at y%+0.5em
+            //   centerV=true  → preview centers on y%  → em-box middle at y%
+            const PT_TO_MM = 25.4 / 72;
+            const halfEmMm = 0.5 * item.fontSize * PT_TO_MM;
+            const yBaseline = item.centerV ? yMm : yMm + halfEmMm;
+
+            doc.text(text, xMm, yBaseline, {
               align:    item.centerH ? 'center' : 'left',
-              baseline: item.centerV ? 'middle'  : 'top',
+              baseline: 'middle',
             });
           }
         }
@@ -120,6 +139,19 @@ export class DiplomaGeneratorService {
     if (g === 'M') return this.transloco.translate('LEADERBOARD.MEN');
     if (g === 'F') return this.transloco.translate('LEADERBOARD.WOMEN');
     return g;
+  }
+
+  /**
+   * Render a category item using its optional per-template overrides. Falls back
+   * to the translated gender labels and the "{gender} · {category}" layout so
+   * templates saved before this feature keep rendering exactly as before.
+   */
+  private formatCategory(item: DiplomaItem, gender: string, categoryName: string): string {
+    const male = item.genderMale?.trim() || this.transloco.translate('LEADERBOARD.MEN');
+    const female = item.genderFemale?.trim() || this.transloco.translate('LEADERBOARD.WOMEN');
+    const g = gender === 'M' ? male : gender === 'F' ? female : gender;
+    const fmt = item.categoryFormat?.trim() || '{gender} · {category}';
+    return fmt.split('{gender}').join(g).split('{category}').join(categoryName);
   }
 
   private resolveImageToBase64(url: string): Promise<string> {
